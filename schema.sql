@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS commandes (
   telephone       TEXT,
   article         TEXT    NOT NULL,                -- nom du poster / produit
   format          TEXT,                            -- A5, A4, A3, A2, A1, Magazine…
+  avec_cadre      INTEGER NOT NULL DEFAULT 0 CHECK (avec_cadre IN (0, 1)), -- 1 = poster + cadre
   quantite        INTEGER NOT NULL DEFAULT 1  CHECK (quantite > 0),
   prix_unitaire   REAL    NOT NULL DEFAULT 0  CHECK (prix_unitaire >= 0),
   devise          TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD')),

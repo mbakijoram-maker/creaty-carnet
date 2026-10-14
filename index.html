@@ -228,27 +228,6 @@ textarea.in{resize:vertical;min-height:64px}
 .welcome{display:flex;flex-direction:column;gap:12px}
 .welcome .acts{display:flex;flex-wrap:wrap;gap:8px}
 
-/* SQL */
-.sqlgrid{display:grid;gap:20px;padding-bottom:64px;align-items:start}
-@media(min-width:980px){.sqlgrid{grid-template-columns:minmax(0,1fr) 320px}}
-.sql-ed{width:100%;min-height:150px;background:#0a0a0a;border:1px solid var(--line);padding:14px;font-family:Consolas,'Courier New',monospace;font-size:13px;line-height:1.55;color:var(--ink);outline:none;resize:vertical;border-radius:0}
-.sql-ed:focus{border-color:var(--lime)}
-.ex{display:flex;flex-wrap:wrap;gap:6px}
-.tbl-wrap{overflow:auto;border:1px solid var(--line);max-height:60vh}
-.tbl{border-collapse:collapse;width:100%;font-size:12px;font-family:Consolas,'Courier New',monospace}
-.tbl th{position:sticky;top:0;background:var(--bg3);text-align:left;padding:8px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--lime);border-bottom:1px solid var(--line2);white-space:nowrap}
-.tbl td{padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis}
-.tbl td.num{text-align:right}
-.null{color:var(--mut2);font-style:italic}
-.sql-err{border:1px solid var(--red);color:var(--red);padding:12px;font-family:Consolas,monospace;font-size:12px;overflow-wrap:anywhere}
-.sql-ok{color:var(--lime);font-size:12px;font-weight:700}
-.sch-list{display:grid;gap:6px}
-.sch{text-align:left;background:var(--bg3);border:1px solid var(--line);padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 10px}
-.sch:hover{border-color:var(--lime)}
-.sch-n{font-family:Consolas,monospace;font-weight:700;color:var(--ink)}
-.sch-t{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut2)}
-.sch-c{grid-column:1/-1;font-size:11px;color:var(--mut);font-family:Consolas,monospace;overflow-wrap:anywhere}
-
 /* réglages */
 .rgrid{display:grid;gap:16px;padding-bottom:64px;align-items:start}
 @media(min-width:900px){.rgrid{grid-template-columns:1fr 1fr}}
@@ -282,8 +261,8 @@ textarea.in{resize:vertical;min-height:64px}
 
 <div class="banner" aria-hidden="true">
   <div class="mq">
-    <span>✦ Carnet de bord CREATY</span><span>✦ Joram &amp; Plam's</span><span>✦ Commandes · Dépenses · Recettes</span><span>✦ Base SQL</span>
-    <span>✦ Carnet de bord CREATY</span><span>✦ Joram &amp; Plam's</span><span>✦ Commandes · Dépenses · Recettes</span><span>✦ Base SQL</span>
+    <span>✦ Carnet de bord CREATY</span><span>✦ Joram &amp; Plam's</span><span>✦ Commandes · Dépenses · Recettes</span><span>✦ Option avec cadre</span>
+    <span>✦ Carnet de bord CREATY</span><span>✦ Joram &amp; Plam's</span><span>✦ Commandes · Dépenses · Recettes</span><span>✦ Option avec cadre</span>
   </div>
 </div>
 
@@ -297,7 +276,6 @@ textarea.in{resize:vertical;min-height:64px}
     <button data-tab="commandes">Commandes</button>
     <button data-tab="depenses">Dépenses</button>
     <button data-tab="recettes">Recettes</button>
-    <button data-tab="sql">SQL</button>
     <button data-tab="reglages">Sauvegarde<span class="dot" id="bkDot" hidden></span></button>
   </nav>
 </header>
@@ -341,10 +319,14 @@ textarea.in{resize:vertical;min-height:64px}
           <div class="f"><label for="c-fmt">Format</label>
             <select class="in" id="c-fmt" name="format">
               <option value="">—</option><option>A5</option><option>A4</option><option>A3</option><option>A2</option><option>A1</option>
-              <option>Magazine 5 pages</option><option>Magazine 10 pages</option><option>Cadre</option><option>Autre</option>
+              <option>Magazine 5 pages</option><option>Magazine 10 pages</option><option>Autre</option>
             </select></div>
           <div class="f"><label for="c-qte">Quantité</label><input class="in" id="c-qte" type="number" name="quantite" min="1" step="1" value="1" required data-num inputmode="numeric"></div>
         </div>
+        <div class="f"><span class="flabel">Finition</span><div class="rseg" id="c-cadre">
+          <label><input type="radio" name="avec_cadre" value="0" data-num checked><span>Poster seul</span></label>
+          <label><input type="radio" name="avec_cadre" value="1" data-num><span>Avec cadre</span></label>
+        </div></div>
         <div class="gridm">
           <div class="f"><label for="c-prix">Prix unitaire</label><input class="in" id="c-prix" type="number" name="prix_unitaire" min="0" step="any" required data-num inputmode="decimal" placeholder="0"></div>
           <div class="f"><label for="c-dev">Devise</label><select class="in" id="c-dev" name="devise"><option value="FC">FC</option><option value="USD">$</option></select></div>
@@ -452,31 +434,10 @@ textarea.in{resize:vertical;min-height:64px}
     </div>
   </section>
 
-  <!-- SQL -->
-  <section class="tab" id="tab-sql" hidden>
-    <div class="ph">
-      <p class="eyebrow">Base de données SQLite</p>
-      <h2 class="fd">Console<br><span class="lime">SQL.</span></h2>
-      <p>Toutes les fiches sont dans une vraie base SQL. Lance tes propres requêtes ou choisis un exemple. Ctrl + Entrée pour exécuter.</p>
-    </div>
-    <div class="sqlgrid">
-      <div class="panel">
-        <div class="ex" id="sqlEx"></div>
-        <textarea class="sql-ed" id="sqlIn" spellcheck="false" aria-label="Requête SQL">SELECT * FROM v_bilan_mensuel;</textarea>
-        <div class="acts"><button class="btn btn-p" id="sqlRun" type="button">Exécuter la requête</button></div>
-        <div id="sqlOut"></div>
-      </div>
-      <div class="panel">
-        <div class="panel-h"><h3 class="fd">Tables &amp; vues</h3></div>
-        <div class="sch-list" id="sqlSchema"></div>
-      </div>
-    </div>
-  </section>
-
   <!-- REGLAGES / SAUVEGARDE -->
   <section class="tab" id="tab-reglages" hidden>
     <div class="ph">
-      <p class="eyebrow">Fichier de la base</p>
+      <p class="eyebrow">Mettre à l'abri</p>
       <h2 class="fd">La<br><span class="lime">sauvegarde.</span></h2>
     </div>
     <div class="rgrid">
@@ -549,6 +510,7 @@ CREATE TABLE IF NOT EXISTS commandes (
   telephone       TEXT,
   article         TEXT    NOT NULL,
   format          TEXT,
+  avec_cadre      INTEGER NOT NULL DEFAULT 0 CHECK (avec_cadre IN (0, 1)),
   quantite        INTEGER NOT NULL DEFAULT 1  CHECK (quantite > 0),
   prix_unitaire   REAL    NOT NULL DEFAULT 0  CHECK (prix_unitaire >= 0),
   devise          TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD')),
@@ -660,14 +622,7 @@ const STATUTS = ['En attente', 'En cours', 'Livrée', 'Annulée'];
 const ST_CLASS = { 'En attente': 'attente', 'En cours': 'cours', 'Livrée': 'livree', 'Annulée': 'annulee' };
 // Prix du site CREATY, pour pré-remplir les commandes
 const PRIX = { 'A5': [2500, 'FC'], 'A4': [3500, 'FC'], 'A3': [5000, 'FC'], 'A2': [10000, 'FC'], 'A1': [10, 'USD'], 'Magazine 5 pages': [5, 'USD'], 'Magazine 10 pages': [10, 'USD'] };
-const EX = [
-  ['Bilan par mois', 'SELECT * FROM v_bilan_mensuel;'],
-  ['Soldes des associés', 'SELECT * FROM v_soldes_associes;'],
-  ['Dépenses par type', "SELECT categorie, devise, COUNT(*) AS nb, SUM(montant) AS total\nFROM v_depenses\nGROUP BY categorie, devise\nORDER BY total DESC;"],
-  ['Commandes à encaisser', "SELECT id, date_commande, client, article, total, encaisse, reste, devise\nFROM v_commandes\nWHERE statut <> 'Annulée' AND reste > 0\nORDER BY date_commande;"],
-  ['Meilleurs clients', "SELECT client, COUNT(*) AS commandes, SUM(total) AS total, devise\nFROM v_commandes\nWHERE statut <> 'Annulée'\nGROUP BY client, devise\nORDER BY total DESC\nLIMIT 10;"],
-  ['Formats les plus vendus', "SELECT format, SUM(quantite) AS pieces\nFROM commandes\nWHERE statut <> 'Annulée'\nGROUP BY format\nORDER BY pieces DESC;"]
-];
+const PRIX_CADRE = { 'A5': [15000, 'FC'], 'A4': [18000, 'FC'], 'A3': [22000, 'FC'], 'A2': [30000, 'FC'], 'A1': [40000, 'FC'] };
 const IC = {
   edit: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
   del: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>'
@@ -744,6 +699,9 @@ function commit() { persist(); renderAll(); }
 function setup() {
   db.run('PRAGMA foreign_keys = ON');
   db.exec(SCHEMA_TABLES);
+  // Mise à jour d'une ancienne base : ajout de la colonne avec_cadre
+  if (!q("SELECT 1 FROM pragma_table_info('commandes') WHERE name = 'avec_cadre'").length)
+    db.run('ALTER TABLE commandes ADD COLUMN avec_cadre INTEGER NOT NULL DEFAULT 0 CHECK (avec_cadre IN (0, 1))');
   db.exec(SCHEMA_SEED);
   db.exec(SCHEMA_VIEWS);
   ASSOC = q('SELECT id, nom FROM associes ORDER BY id');
@@ -769,7 +727,7 @@ function setup() {
   } catch (e) {
     console.error(e);
     $('#bootMsg').textContent = e.message === 'offline' || /fetch|network|wasm/i.test(e.message)
-      ? 'Connexion internet nécessaire pour charger le moteur SQL. Vérifie ta connexion puis recharge la page.'
+      ? 'Connexion internet nécessaire pour ouvrir le carnet. Vérifie ta connexion puis recharge la page.'
       : 'Erreur au démarrage : ' + e.message;
   }
 })();
@@ -781,17 +739,16 @@ function buildStatic() {
     const name = el.dataset.assoc;
     el.innerHTML = ASSOC.map(a => `<label><input type="radio" name="${name}" value="${a.id}" data-num required><span>${esc(a.nom)}</span></label>`).join('');
   });
-  $('#sqlEx').innerHTML = EX.map((x, i) => `<button type="button" class="chipf" data-act="ex" data-i="${i}">${esc(x[0])}</button>`).join('');
   updateMe();
 }
 
 /* ================== NAVIGATION ================== */
-const TABS = ['tableau', 'commandes', 'depenses', 'recettes', 'sql', 'reglages'];
+const TABS = ['tableau', 'commandes', 'depenses', 'recettes', 'reglages'];
 function showTab(id, first) {
   if (!TABS.includes(id)) id = 'tableau';
   $$('.tab').forEach(s => s.hidden = s.id !== 'tab-' + id);
   $$('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
-  $('#filters').hidden = id === 'sql' || id === 'reglages';
+  $('#filters').hidden = id === 'reglages';
   if (location.hash.slice(1) !== id) history.replaceState(null, '', '#' + id);
   if (!first) window.scrollTo(0, 0);
 }
@@ -917,7 +874,7 @@ function toggleNewCat() {
 function renderAll() {
   fillMonths(); fillSelects();
   renderDash(); renderCommandes(); renderDepenses(); renderRecettes();
-  renderSchema(); renderReglages();
+  renderReglages();
 }
 function setOptions(sel, html) { const v = sel.value; sel.innerHTML = html; if ([...sel.options].some(o => o.value === v)) sel.value = v; }
 function fillMonths() {
@@ -961,7 +918,7 @@ function renderDash() {
   if (!hasAny) {
     h += `<div class="blk full welcome">
       <div class="blk-h"><h3 class="fd">Bienvenue dans le carnet</h3></div>
-      <p class="lbl" style="letter-spacing:.06em;text-transform:none;font-weight:400">Choisis qui tu es en haut à droite, puis ajoute la première fiche. Tout s'enregistre tout seul dans la base SQL.</p>
+      <p class="lbl" style="letter-spacing:.06em;text-transform:none;font-weight:400">Choisis qui tu es en haut à droite, puis ajoute la première fiche. Tout s'enregistre tout seul.</p>
       <div class="acts"><button class="btn btn-p btn-sm" data-act="goto" data-tab="commandes">Ajouter une commande</button><button class="btn btn-g btn-sm" data-act="goto" data-tab="depenses">Ajouter une dépense</button><button class="btn btn-g btn-sm" data-act="goto" data-tab="recettes">Ajouter une recette</button></div>
     </div>`;
   }
@@ -1026,7 +983,7 @@ function renderCommandes() {
       <div class="i-main">
         <div class="i-meta"><span class="id">#${r.id}</span><span>${fdate(r.date_commande)}</span>${who(r.associe_id)}</div>
         <h4 class="i-title">${esc(r.client)}${r.telephone ? `<a class="tel" href="tel:${esc(r.telephone.replace(/\s/g, ''))}">${esc(r.telephone)}</a>` : ''}</h4>
-        <p class="i-sub">${esc(r.article)}${r.format ? ' · ' + esc(r.format) : ''} × ${r.quantite}${r.lieu_livraison ? ' · ' + esc(r.lieu_livraison) : ''}</p>
+        <p class="i-sub">${esc(r.article)}${r.format ? ' · ' + esc(r.format) : ''}${r.avec_cadre ? ' + cadre' : ''} × ${r.quantite}${r.lieu_livraison ? ' · ' + esc(r.lieu_livraison) : ''}</p>
         ${r.note ? `<p class="i-note">${esc(r.note)}</p>` : ''}
       </div>
       <div class="i-amt"><span class="fd">${money(r.total, r.devise)}</span>${paye ? '<span class="paid">✓ Payée</span>' : (live && r.encaisse > 0 ? `<span class="due">Reste ${money(r.reste, r.devise)}</span>` : '')}</div>
@@ -1037,7 +994,7 @@ function renderCommandes() {
         <button type="button" class="ib del" data-act="del" data-t="commandes" data-id="${r.id}" title="Supprimer" aria-label="Supprimer la commande #${r.id}">${IC.del}</button>
       </div>
     </article>`;
-  }).join('') : (s || ST_FILTER || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune commande ne correspond aux filtres.') : emptyState('Aucune commande', 'Ajoute la première avec le formulaire. Le prix se remplit tout seul quand tu choisis le format.'));
+  }).join('') : (s || ST_FILTER || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune commande ne correspond aux filtres.') : emptyState('Aucune commande', 'Ajoute la première avec le formulaire. Le prix se remplit tout seul quand tu choisis le format et la finition.'));
 }
 function renderDepenses() {
   const extra = [];
@@ -1080,39 +1037,14 @@ function renderRecettes() {
       </div>
     </article>`).join('') : (s || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune recette ne correspond aux filtres.') : emptyState('Aucune recette', 'Encaisse une commande ou ajoute une recette avec le formulaire.'));
 }
-function renderSchema() {
-  const objs = q("SELECT name, type FROM sqlite_master WHERE type IN ('table', 'view') AND name NOT LIKE 'sqlite_%' ORDER BY type, name");
-  $('#sqlSchema').innerHTML = objs.map(o => {
-    const cols = q('SELECT name FROM pragma_table_info(?)', [o.name]).map(c => c.name);
-    return `<button type="button" class="sch" data-act="sqlpick" data-name="${esc(o.name)}"><span class="sch-n">${esc(o.name)}</span><span class="sch-t">${o.type === 'view' ? 'vue' : 'table'}</span><span class="sch-c">${esc(cols.join(', '))}</span></button>`;
-  }).join('');
-}
 function renderReglages() {
   const n = q1('SELECT (SELECT COUNT(*) FROM commandes) c, (SELECT COUNT(*) FROM depenses) d, (SELECT COUNT(*) FROM recettes) r');
   const last = param('derniere_sauvegarde');
   const days = last ? Math.floor((Date.now() - Date.parse(last)) / 864e5) : null;
-  $('#bkInfo').textContent = `Base : ${plural(n.c, 'commande')} · ${plural(n.d, 'dépense')} · ${plural(n.r, 'recette')}. ` +
+  $('#bkInfo').textContent = `Carnet : ${plural(n.c, 'commande')} · ${plural(n.d, 'dépense')} · ${plural(n.r, 'recette')}. ` +
     (last ? `Dernier export : ${new Date(last).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} (${days === 0 ? 'aujourd’hui' : 'il y a ' + plural(days, 'jour')}).` : 'Aucun export pour l’instant.');
   $('#bkDot').hidden = !((n.c + n.d + n.r) > 0 && (days === null || days >= 7));
   if (document.activeElement !== $('#taux')) $('#taux').value = param('taux_usd_fc') || '';
-}
-
-/* ================== SQL ================== */
-function runSQL() {
-  const src = $('#sqlIn').value; if (!src.trim()) return;
-  const out = $('#sqlOut');
-  try {
-    const before = q1('SELECT total_changes() n').n;
-    const res = db.exec(src);
-    const changed = q1('SELECT total_changes() n').n - before;
-    let h = '';
-    if (!res.length) h = `<p class="sql-ok">✓ Requête exécutée${changed ? ' · ' + plural(changed, 'ligne') + ' modifiée' + (changed > 1 ? 's' : '') : ''}</p>`;
-    res.forEach(r => {
-      h += `<p class="lbl" style="margin:6px 0 8px">${plural(r.values.length, 'ligne')}${r.values.length > 500 ? ' (500 affichées)' : ''}</p><div class="tbl-wrap"><table class="tbl"><thead><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${r.values.slice(0, 500).map(v => `<tr>${v.map(x => `<td class="${typeof x === 'number' ? 'num' : ''}">${x === null ? '<span class="null">NULL</span>' : esc(x instanceof Uint8Array ? '[blob]' : x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-    });
-    out.innerHTML = h;
-    if (changed || !/^\s*(select|with|explain)\b/i.test(src)) { persist(); renderAll(); }
-  } catch (e) { out.innerHTML = `<p class="sql-err">${esc(e.message)}</p>`; }
 }
 
 /* ================== SAUVEGARDE ================== */
@@ -1165,11 +1097,14 @@ function bind() {
 
   // Commande : prix du site selon le format, total en direct, téléphone d'un client connu
   const fc = $('#f-commandes');
-  E(fc, 'format').addEventListener('change', () => {
-    const p = PRIX[E(fc, 'format').value], pr = E(fc, 'prix_unitaire');
+  const autoPrix = () => {
+    const fmt = E(fc, 'format').value, cadre = $('input[name="avec_cadre"]:checked', fc)?.value === '1';
+    const p = (cadre ? PRIX_CADRE : PRIX)[fmt], pr = E(fc, 'prix_unitaire');
     if (p && (pr.value === '' || pr.dataset.auto === '1')) { pr.value = p[0]; E(fc, 'devise').value = p[1]; pr.dataset.auto = '1'; }
     liveTotal();
-  });
+  };
+  E(fc, 'format').addEventListener('change', autoPrix);
+  $$('input[name="avec_cadre"]', fc).forEach(r => r.addEventListener('change', autoPrix));
   E(fc, 'prix_unitaire').addEventListener('input', e => e.target.dataset.auto = '0');
   fc.addEventListener('input', liveTotal); fc.addEventListener('change', liveTotal);
   E(fc, 'client').addEventListener('change', () => {
@@ -1210,8 +1145,6 @@ function bind() {
       case 'encaisser': encaisser(id); break;
       case 'goto': showTab(b.dataset.tab); break;
       case 'stf': ST_FILTER = b.dataset.v; renderCommandes(); break;
-      case 'ex': $('#sqlIn').value = EX[+b.dataset.i][1]; runSQL(); break;
-      case 'sqlpick': $('#sqlIn').value = `SELECT * FROM ${b.dataset.name} LIMIT 50;`; runSQL(); break;
       case 'csv': exportCSV(b.dataset.name, b.dataset.label); break;
     }
   });
@@ -1220,10 +1153,6 @@ function bind() {
     db.run('UPDATE commandes SET statut = ? WHERE id = ?', [s.value, +s.dataset.id]);
     commit(); toast(`Commande #${s.dataset.id} : ${s.value}`);
   });
-
-  // SQL
-  $('#sqlRun').addEventListener('click', runSQL);
-  $('#sqlIn').addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runSQL(); } });
 
   // Sauvegarde
   $('#bkExport').addEventListener('click', exportDB);
