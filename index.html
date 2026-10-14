@@ -1,0 +1,1238 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Carnet CREATY</title>
+<meta name="description" content="Carnet de bord interne de JP CREATY : commandes, dépenses et recettes de Joram et Plam's."/>
+<meta name="robots" content="noindex"/>
+<meta name="theme-color" content="#0d0d0d"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+<style>
+:root{
+  --bg:#0d0d0d;--bg2:#121212;--bg3:#181818;
+  --ink:#f5f2ea;--mut:rgba(245,242,234,.58);--mut2:rgba(245,242,234,.34);
+  --line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.22);
+  --lime:#9be619;--fu:#d946ef;--fu-ink:#f0abfc;--red:#ff6b6b;
+  --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239be619' stroke-width='1.6'/%3E%3C/svg%3E");
+  --chev2:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23f5f2ea' stroke-opacity='.6' stroke-width='1.6'/%3E%3C/svg%3E");
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45;min-height:100vh}
+.fd{font-family:'Arial Black','Arial Bold',Arial,sans-serif;font-weight:900}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+option{background:#181818;color:#f5f2ea}
+[hidden]{display:none!important}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--lime)}
+:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+.wrap{max-width:1280px;margin:0 auto;padding-left:16px;padding-right:16px}
+@media(min-width:640px){.wrap{padding-left:32px;padding-right:32px}}
+.eyebrow{display:flex;align-items:center;gap:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.32em;color:var(--lime)}
+.eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--lime)}
+.lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:var(--mut)}
+
+/* bandeau */
+.banner{overflow:hidden;background:var(--lime);padding:9px 0}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mq{display:flex;width:max-content;animation:mq 26s linear infinite}
+.mq span{margin:0 32px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.28em;color:#111;white-space:nowrap}
+@media(prefers-reduced-motion:reduce){.mq{animation:none}html{scroll-behavior:auto}}
+
+/* en-tête */
+.hdr{position:sticky;top:0;z-index:20;background:rgba(13,13,13,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;padding-bottom:12px}
+.logo{font-size:18px;letter-spacing:-.12em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:10px;white-space:nowrap}
+.logo .tag{font-family:Arial,sans-serif;font-size:9px;letter-spacing:.25em;background:var(--lime);color:#111;padding:4px 7px;font-weight:700}
+@media(max-width:400px){.logo .tag{display:none}}
+@media(min-width:640px){.logo{font-size:22px}}
+.me{display:flex;align-items:center;gap:10px}
+.me .lbl{display:none}
+@media(min-width:560px){.me .lbl{display:inline}}
+.seg{display:inline-flex;border:1px solid var(--line2)}
+.seg button{background:none;border:0;padding:8px 11px;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);min-height:36px}
+.seg button+button{border-left:1px solid var(--line2)}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:var(--lime);color:#111}
+.seg button.on.p2{background:var(--fu);color:#fff}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;border-top:1px solid var(--line)}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{position:relative;background:none;border:0;padding:14px 12px;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--mut2);white-space:nowrap}
+.tabs button:first-child{padding-left:0}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{color:var(--lime)}
+.tabs button.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--lime)}
+.tabs button:first-child.on::after{left:0}
+.tabs .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--fu);margin-left:6px;vertical-align:middle}
+
+/* filtres */
+.filters{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;padding-top:20px}
+.filters label{display:flex;align-items:center;gap:10px}
+
+/* champs */
+.in{width:100%;background:var(--bg3);border:1px solid var(--line);padding:11px 12px;border-radius:0;outline:none;transition:border-color .15s;font-size:14px;min-height:44px}
+.in:focus{border-color:var(--lime)}
+.in::placeholder{color:var(--mut2)}
+select.in{appearance:none;-webkit-appearance:none;background-image:var(--chev);background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+.in.sm{width:auto;min-height:38px;padding:8px 32px 8px 10px;font-size:12px}
+textarea.in{resize:vertical;min-height:64px}
+.f{display:flex;flex-direction:column;gap:6px;min-width:0}
+.f>label,.f>.flabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:var(--mut)}
+.f .opt{font-style:normal;letter-spacing:.06em;color:var(--mut2);text-transform:none;font-weight:400}
+.f .hint{font-size:11px;color:var(--mut2)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.gridm{display:grid;grid-template-columns:1fr 92px;gap:12px}
+.rseg{display:grid;grid-template-columns:repeat(2,1fr);border:1px solid var(--line2)}
+.rseg label{position:relative;display:block;cursor:pointer}
+.rseg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;width:100%;height:100%}
+.rseg span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:8px;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+.rseg label+label span{border-left:1px solid var(--line2)}
+.rseg input:checked+span{background:var(--lime);color:#111}
+.rseg input[value="2"]:checked+span{background:var(--fu);color:#fff}
+.rseg input:focus-visible+span{outline:2px solid var(--lime);outline-offset:-2px}
+
+/* boutons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:12px 18px;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;border:1px solid transparent;background:none;transition:transform .15s,background .15s,color .15s,border-color .15s;text-decoration:none;white-space:nowrap}
+.btn-p{background:var(--lime);color:#111}
+.btn-p:hover{transform:translateY(-1px)}
+.btn-g{border-color:var(--line2);color:var(--ink)}
+.btn-g:hover{border-color:var(--lime);color:var(--lime)}
+.btn-d{border-color:rgba(255,107,107,.45);color:var(--red)}
+.btn-d:hover:not(:disabled){background:var(--red);color:#111}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.btn-sm{min-height:34px;padding:8px 12px;font-size:9px}
+.ib{width:34px;height:34px;display:inline-grid;place-items:center;border:1px solid var(--line);background:none;color:var(--mut);transition:color .15s,border-color .15s}
+.ib:hover{color:var(--ink);border-color:var(--line2)}
+.ib.del:hover{color:var(--red);border-color:var(--red)}
+.form-act{display:flex;gap:10px}
+.form-act .btn-p{flex:1}
+
+/* titres de page */
+.ph{padding:40px 0 28px;display:flex;flex-direction:column;gap:14px}
+.ph h1,.ph h2{font-size:clamp(2.4rem,8vw,5.6rem);line-height:.84;letter-spacing:-.085em;text-transform:uppercase}
+.ph .lime{color:var(--lime)}
+.ph .ghost{color:rgba(245,242,234,.22)}
+.ph .outline{-webkit-text-stroke:2px var(--lime);color:transparent}
+.ph p{max-width:52ch;color:var(--mut);font-size:13px}
+
+/* panneaux */
+.panel{background:var(--bg2);border:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:14px}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.panel-h h3{font-size:18px;letter-spacing:-.05em;text-transform:uppercase}
+.badge-edit{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:var(--fu);color:#fff;padding:4px 8px}
+.form-panel.editing{border-color:var(--fu);box-shadow:6px 6px 0 var(--fu)}
+.live{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed var(--line2);padding-top:12px}
+.live b{font-family:'Arial Black',Arial,sans-serif;font-size:22px;letter-spacing:-.04em;color:var(--lime)}
+.split{display:grid;gap:28px;align-items:start;padding-bottom:64px}
+@media(min-width:980px){
+  .split{grid-template-columns:minmax(340px,400px) 1fr}
+  .split>.form-panel{position:sticky;top:124px;max-height:calc(100vh - 140px);overflow:auto}
+}
+
+/* listes */
+.lh{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.lh h3{font-size:18px;letter-spacing:-.05em;text-transform:uppercase}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;flex:1;justify-content:flex-end}
+.search{position:relative;flex:1;min-width:180px;max-width:300px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--mut2);pointer-events:none}
+.search .in{padding-left:36px;min-height:40px;font-size:13px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.chipf{background:none;border:1px solid var(--line);padding:7px 11px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);min-height:32px}
+.chipf:hover{color:var(--ink)}
+.chipf.on{border-color:var(--lime);color:var(--lime)}
+.lsum{font-size:11px;color:var(--mut);margin:14px 0 8px;letter-spacing:.04em}
+.list{border-top:1px solid var(--line)}
+.item{display:grid;grid-template-columns:1fr auto;gap:10px 16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.i-main{min-width:0}
+.i-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);margin-bottom:6px}
+.i-meta .id{color:var(--lime)}
+.i-title{font-size:15px;font-weight:700;line-height:1.3;overflow-wrap:anywhere}
+.i-title .tel{font-size:12px;font-weight:400;color:var(--mut);text-decoration:none;margin-left:6px;white-space:nowrap}
+.i-title .tel:hover{color:var(--lime)}
+.i-sub{font-size:12px;color:var(--mut);margin-top:4px;overflow-wrap:anywhere}
+.i-note{font-size:12px;color:var(--mut2);font-style:italic;margin-top:4px;overflow-wrap:anywhere}
+.i-amt{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.i-amt .fd{font-size:17px;letter-spacing:-.04em;white-space:nowrap}
+.i-amt.rec .fd{color:var(--lime)}
+.i-amt.dep .fd{color:var(--fu-ink)}
+.paid,.due{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap}
+.paid{color:var(--lime)}
+.due{color:var(--fu-ink)}
+.i-act{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+@media(min-width:1180px){.item{grid-template-columns:1fr auto auto;align-items:center}.i-act{grid-column:auto;justify-content:flex-end}}
+.st{appearance:none;-webkit-appearance:none;background:transparent var(--chev2) no-repeat right 9px center;border:1px solid;min-height:34px;padding:6px 26px 6px 10px;font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;border-radius:0;outline:none}
+.st-attente{border-color:var(--line2);color:var(--ink)}
+.st-cours{border-color:var(--fu);color:var(--fu-ink)}
+.st-livree{border-color:var(--lime);color:var(--lime)}
+.st-annulee{border-color:var(--line);color:var(--mut2);text-decoration:line-through}
+.who{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;font-size:9px;font-family:'Arial Black',Arial,sans-serif;font-weight:900;letter-spacing:0;background:var(--line2);color:var(--ink)}
+.who-1{background:var(--lime);color:#111}
+.who-2{background:var(--fu);color:#fff}
+.whon{display:inline-flex;align-items:center;gap:6px}
+.tagc{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--line2);padding:3px 7px;color:var(--ink);margin-right:6px}
+.empty{border:1px dashed var(--line2);padding:32px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:12px}
+.empty b{font-family:'Arial Black',Arial,sans-serif;text-transform:uppercase;letter-spacing:-.03em;font-size:16px}
+.empty p{color:var(--mut);font-size:13px;max-width:38ch}
+
+/* tableau de bord */
+.kpis{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:520px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:960px){.kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.kpi{background:var(--bg2);border:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.kpi .v{font-size:clamp(20px,2.6vw,30px);letter-spacing:-.05em;line-height:1.05;margin-top:4px}
+.kpi .v2{font-size:12px;font-weight:700;color:var(--mut)}
+.kpi .v3{font-size:11px;color:var(--mut2)}
+.kpi.k-rec .v{color:var(--lime)}
+.kpi.k-dep .v{color:var(--fu-ink)}
+.kpi.hl{background:var(--lime);border-color:var(--lime);color:#111;box-shadow:6px 6px 0 var(--fu)}
+.kpi.hl .lbl,.kpi.hl .v2,.kpi.hl .v3{color:rgba(17,17,17,.62)}
+.kpi.hl.neg{background:var(--fu);border-color:var(--fu);color:#fff;box-shadow:6px 6px 0 var(--lime)}
+.kpi.hl.neg .lbl,.kpi.hl.neg .v2,.kpi.hl.neg .v3{color:rgba(255,255,255,.78)}
+.dgrid{display:grid;gap:12px;margin-top:20px;padding-bottom:64px}
+@media(min-width:960px){.dgrid{grid-template-columns:1fr 1fr}.dgrid .full{grid-column:1/-1}}
+.blk{border:1px solid var(--line);background:var(--bg2);padding:18px;min-width:0}
+.blk-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px}
+.blk-h h3{font-size:16px;letter-spacing:-.04em;text-transform:uppercase}
+.pcards{display:grid;gap:12px}
+@media(min-width:600px){.pcards{grid-template-columns:1fr 1fr}}
+.pcard{border:1px solid var(--line);background:var(--bg3);padding:16px;border-top:3px solid var(--line2)}
+.pc-1{border-top-color:var(--lime)}
+.pc-2{border-top-color:var(--fu)}
+.pcard h4{font-size:20px;letter-spacing:-.06em;text-transform:uppercase;display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.pcard .row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+.pcard .row span:first-child{color:var(--mut)}
+.pcard .row span:last-child{font-weight:700;text-align:right}
+.pcard .solde span:last-child{font-family:'Arial Black',Arial,sans-serif;font-weight:900}
+.pcard .solde.neg span:last-child{color:var(--fu-ink)}
+.note{font-size:11px;color:var(--mut2);margin-top:10px}
+.cat{padding:9px 0;border-top:1px solid var(--line)}
+.cat-h{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:7px}
+.cat-h span:first-child{font-weight:700}
+.cat-h span:last-child{color:var(--mut);text-align:right}
+.bar{height:8px;background:var(--bg3)}
+.bar i{display:block;height:100%;background:var(--fu)}
+.ops{list-style:none}
+.ops li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:13px}
+.ops .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ops .t small{display:block;font-size:10px;color:var(--mut2);letter-spacing:.06em}
+.ops .a{font-weight:700;white-space:nowrap}
+.op-k{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:3px 6px;border:1px solid}
+.op-R{color:var(--lime);border-color:var(--lime)}
+.op-D{color:var(--fu-ink);border-color:var(--fu)}
+.op-C{color:var(--ink);border-color:var(--line2)}
+.ops .a.R{color:var(--lime)}
+.ops .a.D{color:var(--fu-ink)}
+.welcome{display:flex;flex-direction:column;gap:12px}
+.welcome .acts{display:flex;flex-wrap:wrap;gap:8px}
+
+/* SQL */
+.sqlgrid{display:grid;gap:20px;padding-bottom:64px;align-items:start}
+@media(min-width:980px){.sqlgrid{grid-template-columns:minmax(0,1fr) 320px}}
+.sql-ed{width:100%;min-height:150px;background:#0a0a0a;border:1px solid var(--line);padding:14px;font-family:Consolas,'Courier New',monospace;font-size:13px;line-height:1.55;color:var(--ink);outline:none;resize:vertical;border-radius:0}
+.sql-ed:focus{border-color:var(--lime)}
+.ex{display:flex;flex-wrap:wrap;gap:6px}
+.tbl-wrap{overflow:auto;border:1px solid var(--line);max-height:60vh}
+.tbl{border-collapse:collapse;width:100%;font-size:12px;font-family:Consolas,'Courier New',monospace}
+.tbl th{position:sticky;top:0;background:var(--bg3);text-align:left;padding:8px 10px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--lime);border-bottom:1px solid var(--line2);white-space:nowrap}
+.tbl td{padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis}
+.tbl td.num{text-align:right}
+.null{color:var(--mut2);font-style:italic}
+.sql-err{border:1px solid var(--red);color:var(--red);padding:12px;font-family:Consolas,monospace;font-size:12px;overflow-wrap:anywhere}
+.sql-ok{color:var(--lime);font-size:12px;font-weight:700}
+.sch-list{display:grid;gap:6px}
+.sch{text-align:left;background:var(--bg3);border:1px solid var(--line);padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:3px 10px}
+.sch:hover{border-color:var(--lime)}
+.sch-n{font-family:Consolas,monospace;font-weight:700;color:var(--ink)}
+.sch-t{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut2)}
+.sch-c{grid-column:1/-1;font-size:11px;color:var(--mut);font-family:Consolas,monospace;overflow-wrap:anywhere}
+
+/* réglages */
+.rgrid{display:grid;gap:16px;padding-bottom:64px;align-items:start}
+@media(min-width:900px){.rgrid{grid-template-columns:1fr 1fr}}
+.panel p.txt{color:var(--mut);font-size:13px}
+.panel .acts{display:flex;flex-wrap:wrap;gap:8px}
+.panel.danger{border-color:rgba(255,107,107,.3)}
+.kv{font-size:12px;color:var(--mut2)}
+.taux{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.taux .in{max-width:160px}
+
+/* divers */
+.ftr{border-top:1px solid var(--line);background:#090909}
+.ftr .wrap{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding-top:28px;padding-bottom:28px}
+.ftr span{font-size:12px;font-weight:700;color:rgba(245,242,234,.22)}
+.ftr a{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--lime);text-decoration:none;border:1px solid var(--lime);padding:10px 14px}
+.ftr a:hover{background:var(--lime);color:#111}
+#toast{position:fixed;bottom:24px;left:50%;z-index:60;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 32px);background:var(--lime);color:#111;padding:12px 18px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translate(-50%,12px);transition:opacity .25s,transform .25s;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast.err{background:var(--fu);color:#fff}
+.boot{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
+.boot .fd{font-size:40px;letter-spacing:-.12em}
+.boot p{max-width:42ch}
+</style>
+</head>
+<body>
+
+<div class="boot" id="boot">
+  <div class="fd">JP CREATY</div>
+  <p class="lbl" id="bootMsg">Ouverture du carnet…</p>
+</div>
+
+<div class="banner" aria-hidden="true">
+  <div class="mq">
+    <span>✦ Carnet de bord CREATY</span><span>✦ Joram &amp; Plam's</span><span>✦ Commandes · Dépenses · Recettes</span><span>✦ Base SQL</span>
+    <span>✦ Carnet de bord CREATY</span><span>✦ Joram &amp; Plam's</span><span>✦ Commandes · Dépenses · Recettes</span><span>✦ Base SQL</span>
+  </div>
+</div>
+
+<header class="hdr">
+  <div class="wrap hdr-in">
+    <a class="logo fd" href="https://creatyjp.github.io/Creaty-final/">JP CREATY <span class="tag">Carnet</span></a>
+    <div class="me"><span class="lbl">Je suis</span><div class="seg" id="meSeg" role="group" aria-label="Qui utilise le carnet"></div></div>
+  </div>
+  <nav class="wrap tabs" aria-label="Sections">
+    <button data-tab="tableau">Tableau</button>
+    <button data-tab="commandes">Commandes</button>
+    <button data-tab="depenses">Dépenses</button>
+    <button data-tab="recettes">Recettes</button>
+    <button data-tab="sql">SQL</button>
+    <button data-tab="reglages">Sauvegarde<span class="dot" id="bkDot" hidden></span></button>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <div class="filters" id="filters">
+    <label><span class="lbl">Période</span><select class="in sm" id="fMois"></select></label>
+    <label><span class="lbl">Associé</span><select class="in sm" id="fQui"></select></label>
+  </div>
+
+  <!-- TABLEAU DE BORD -->
+  <section class="tab" id="tab-tableau">
+    <div class="ph">
+      <p class="eyebrow">Kinshasa · Carnet de bord</p>
+      <h1 class="fd">Le carnet<br><span class="outline">de bord.</span></h1>
+      <p id="dashScope"></p>
+    </div>
+    <div id="dash"></div>
+  </section>
+
+  <!-- COMMANDES -->
+  <section class="tab" id="tab-commandes" hidden>
+    <div class="ph">
+      <p class="eyebrow">Commandes clients</p>
+      <h2 class="fd">Les<br><span class="lime">commandes.</span></h2>
+    </div>
+    <div class="split">
+      <form class="panel form-panel" id="f-commandes" data-table="commandes" data-add="Ajouter la commande">
+        <div class="panel-h"><h3 class="fd">Nouvelle commande</h3><span class="badge-edit" hidden></span></div>
+        <div class="grid2">
+          <div class="f"><label for="c-date">Date</label><input class="in" id="c-date" type="date" name="date_commande" required data-today></div>
+          <div class="f"><label for="c-st">Statut</label>
+            <select class="in" id="c-st" name="statut"><option>En attente</option><option>En cours</option><option>Livrée</option><option>Annulée</option></select></div>
+        </div>
+        <div class="f"><span class="flabel">Gérée par</span><div class="rseg" data-assoc="associe_id"></div></div>
+        <div class="f"><label for="c-client">Client</label><input class="in" id="c-client" name="client" required placeholder="Nom du client" autocomplete="off" list="dl-clients"></div>
+        <div class="f"><label for="c-tel">Téléphone <span class="opt">facultatif</span></label><input class="in" id="c-tel" type="tel" name="telephone" placeholder="+243 …" autocomplete="off"></div>
+        <div class="f"><label for="c-art">Article / poster</label><input class="in" id="c-art" name="article" required placeholder="ex. Naruto Uzumaki" autocomplete="off" list="dl-articles"></div>
+        <div class="grid2">
+          <div class="f"><label for="c-fmt">Format</label>
+            <select class="in" id="c-fmt" name="format">
+              <option value="">—</option><option>A5</option><option>A4</option><option>A3</option><option>A2</option><option>A1</option>
+              <option>Magazine 5 pages</option><option>Magazine 10 pages</option><option>Cadre</option><option>Autre</option>
+            </select></div>
+          <div class="f"><label for="c-qte">Quantité</label><input class="in" id="c-qte" type="number" name="quantite" min="1" step="1" value="1" required data-num inputmode="numeric"></div>
+        </div>
+        <div class="gridm">
+          <div class="f"><label for="c-prix">Prix unitaire</label><input class="in" id="c-prix" type="number" name="prix_unitaire" min="0" step="any" required data-num inputmode="decimal" placeholder="0"></div>
+          <div class="f"><label for="c-dev">Devise</label><select class="in" id="c-dev" name="devise"><option value="FC">FC</option><option value="USD">$</option></select></div>
+        </div>
+        <div class="f"><label for="c-lieu">Lieu de livraison <span class="opt">facultatif</span></label><input class="in" id="c-lieu" name="lieu_livraison" placeholder="ex. Gombe, Limete…"></div>
+        <div class="f"><label for="c-note">Note <span class="opt">facultatif</span></label><textarea class="in" id="c-note" name="note" rows="2"></textarea></div>
+        <div class="live"><span class="lbl">Total</span><b id="c-total">0 FC</b></div>
+        <div class="form-act"><button class="btn btn-p" type="submit">Ajouter la commande</button><button class="btn btn-g" type="button" data-cancel hidden>Annuler</button></div>
+      </form>
+      <div>
+        <div class="lh">
+          <h3 class="fd">Registre</h3>
+          <div class="tools">
+            <div class="search">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input class="in" type="search" data-search="commandes" placeholder="Client, poster, téléphone…" aria-label="Rechercher une commande">
+            </div>
+          </div>
+        </div>
+        <div class="chips" id="stChips"></div>
+        <p class="lsum" id="sum-commandes"></p>
+        <div class="list" id="l-commandes"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEPENSES -->
+  <section class="tab" id="tab-depenses" hidden>
+    <div class="ph">
+      <p class="eyebrow">Dépenses personnelles</p>
+      <h2 class="fd">Les<br><span class="lime">dépenses.</span></h2>
+      <p>Tout ce que Joram ou Plam's paie de sa poche pour CREATY : transport, cadres, posters…</p>
+    </div>
+    <div class="split">
+      <form class="panel form-panel" id="f-depenses" data-table="depenses" data-add="Ajouter la dépense">
+        <div class="panel-h"><h3 class="fd">Nouvelle dépense</h3><span class="badge-edit" hidden></span></div>
+        <div class="f"><span class="flabel">Payée par</span><div class="rseg" data-assoc="associe_id"></div></div>
+        <div class="grid2">
+          <div class="f"><label for="d-date">Date</label><input class="in" id="d-date" type="date" name="date_depense" required data-today></div>
+          <div class="f"><label for="d-cat">Type de dépense</label><select class="in" id="d-cat" name="categorie_id" required></select></div>
+        </div>
+        <div class="f" id="d-newcat-wrap" hidden><label for="d-newcat">Nom du nouveau type</label><input class="in" id="d-newcat" placeholder="ex. Impression, Emballage…" autocomplete="off"></div>
+        <div class="f"><label for="d-desc">Description</label><input class="in" id="d-desc" name="description" required placeholder="ex. Taxi Gombe → Limete, 10 cadres A3…" autocomplete="off"></div>
+        <div class="gridm">
+          <div class="f"><label for="d-mt">Montant</label><input class="in" id="d-mt" type="number" name="montant" min="0.01" step="any" required data-num inputmode="decimal" placeholder="0"></div>
+          <div class="f"><label for="d-dev">Devise</label><select class="in" id="d-dev" name="devise"><option value="FC">FC</option><option value="USD">$</option></select></div>
+        </div>
+        <div class="f"><label for="d-cmd">Pour la commande <span class="opt">facultatif</span></label><select class="in" id="d-cmd" name="commande_id" data-num></select></div>
+        <div class="form-act"><button class="btn btn-p" type="submit">Ajouter la dépense</button><button class="btn btn-g" type="button" data-cancel hidden>Annuler</button></div>
+      </form>
+      <div>
+        <div class="lh">
+          <h3 class="fd">Registre</h3>
+          <div class="tools">
+            <select class="in sm" id="catFilter" aria-label="Filtrer par type de dépense"></select>
+            <div class="search">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input class="in" type="search" data-search="depenses" placeholder="Rechercher…" aria-label="Rechercher une dépense">
+            </div>
+          </div>
+        </div>
+        <p class="lsum" id="sum-depenses"></p>
+        <div class="list" id="l-depenses"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECETTES -->
+  <section class="tab" id="tab-recettes" hidden>
+    <div class="ph">
+      <p class="eyebrow">Recettes de l'entreprise</p>
+      <h2 class="fd">Les<br><span class="lime">recettes.</span></h2>
+      <p>L'argent qui rentre. Astuce : le bouton « Encaisser » d'une commande crée la recette tout seul.</p>
+    </div>
+    <div class="split">
+      <form class="panel form-panel" id="f-recettes" data-table="recettes" data-add="Ajouter la recette">
+        <div class="panel-h"><h3 class="fd">Nouvelle recette</h3><span class="badge-edit" hidden></span></div>
+        <div class="f"><span class="flabel">Encaissée par</span><div class="rseg" data-assoc="associe_id"></div></div>
+        <div class="grid2">
+          <div class="f"><label for="r-date">Date</label><input class="in" id="r-date" type="date" name="date_recette" required data-today></div>
+          <div class="f"><label for="r-mode">Paiement</label>
+            <select class="in" id="r-mode" name="mode_paiement"><option>Cash</option><option>Mobile Money</option><option>Virement</option><option>Autre</option></select></div>
+        </div>
+        <div class="f"><label for="r-cmd">Commande <span class="opt">facultatif</span></label><select class="in" id="r-cmd" name="commande_id" data-num></select><span class="hint">Choisis une commande pour remplir le montant automatiquement (acompte possible).</span></div>
+        <div class="f"><label for="r-desc">Description</label><input class="in" id="r-desc" name="description" required placeholder="ex. Vente expo, acompte…" autocomplete="off"></div>
+        <div class="gridm">
+          <div class="f"><label for="r-mt">Montant</label><input class="in" id="r-mt" type="number" name="montant" min="0.01" step="any" required data-num inputmode="decimal" placeholder="0"></div>
+          <div class="f"><label for="r-dev">Devise</label><select class="in" id="r-dev" name="devise"><option value="FC">FC</option><option value="USD">$</option></select></div>
+        </div>
+        <div class="form-act"><button class="btn btn-p" type="submit">Ajouter la recette</button><button class="btn btn-g" type="button" data-cancel hidden>Annuler</button></div>
+      </form>
+      <div>
+        <div class="lh">
+          <h3 class="fd">Registre</h3>
+          <div class="tools">
+            <div class="search">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+              <input class="in" type="search" data-search="recettes" placeholder="Rechercher…" aria-label="Rechercher une recette">
+            </div>
+          </div>
+        </div>
+        <p class="lsum" id="sum-recettes"></p>
+        <div class="list" id="l-recettes"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SQL -->
+  <section class="tab" id="tab-sql" hidden>
+    <div class="ph">
+      <p class="eyebrow">Base de données SQLite</p>
+      <h2 class="fd">Console<br><span class="lime">SQL.</span></h2>
+      <p>Toutes les fiches sont dans une vraie base SQL. Lance tes propres requêtes ou choisis un exemple. Ctrl + Entrée pour exécuter.</p>
+    </div>
+    <div class="sqlgrid">
+      <div class="panel">
+        <div class="ex" id="sqlEx"></div>
+        <textarea class="sql-ed" id="sqlIn" spellcheck="false" aria-label="Requête SQL">SELECT * FROM v_bilan_mensuel;</textarea>
+        <div class="acts"><button class="btn btn-p" id="sqlRun" type="button">Exécuter la requête</button></div>
+        <div id="sqlOut"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 class="fd">Tables &amp; vues</h3></div>
+        <div class="sch-list" id="sqlSchema"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGLAGES / SAUVEGARDE -->
+  <section class="tab" id="tab-reglages" hidden>
+    <div class="ph">
+      <p class="eyebrow">Fichier de la base</p>
+      <h2 class="fd">La<br><span class="lime">sauvegarde.</span></h2>
+    </div>
+    <div class="rgrid">
+      <div class="panel">
+        <div class="panel-h"><h3 class="fd">Où sont les données ?</h3></div>
+        <p class="txt">Le carnet enregistre tout automatiquement dans <b>ce navigateur, sur cet appareil</b>. Rien n'est envoyé sur internet.</p>
+        <p class="txt">Pour mettre la base à l'abri ou la passer à l'autre associé, exporte le fichier <b>.db</b> et envoie-le (WhatsApp, OneDrive…). L'autre l'importe ici sur son téléphone. Une seule personne tient le carnet à la fois, ou vous vous repassez le fichier.</p>
+        <div class="acts">
+          <button class="btn btn-p" type="button" id="bkExport">Exporter la base (.db)</button>
+          <button class="btn btn-g" type="button" id="bkImportBtn">Importer une base</button>
+          <input type="file" id="bkImport" accept=".db,.sqlite,.sqlite3,application/x-sqlite3,application/octet-stream" hidden>
+        </div>
+        <p class="kv" id="bkInfo"></p>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 class="fd">Exporter pour Excel</h3></div>
+        <p class="txt">Fichiers CSV qui s'ouvrent dans Excel ou Google Sheets.</p>
+        <div class="acts">
+          <button class="btn btn-g btn-sm" data-act="csv" data-name="v_commandes" data-label="commandes">Commandes</button>
+          <button class="btn btn-g btn-sm" data-act="csv" data-name="v_depenses" data-label="depenses">Dépenses</button>
+          <button class="btn btn-g btn-sm" data-act="csv" data-name="v_recettes" data-label="recettes">Recettes</button>
+          <button class="btn btn-g btn-sm" data-act="csv" data-name="v_bilan_mensuel" data-label="bilan-mensuel">Bilan mensuel</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 class="fd">Taux du dollar</h3></div>
+        <p class="txt">Facultatif. Sert seulement à afficher un total combiné « ≈ en FC » quand il y a des montants en FC et en $.</p>
+        <div class="taux"><span class="lbl">1 $ =</span><input class="in" type="number" id="taux" min="0" step="any" inputmode="decimal" placeholder="ex. 2800" aria-label="Taux du dollar en francs congolais"><span class="lbl">FC</span></div>
+      </div>
+      <div class="panel danger">
+        <div class="panel-h"><h3 class="fd">Tout effacer</h3></div>
+        <p class="txt">Supprime toutes les commandes, dépenses et recettes de cet appareil. Exporte la base avant. Tape <b>EFFACER</b> pour confirmer.</p>
+        <div class="taux"><input class="in" id="resetTxt" autocomplete="off" placeholder="EFFACER" aria-label="Tape EFFACER pour confirmer"><button class="btn btn-d" type="button" id="resetBtn" disabled>Effacer le carnet</button></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<datalist id="dl-clients"></datalist>
+<datalist id="dl-articles"></datalist>
+
+<footer class="ftr">
+  <div class="wrap">
+    <span>2026 JP CREATY — Carnet interne · Joram &amp; Plam's</span>
+    <a href="https://creatyjp.github.io/Creaty-final/">Retour au site</a>
+  </div>
+</footer>
+
+<div id="toast" role="status" aria-live="polite">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastTxt"></span>
+</div>
+
+<script>
+/* ================== SCHÉMA SQL (identique à schema.sql) ================== */
+const SCHEMA_TABLES = `
+CREATE TABLE IF NOT EXISTS associes (
+  id   INTEGER PRIMARY KEY,
+  nom  TEXT NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS categories_depense (
+  id   INTEGER PRIMARY KEY,
+  nom  TEXT NOT NULL UNIQUE COLLATE NOCASE
+);
+CREATE TABLE IF NOT EXISTS commandes (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  date_commande   TEXT    NOT NULL DEFAULT (date('now')),
+  client          TEXT    NOT NULL,
+  telephone       TEXT,
+  article         TEXT    NOT NULL,
+  format          TEXT,
+  quantite        INTEGER NOT NULL DEFAULT 1  CHECK (quantite > 0),
+  prix_unitaire   REAL    NOT NULL DEFAULT 0  CHECK (prix_unitaire >= 0),
+  devise          TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD')),
+  statut          TEXT    NOT NULL DEFAULT 'En attente'
+                  CHECK (statut IN ('En attente','En cours','Livrée','Annulée')),
+  lieu_livraison  TEXT,
+  associe_id      INTEGER REFERENCES associes(id),
+  note            TEXT,
+  cree_le         TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS depenses (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  date_depense  TEXT    NOT NULL DEFAULT (date('now')),
+  associe_id    INTEGER NOT NULL REFERENCES associes(id),
+  categorie_id  INTEGER NOT NULL REFERENCES categories_depense(id),
+  description   TEXT    NOT NULL,
+  montant       REAL    NOT NULL CHECK (montant > 0),
+  devise        TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD')),
+  commande_id   INTEGER REFERENCES commandes(id) ON DELETE SET NULL,
+  cree_le       TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS recettes (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  date_recette   TEXT    NOT NULL DEFAULT (date('now')),
+  associe_id     INTEGER NOT NULL REFERENCES associes(id),
+  description    TEXT    NOT NULL,
+  montant        REAL    NOT NULL CHECK (montant > 0),
+  devise         TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD')),
+  mode_paiement  TEXT    NOT NULL DEFAULT 'Cash'
+                 CHECK (mode_paiement IN ('Cash','Mobile Money','Virement','Autre')),
+  commande_id    INTEGER REFERENCES commandes(id) ON DELETE SET NULL,
+  cree_le        TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+CREATE TABLE IF NOT EXISTS parametres (
+  cle     TEXT PRIMARY KEY,
+  valeur  TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_commandes_date ON commandes(date_commande);
+CREATE INDEX IF NOT EXISTS idx_depenses_date  ON depenses(date_depense);
+CREATE INDEX IF NOT EXISTS idx_recettes_date  ON recettes(date_recette);
+CREATE INDEX IF NOT EXISTS idx_recettes_cmd   ON recettes(commande_id);
+`;
+const SCHEMA_SEED = `
+INSERT OR IGNORE INTO associes (id, nom) VALUES (1, 'Joram'), (2, 'Plam''s');
+INSERT OR IGNORE INTO categories_depense (id, nom) VALUES
+  (1, 'Transport'), (2, 'Achat de cadres'), (3, 'Achat de posters'), (4, 'Autre');
+`;
+const SCHEMA_VIEWS = `
+DROP VIEW IF EXISTS v_commandes;
+DROP VIEW IF EXISTS v_depenses;
+DROP VIEW IF EXISTS v_recettes;
+DROP VIEW IF EXISTS v_bilan_mensuel;
+DROP VIEW IF EXISTS v_soldes_associes;
+CREATE VIEW v_commandes AS
+SELECT x.*, x.total - x.encaisse AS reste
+FROM (
+  SELECT c.*,
+         c.quantite * c.prix_unitaire AS total,
+         a.nom AS gere_par,
+         COALESCE((SELECT SUM(r.montant) FROM recettes r
+                   WHERE r.commande_id = c.id AND r.devise = c.devise), 0) AS encaisse
+  FROM commandes c
+  LEFT JOIN associes a ON a.id = c.associe_id
+) x;
+CREATE VIEW v_depenses AS
+SELECT d.*, a.nom AS paye_par, k.nom AS categorie
+FROM depenses d
+JOIN associes a           ON a.id = d.associe_id
+JOIN categories_depense k ON k.id = d.categorie_id;
+CREATE VIEW v_recettes AS
+SELECT r.*, a.nom AS encaisse_par, c.client AS client
+FROM recettes r
+JOIN associes a       ON a.id = r.associe_id
+LEFT JOIN commandes c ON c.id = r.commande_id;
+CREATE VIEW v_bilan_mensuel AS
+SELECT mois, devise,
+       SUM(CASE WHEN t = 'R' THEN montant ELSE 0 END)        AS recettes,
+       SUM(CASE WHEN t = 'D' THEN montant ELSE 0 END)        AS depenses,
+       SUM(CASE WHEN t = 'R' THEN montant ELSE -montant END) AS benefice
+FROM (
+  SELECT strftime('%Y-%m', date_recette) AS mois, devise, montant, 'R' AS t FROM recettes
+  UNION ALL
+  SELECT strftime('%Y-%m', date_depense), devise, montant, 'D' FROM depenses
+)
+GROUP BY mois, devise
+ORDER BY mois DESC, devise;
+CREATE VIEW v_soldes_associes AS
+SELECT a.nom AS associe, x.devise,
+       SUM(CASE WHEN x.t = 'R' THEN x.montant ELSE 0 END)          AS encaisse,
+       SUM(CASE WHEN x.t = 'D' THEN x.montant ELSE 0 END)          AS depense,
+       SUM(CASE WHEN x.t = 'R' THEN x.montant ELSE -x.montant END) AS solde
+FROM associes a
+JOIN (
+  SELECT associe_id, devise, montant, 'R' AS t FROM recettes
+  UNION ALL
+  SELECT associe_id, devise, montant, 'D' FROM depenses
+) x ON x.associe_id = a.id
+GROUP BY a.id, x.devise;
+`;
+
+/* ================== ÉTAT ================== */
+const SQLJS_VER = '1.10.3';
+let SQL, db, ME = 1, ASSOC = [];
+const F = { mois: '', qui: '' };
+const SEARCH = { commandes: '', depenses: '', recettes: '' };
+let ST_FILTER = '', CAT_FILTER = '';
+const editing = { commandes: null, depenses: null, recettes: null };
+const STATUTS = ['En attente', 'En cours', 'Livrée', 'Annulée'];
+const ST_CLASS = { 'En attente': 'attente', 'En cours': 'cours', 'Livrée': 'livree', 'Annulée': 'annulee' };
+// Prix du site CREATY, pour pré-remplir les commandes
+const PRIX = { 'A5': [2500, 'FC'], 'A4': [3500, 'FC'], 'A3': [5000, 'FC'], 'A2': [10000, 'FC'], 'A1': [10, 'USD'], 'Magazine 5 pages': [5, 'USD'], 'Magazine 10 pages': [10, 'USD'] };
+const EX = [
+  ['Bilan par mois', 'SELECT * FROM v_bilan_mensuel;'],
+  ['Soldes des associés', 'SELECT * FROM v_soldes_associes;'],
+  ['Dépenses par type', "SELECT categorie, devise, COUNT(*) AS nb, SUM(montant) AS total\nFROM v_depenses\nGROUP BY categorie, devise\nORDER BY total DESC;"],
+  ['Commandes à encaisser', "SELECT id, date_commande, client, article, total, encaisse, reste, devise\nFROM v_commandes\nWHERE statut <> 'Annulée' AND reste > 0\nORDER BY date_commande;"],
+  ['Meilleurs clients', "SELECT client, COUNT(*) AS commandes, SUM(total) AS total, devise\nFROM v_commandes\nWHERE statut <> 'Annulée'\nGROUP BY client, devise\nORDER BY total DESC\nLIMIT 10;"],
+  ['Formats les plus vendus', "SELECT format, SUM(quantite) AS pieces\nFROM commandes\nWHERE statut <> 'Annulée'\nGROUP BY format\nORDER BY pieces DESC;"]
+];
+const IC = {
+  edit: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
+  del: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>'
+};
+
+/* ================== OUTILS ================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const E = (form, name) => form.elements.namedItem(name);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const nf = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 });
+const money = (n, dev) => { n = Math.round((n || 0) * 100) / 100 || 0; return nf.format(n) + (dev === 'USD' ? ' $' : ' FC'); };
+const fdate = s => { if (!s) return ''; const [y, m, d] = String(s).split('-').map(Number); const dt = new Date(y, m - 1, d); return isNaN(dt) ? s : dt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }); };
+const fmois = s => { const [y, m] = s.split('-').map(Number); const t = new Date(y, m - 1, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }); return t.charAt(0).toUpperCase() + t.slice(1); };
+const plural = (n, w) => n + ' ' + w + (n > 1 ? 's' : '');
+const LS = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
+
+function q(sql, p = []) { const st = db.prepare(sql); try { st.bind(p); const out = []; while (st.step()) out.push(st.getAsObject()); return out; } finally { st.free(); } }
+const q1 = (sql, p) => q(sql, p)[0];
+const param = k => { const r = q1('SELECT valeur FROM parametres WHERE cle = ?', [k]); return r ? r.valeur : null; };
+const setParam = (k, v) => db.run('INSERT INTO parametres (cle, valeur) VALUES (?, ?) ON CONFLICT(cle) DO UPDATE SET valeur = excluded.valeur', [k, v]);
+const taux = () => Number(param('taux_usd_fc')) || 0;
+const nomAssoc = id => (ASSOC.find(a => a.id === id) || {}).nom || '—';
+const who = id => id ? `<span class="whon"><span class="who who-${id}">${esc(nomAssoc(id).charAt(0))}</span>${esc(nomAssoc(id))}</span>` : '';
+
+// WHERE construit à partir des filtres (période + associé) et de conditions en plus
+function W(dateCol, extra = [], qui = F.qui) {
+  const c = extra.map(x => x[0]), p = extra.flatMap(x => x.slice(1));
+  if (F.mois) { c.push(`strftime('%Y-%m', ${dateCol}) = ?`); p.push(F.mois); }
+  if (qui) { c.push('associe_id = ?'); p.push(+qui); }
+  return [c.length ? 'WHERE ' + c.join(' AND ') : '', p];
+}
+function totals(sql, p) { const t = { FC: 0, USD: 0 }; for (const r of q(sql, p)) t[r.devise] = (t[r.devise] || 0) + (r.s || 0); return t; }
+const sumBy = (table, col, qui = F.qui) => { const [w, p] = W(col, [], qui); return totals(`SELECT devise, SUM(montant) s FROM ${table} ${w} GROUP BY devise`, p); };
+const diff = (a, b) => ({ FC: a.FC - b.FC, USD: a.USD - b.USD });
+function inline(t) { const a = []; if (t.FC || !t.USD) a.push(money(t.FC, 'FC')); if (t.USD) a.push(money(t.USD, 'USD')); return a.join(' · '); }
+function fmtT(t) {
+  const parts = []; if (t.FC || !t.USD) parts.push(money(t.FC, 'FC')); if (t.USD) parts.push(money(t.USD, 'USD'));
+  let h = `<div class="v fd">${parts[0]}</div>`;
+  if (parts[1]) h += `<div class="v2">${t.USD < 0 ? '' : '+ '}${parts[1]}</div>`;
+  const tx = taux(); if (tx && t.USD && t.FC) h += `<div class="v3">≈ ${money(t.FC + t.USD * tx, 'FC')} au total</div>`;
+  return h;
+}
+const emptyState = (title, txt) => `<div class="empty"><b>${title}</b><p>${txt}</p></div>`;
+
+let toastT;
+function toast(msg, err) { const t = $('#toast'); $('#toastTxt').textContent = msg; t.classList.toggle('err', !!err); t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), err ? 4500 : 2400); }
+
+/* ================== STOCKAGE (IndexedDB) ================== */
+function idb(mode, fn) {
+  return new Promise((res, rej) => {
+    let r; try { r = indexedDB.open('creaty-carnet', 1); } catch (e) { return rej(e); }
+    r.onupgradeneeded = () => r.result.createObjectStore('kv');
+    r.onerror = () => rej(r.error);
+    r.onsuccess = () => {
+      const tx = r.result.transaction('kv', mode), req = fn(tx.objectStore('kv'));
+      tx.oncomplete = () => { r.result.close(); res(req && req.result); };
+      tx.onerror = () => rej(tx.error);
+    };
+  });
+}
+const idbGet = k => idb('readonly', st => st.get(k));
+const idbSet = (k, v) => idb('readwrite', st => st.put(v, k));
+let saving = Promise.resolve();
+function persist() {
+  const data = db.export();
+  db.run('PRAGMA foreign_keys = ON'); // export() rouvre la base et remet les pragmas à zéro
+  saving = saving.then(() => idbSet('db', data)).catch(e => { console.error(e); toast('Enregistrement impossible ici — exporte la base', true); });
+  return saving;
+}
+function commit() { persist(); renderAll(); }
+
+function setup() {
+  db.run('PRAGMA foreign_keys = ON');
+  db.exec(SCHEMA_TABLES);
+  db.exec(SCHEMA_SEED);
+  db.exec(SCHEMA_VIEWS);
+  ASSOC = q('SELECT id, nom FROM associes ORDER BY id');
+}
+
+/* ================== DÉMARRAGE ================== */
+(async function boot() {
+  try {
+    if (typeof initSqlJs !== 'function') throw new Error('offline');
+    SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/${SQLJS_VER}/${f}` });
+    let saved = null;
+    try { saved = await idbGet('db'); } catch (e) { console.warn(e); }
+    db = saved ? new SQL.Database(saved) : new SQL.Database();
+    setup();
+    if (!saved) await persist();
+    ME = Number(LS.get('creaty-me')) || 1;
+    if (!ASSOC.some(a => a.id === ME)) ME = ASSOC[0].id;
+    buildStatic();
+    bind();
+    renderAll();
+    showTab((location.hash || '#tableau').slice(1), true);
+    $('#boot').hidden = true;
+  } catch (e) {
+    console.error(e);
+    $('#bootMsg').textContent = e.message === 'offline' || /fetch|network|wasm/i.test(e.message)
+      ? 'Connexion internet nécessaire pour charger le moteur SQL. Vérifie ta connexion puis recharge la page.'
+      : 'Erreur au démarrage : ' + e.message;
+  }
+})();
+
+function buildStatic() {
+  $('#meSeg').innerHTML = ASSOC.map(a => `<button type="button" data-me="${a.id}" class="p${a.id}">${esc(a.nom)}</button>`).join('');
+  $('#fQui').innerHTML = '<option value="">Les deux</option>' + ASSOC.map(a => `<option value="${a.id}">${esc(a.nom)}</option>`).join('');
+  $$('[data-assoc]').forEach(el => {
+    const name = el.dataset.assoc;
+    el.innerHTML = ASSOC.map(a => `<label><input type="radio" name="${name}" value="${a.id}" data-num required><span>${esc(a.nom)}</span></label>`).join('');
+  });
+  $('#sqlEx').innerHTML = EX.map((x, i) => `<button type="button" class="chipf" data-act="ex" data-i="${i}">${esc(x[0])}</button>`).join('');
+  updateMe();
+}
+
+/* ================== NAVIGATION ================== */
+const TABS = ['tableau', 'commandes', 'depenses', 'recettes', 'sql', 'reglages'];
+function showTab(id, first) {
+  if (!TABS.includes(id)) id = 'tableau';
+  $$('.tab').forEach(s => s.hidden = s.id !== 'tab-' + id);
+  $$('[data-tab]').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
+  $('#filters').hidden = id === 'sql' || id === 'reglages';
+  if (location.hash.slice(1) !== id) history.replaceState(null, '', '#' + id);
+  if (!first) window.scrollTo(0, 0);
+}
+function setMe(id) {
+  ME = id; LS.set('creaty-me', String(id)); updateMe();
+  $$('form[data-table]').forEach(f => { if (!editing[f.dataset.table]) $$('input[name="associe_id"]', f).forEach(r => r.checked = +r.value === ME); });
+  toast('Bonjour ' + nomAssoc(id));
+}
+function updateMe() { $$('#meSeg button').forEach(b => { b.classList.toggle('on', +b.dataset.me === ME); b.setAttribute('aria-pressed', +b.dataset.me === ME); }); }
+
+/* ================== FORMULAIRES ================== */
+function readForm(form) {
+  const o = {};
+  for (const el of form.elements) {
+    if (!el.name || el.disabled) continue;
+    if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) continue;
+    const v = el.value.trim();
+    o[el.name] = v === '' ? null : ('num' in el.dataset ? Number(v) : v);
+  }
+  return o;
+}
+function fillForm(form, row) {
+  for (const el of form.elements) {
+    if (!el.name || !(el.name in row)) continue;
+    const v = row[el.name];
+    if (el.type === 'radio') el.checked = String(el.value) === String(v);
+    else el.value = v ?? '';
+  }
+}
+function setMode(form) {
+  const id = editing[form.dataset.table], b = $('.badge-edit', form);
+  form.classList.toggle('editing', !!id);
+  b.hidden = !id; if (id) b.textContent = 'Modification #' + id;
+  $('[type=submit]', form).textContent = id ? 'Enregistrer' : form.dataset.add;
+  $('[data-cancel]', form).hidden = !id;
+}
+function resetForm(form) {
+  form.reset();
+  for (const el of form.elements) {
+    delete el.dataset.auto;
+    if ('today' in el.dataset) el.value = today();
+    if (el.type === 'radio' && el.name === 'associe_id') el.checked = +el.value === ME;
+  }
+  editing[form.dataset.table] = null;
+  setMode(form);
+  if (form.id === 'f-depenses') toggleNewCat();
+  if (form.id === 'f-commandes') liveTotal();
+}
+function friendly(e) {
+  const m = String(e.message || e);
+  if (/NOT NULL.*associe_id/.test(m)) return 'Choisis l’associé';
+  if (/NOT NULL/.test(m)) return 'Un champ obligatoire est vide';
+  if (/CHECK constraint/.test(m)) return 'Une valeur n’est pas valide (montant supérieur à 0 ?)';
+  if (/FOREIGN KEY/.test(m)) return 'Lien invalide avec une autre fiche';
+  return 'Erreur : ' + m;
+}
+function onSubmit(e) {
+  e.preventDefault();
+  const form = e.target, t = form.dataset.table, data = readForm(form);
+  try {
+    if (t === 'depenses') {
+      if (data.categorie_id === '__new') {
+        const nom = $('#d-newcat').value.trim();
+        if (!nom) { $('#d-newcat').focus(); return toast('Donne un nom au nouveau type', true); }
+        db.run('INSERT OR IGNORE INTO categories_depense (nom) VALUES (?)', [nom]);
+        data.categorie_id = q1('SELECT id FROM categories_depense WHERE nom = ? COLLATE NOCASE', [nom]).id;
+      } else data.categorie_id = data.categorie_id == null ? null : Number(data.categorie_id);
+    }
+    const cols = Object.keys(data), vals = cols.map(c => data[c]);
+    if (editing[t]) {
+      db.run(`UPDATE ${t} SET ${cols.map(c => c + ' = ?').join(', ')} WHERE id = ?`, [...vals, editing[t]]);
+      toast('Fiche #' + editing[t] + ' mise à jour');
+    } else {
+      db.run(`INSERT INTO ${t} (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`, vals);
+      toast({ commandes: 'Commande ajoutée', depenses: 'Dépense ajoutée', recettes: 'Recette ajoutée' }[t]);
+    }
+    resetForm(form);
+    commit();
+  } catch (err) { console.error(err); toast(friendly(err), true); }
+}
+function startEdit(t, id) {
+  const row = q1(`SELECT * FROM ${t} WHERE id = ?`, [id]); if (!row) return;
+  const form = $('#f-' + t);
+  resetForm(form);
+  fillForm(form, row);
+  editing[t] = id; setMode(form);
+  if (t === 'depenses') toggleNewCat();
+  if (t === 'commandes') liveTotal();
+  form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => form.querySelector('.in').focus({ preventScroll: true }), 300);
+}
+function delRow(t, id) {
+  const r = q1(`SELECT * FROM ${t} WHERE id = ?`, [id]); if (!r) return;
+  const label = t === 'commandes' ? `la commande #${id} (${r.client})` : `${t === 'depenses' ? 'la dépense' : 'la recette'} #${id} (${r.description})`;
+  let extra = '';
+  if (t === 'commandes') { const n = q1('SELECT (SELECT COUNT(*) FROM recettes WHERE commande_id = ?) + (SELECT COUNT(*) FROM depenses WHERE commande_id = ?) n', [id, id]).n; if (n) extra = `\n${plural(n, 'fiche')} liée(s) resteront, sans lien vers la commande.`; }
+  if (!confirm(`Supprimer ${label} ?${extra}\nCette action est définitive.`)) return;
+  db.run(`DELETE FROM ${t} WHERE id = ?`, [id]);
+  if (editing[t] === id) resetForm($('#f-' + t));
+  commit(); toast('Fiche #' + id + ' supprimée');
+}
+function encaisser(id) {
+  const c = q1('SELECT * FROM v_commandes WHERE id = ?', [id]);
+  if (!c || c.reste <= 0.004) return;
+  db.run('INSERT INTO recettes (date_recette, associe_id, description, montant, devise, mode_paiement, commande_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [today(), ME, `Commande #${id} — ${c.client}`, c.reste, c.devise, 'Cash', id]);
+  if (c.statut === 'En attente' || c.statut === 'En cours') db.run("UPDATE commandes SET statut = 'Livrée' WHERE id = ?", [id]);
+  commit(); toast(`${money(c.reste, c.devise)} encaissés par ${nomAssoc(ME)}`);
+}
+
+function liveTotal() {
+  const f = $('#f-commandes');
+  const t = (Number(E(f, 'quantite').value) || 0) * (Number(E(f, 'prix_unitaire').value) || 0);
+  $('#c-total').textContent = money(t, E(f, 'devise').value);
+}
+function toggleNewCat() {
+  const on = $('#d-cat').value === '__new';
+  $('#d-newcat-wrap').hidden = !on; $('#d-newcat').required = on;
+  if (!on) $('#d-newcat').value = '';
+}
+
+/* ================== RENDU ================== */
+function renderAll() {
+  fillMonths(); fillSelects();
+  renderDash(); renderCommandes(); renderDepenses(); renderRecettes();
+  renderSchema(); renderReglages();
+}
+function setOptions(sel, html) { const v = sel.value; sel.innerHTML = html; if ([...sel.options].some(o => o.value === v)) sel.value = v; }
+function fillMonths() {
+  const ms = q(`SELECT m FROM (SELECT strftime('%Y-%m', date_commande) m FROM commandes UNION SELECT strftime('%Y-%m', date_depense) FROM depenses UNION SELECT strftime('%Y-%m', date_recette) FROM recettes) WHERE m IS NOT NULL`).map(r => r.m);
+  const cur = today().slice(0, 7); if (!ms.includes(cur)) ms.push(cur);
+  ms.sort().reverse();
+  if (F.mois && !ms.includes(F.mois)) F.mois = '';
+  $('#fMois').innerHTML = '<option value="">Toute la période</option>' + ms.map(m => `<option value="${m}">${fmois(m)}</option>`).join('');
+  $('#fMois').value = F.mois;
+  $('#fQui').value = F.qui;
+}
+function fillSelects() {
+  const cats = q("SELECT id, nom FROM categories_depense ORDER BY CASE WHEN nom = 'Autre' THEN 1 ELSE 0 END, id");
+  setOptions($('#d-cat'), '<option value="">Choisir…</option>' + cats.map(c => `<option value="${c.id}">${esc(c.nom)}</option>`).join('') + '<option value="__new">＋ Nouveau type…</option>');
+  setOptions($('#catFilter'), '<option value="">Tous les types</option>' + cats.map(c => `<option value="${c.id}">${esc(c.nom)}</option>`).join(''));
+  CAT_FILTER = $('#catFilter').value;
+  const cmds = q('SELECT id, client, article FROM commandes ORDER BY id DESC');
+  const opts = '<option value="">Aucune</option>' + cmds.map(c => `<option value="${c.id}">#${c.id} · ${esc(c.client)} — ${esc(c.article)}</option>`).join('');
+  setOptions($('#d-cmd'), opts); setOptions($('#r-cmd'), opts);
+  $('#dl-clients').innerHTML = q('SELECT DISTINCT client FROM commandes ORDER BY client').map(r => `<option value="${esc(r.client)}">`).join('');
+  $('#dl-articles').innerHTML = q('SELECT DISTINCT article FROM commandes ORDER BY article').map(r => `<option value="${esc(r.article)}">`).join('');
+}
+
+function renderDash() {
+  const scope = (F.mois ? fmois(F.mois) : 'Toute la période') + ' · ' + (F.qui ? nomAssoc(+F.qui) : 'Joram & Plam\'s');
+  $('#dashScope').textContent = scope;
+  const R = sumBy('recettes', 'date_recette'), D = sumBy('depenses', 'date_depense'), B = diff(R, D);
+  const [wc, pc] = W('date_commande'); const nC = q1(`SELECT COUNT(*) n FROM commandes ${wc}`, pc).n;
+  const [wa, pa] = W('date_commande', [["statut IN ('En attente', 'En cours')"]]); const nA = q1(`SELECT COUNT(*) n FROM commandes ${wa}`, pa).n;
+  const [wr, pr] = W('date_commande', [["statut <> 'Annulée' AND reste > 0.004"]]); const AE = totals(`SELECT devise, SUM(reste) s FROM v_commandes ${wr} GROUP BY devise`, pr);
+  const neg = (B.FC < 0 && B.USD <= 0) || (B.USD < 0 && B.FC <= 0);
+  const hasAny = q1('SELECT (SELECT COUNT(*) FROM commandes) + (SELECT COUNT(*) FROM depenses) + (SELECT COUNT(*) FROM recettes) n').n > 0;
+
+  let h = `<div class="kpis">
+    <div class="kpi k-rec"><p class="lbl">Recettes</p>${fmtT(R)}</div>
+    <div class="kpi k-dep"><p class="lbl">Dépenses</p>${fmtT(D)}</div>
+    <div class="kpi hl${neg ? ' neg' : ''}"><p class="lbl">Bénéfice</p>${fmtT(B)}</div>
+    <div class="kpi"><p class="lbl">Commandes</p><div class="v fd">${nC}</div><div class="v2">${nA} à livrer</div>${(AE.FC || AE.USD) ? `<div class="v3">À encaisser : ${inline(AE)}</div>` : ''}</div>
+  </div><div class="dgrid">`;
+
+  if (!hasAny) {
+    h += `<div class="blk full welcome">
+      <div class="blk-h"><h3 class="fd">Bienvenue dans le carnet</h3></div>
+      <p class="lbl" style="letter-spacing:.06em;text-transform:none;font-weight:400">Choisis qui tu es en haut à droite, puis ajoute la première fiche. Tout s'enregistre tout seul dans la base SQL.</p>
+      <div class="acts"><button class="btn btn-p btn-sm" data-act="goto" data-tab="commandes">Ajouter une commande</button><button class="btn btn-g btn-sm" data-act="goto" data-tab="depenses">Ajouter une dépense</button><button class="btn btn-g btn-sm" data-act="goto" data-tab="recettes">Ajouter une recette</button></div>
+    </div>`;
+  }
+
+  // Par associé
+  h += `<div class="blk full"><div class="blk-h"><h3 class="fd">Par associé</h3></div><div class="pcards">`;
+  for (const a of ASSOC) {
+    if (F.qui && +F.qui !== a.id) continue;
+    const Ra = sumBy('recettes', 'date_recette', a.id), Da = sumBy('depenses', 'date_depense', a.id), Sa = diff(Ra, Da);
+    const sneg = Sa.FC < 0 || Sa.USD < 0;
+    h += `<div class="pcard pc-${a.id}">
+      <h4 class="fd"><span class="who who-${a.id}">${esc(a.nom.charAt(0))}</span>${esc(a.nom)}</h4>
+      <div class="row"><span>Dépenses payées</span><span>${inline(Da)}</span></div>
+      <div class="row"><span>Recettes encaissées</span><span>${inline(Ra)}</span></div>
+      <div class="row solde${sneg ? ' neg' : ''}"><span>Solde</span><span>${inline(Sa)}</span></div>
+    </div>`;
+  }
+  h += `</div><p class="note">Solde = encaissé − dépensé. Un solde négatif veut dire que l'associé a payé de sa poche : CREATY lui doit cette somme.</p></div>`;
+
+  // Dépenses par type
+  const [wd, pd] = W('d.date_depense');
+  const rows = q(`SELECT k.nom cat, d.devise, SUM(d.montant) s FROM depenses d JOIN categories_depense k ON k.id = d.categorie_id ${wd.replace('associe_id', 'd.associe_id')} GROUP BY k.id, d.devise`, pd);
+  const cats = {}; rows.forEach(r => { (cats[r.cat] = cats[r.cat] || { cat: r.cat, FC: 0, USD: 0 })[r.devise] += r.s; });
+  const tx = taux(); let list = Object.values(cats);
+  const anyFC = list.some(c => c.FC);
+  list.forEach(c => c.w = anyFC || tx ? c.FC + c.USD * tx : c.USD);
+  list.sort((a, b) => b.w - a.w); const max = Math.max(...list.map(c => c.w), 0);
+  h += `<div class="blk"><div class="blk-h"><h3 class="fd">Dépenses par type</h3><button class="btn btn-g btn-sm" data-act="goto" data-tab="depenses">Voir tout</button></div>`;
+  h += list.length ? list.map(c => `<div class="cat"><div class="cat-h"><span>${esc(c.cat)}</span><span>${inline(c)}</span></div><div class="bar"><i style="width:${max ? Math.max(2, c.w / max * 100) : 0}%"></i></div></div>`).join('')
+    : emptyState('Aucune dépense', 'Les dépenses par type (transport, cadres, posters…) s’afficheront ici.');
+  h += `</div>`;
+
+  // Dernières opérations
+  const [wo, po] = W('d');
+  const ops = q(`SELECT * FROM (
+      SELECT 'R' t, id, date_recette d, description lib, montant m, devise, associe_id, cree_le FROM recettes
+      UNION ALL SELECT 'D', dp.id, date_depense, k.nom || ' — ' || description, montant, devise, associe_id, dp.cree_le FROM depenses dp JOIN categories_depense k ON k.id = dp.categorie_id
+      UNION ALL SELECT 'C', id, date_commande, client || ' — ' || article, quantite * prix_unitaire, devise, associe_id, cree_le FROM commandes
+    ) ${wo} ORDER BY d DESC, cree_le DESC LIMIT 8`, po);
+  const K = { R: 'Recette', D: 'Dépense', C: 'Commande' }, SIGN = { R: '+ ', D: '− ', C: '' };
+  h += `<div class="blk"><div class="blk-h"><h3 class="fd">Dernières fiches</h3></div>`;
+  h += ops.length ? `<ul class="ops">${ops.map(o => `<li><span class="op-k op-${o.t}">${K[o.t]}</span><span class="t">${esc(o.lib)}<small>${fdate(o.d)} · ${esc(nomAssoc(o.associe_id))}</small></span><span class="a ${o.t}">${SIGN[o.t]}${money(o.m, o.devise)}</span></li>`).join('')}</ul>`
+    : emptyState('Rien pour cette période', 'Change la période ou ajoute une fiche.');
+  h += `</div></div>`;
+  $('#dash').innerHTML = h;
+}
+
+function like(s) { return '%' + s + '%'; }
+function renderCommandes() {
+  const counts = {}; q('SELECT statut, COUNT(*) n FROM commandes GROUP BY statut').forEach(r => counts[r.statut] = r.n);
+  $('#stChips').innerHTML = ['', ...STATUTS].map(s => `<button type="button" class="chipf${ST_FILTER === s ? ' on' : ''}" data-act="stf" data-v="${s}">${s || 'Toutes'}${s && counts[s] ? ' · ' + counts[s] : ''}</button>`).join('');
+  const extra = [];
+  if (ST_FILTER) extra.push(['statut = ?', ST_FILTER]);
+  const s = SEARCH.commandes; if (s) extra.push(["(client LIKE ? OR article LIKE ? OR IFNULL(telephone, '') LIKE ? OR IFNULL(lieu_livraison, '') LIKE ?)", like(s), like(s), like(s), like(s)]);
+  const [w, p] = W('date_commande', extra);
+  const rows = q(`SELECT * FROM v_commandes ${w} ORDER BY date_commande DESC, id DESC`, p);
+  const tot = { FC: 0, USD: 0 }; rows.forEach(r => { if (r.statut !== 'Annulée') tot[r.devise] += r.total; });
+  $('#sum-commandes').textContent = rows.length ? `${plural(rows.length, 'commande')} · ${inline(tot)} (hors annulées)` : '';
+  $('#l-commandes').innerHTML = rows.length ? rows.map(r => {
+    const live = r.statut !== 'Annulée' && r.total > 0, paye = live && r.reste <= 0.004;
+    return `<article class="item">
+      <div class="i-main">
+        <div class="i-meta"><span class="id">#${r.id}</span><span>${fdate(r.date_commande)}</span>${who(r.associe_id)}</div>
+        <h4 class="i-title">${esc(r.client)}${r.telephone ? `<a class="tel" href="tel:${esc(r.telephone.replace(/\s/g, ''))}">${esc(r.telephone)}</a>` : ''}</h4>
+        <p class="i-sub">${esc(r.article)}${r.format ? ' · ' + esc(r.format) : ''} × ${r.quantite}${r.lieu_livraison ? ' · ' + esc(r.lieu_livraison) : ''}</p>
+        ${r.note ? `<p class="i-note">${esc(r.note)}</p>` : ''}
+      </div>
+      <div class="i-amt"><span class="fd">${money(r.total, r.devise)}</span>${paye ? '<span class="paid">✓ Payée</span>' : (live && r.encaisse > 0 ? `<span class="due">Reste ${money(r.reste, r.devise)}</span>` : '')}</div>
+      <div class="i-act">
+        <select class="st st-${ST_CLASS[r.statut]}" data-act="statut" data-id="${r.id}" aria-label="Statut de la commande #${r.id}">${STATUTS.map(x => `<option${x === r.statut ? ' selected' : ''}>${x}</option>`).join('')}</select>
+        ${live && !paye ? `<button type="button" class="btn btn-p btn-sm" data-act="encaisser" data-id="${r.id}">Encaisser ${money(r.reste, r.devise)}</button>` : ''}
+        <button type="button" class="ib" data-act="edit" data-t="commandes" data-id="${r.id}" title="Modifier" aria-label="Modifier la commande #${r.id}">${IC.edit}</button>
+        <button type="button" class="ib del" data-act="del" data-t="commandes" data-id="${r.id}" title="Supprimer" aria-label="Supprimer la commande #${r.id}">${IC.del}</button>
+      </div>
+    </article>`;
+  }).join('') : (s || ST_FILTER || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune commande ne correspond aux filtres.') : emptyState('Aucune commande', 'Ajoute la première avec le formulaire. Le prix se remplit tout seul quand tu choisis le format.'));
+}
+function renderDepenses() {
+  const extra = [];
+  if (CAT_FILTER) extra.push(['categorie_id = ?', +CAT_FILTER]);
+  const s = SEARCH.depenses; if (s) extra.push(['(description LIKE ? OR categorie LIKE ?)', like(s), like(s)]);
+  const [w, p] = W('date_depense', extra);
+  const rows = q(`SELECT * FROM v_depenses ${w} ORDER BY date_depense DESC, id DESC`, p);
+  const tot = { FC: 0, USD: 0 }; rows.forEach(r => tot[r.devise] += r.montant);
+  $('#sum-depenses').textContent = rows.length ? `${plural(rows.length, 'dépense')} · ${inline(tot)}` : '';
+  $('#l-depenses').innerHTML = rows.length ? rows.map(r => `<article class="item">
+      <div class="i-main">
+        <div class="i-meta"><span class="id">#${r.id}</span><span>${fdate(r.date_depense)}</span>${who(r.associe_id)}</div>
+        <h4 class="i-title">${esc(r.description)}</h4>
+        <p class="i-sub"><span class="tagc">${esc(r.categorie)}</span>${r.commande_id ? 'Commande #' + r.commande_id : ''}</p>
+      </div>
+      <div class="i-amt dep"><span class="fd">− ${money(r.montant, r.devise)}</span></div>
+      <div class="i-act">
+        <button type="button" class="ib" data-act="edit" data-t="depenses" data-id="${r.id}" title="Modifier" aria-label="Modifier la dépense #${r.id}">${IC.edit}</button>
+        <button type="button" class="ib del" data-act="del" data-t="depenses" data-id="${r.id}" title="Supprimer" aria-label="Supprimer la dépense #${r.id}">${IC.del}</button>
+      </div>
+    </article>`).join('') : (s || CAT_FILTER || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune dépense ne correspond aux filtres.') : emptyState('Aucune dépense', 'Note ici chaque dépense : transport, achat de cadres, achat de posters…'));
+}
+function renderRecettes() {
+  const extra = [];
+  const s = SEARCH.recettes; if (s) extra.push(["(description LIKE ? OR IFNULL(client, '') LIKE ? OR mode_paiement LIKE ?)", like(s), like(s), like(s)]);
+  const [w, p] = W('date_recette', extra);
+  const rows = q(`SELECT * FROM v_recettes ${w} ORDER BY date_recette DESC, id DESC`, p);
+  const tot = { FC: 0, USD: 0 }; rows.forEach(r => tot[r.devise] += r.montant);
+  $('#sum-recettes').textContent = rows.length ? `${plural(rows.length, 'recette')} · ${inline(tot)}` : '';
+  $('#l-recettes').innerHTML = rows.length ? rows.map(r => `<article class="item">
+      <div class="i-main">
+        <div class="i-meta"><span class="id">#${r.id}</span><span>${fdate(r.date_recette)}</span>${who(r.associe_id)}</div>
+        <h4 class="i-title">${esc(r.description)}</h4>
+        <p class="i-sub"><span class="tagc">${esc(r.mode_paiement)}</span>${r.commande_id ? 'Commande #' + r.commande_id + (r.client ? ' · ' + esc(r.client) : '') : ''}</p>
+      </div>
+      <div class="i-amt rec"><span class="fd">+ ${money(r.montant, r.devise)}</span></div>
+      <div class="i-act">
+        <button type="button" class="ib" data-act="edit" data-t="recettes" data-id="${r.id}" title="Modifier" aria-label="Modifier la recette #${r.id}">${IC.edit}</button>
+        <button type="button" class="ib del" data-act="del" data-t="recettes" data-id="${r.id}" title="Supprimer" aria-label="Supprimer la recette #${r.id}">${IC.del}</button>
+      </div>
+    </article>`).join('') : (s || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune recette ne correspond aux filtres.') : emptyState('Aucune recette', 'Encaisse une commande ou ajoute une recette avec le formulaire.'));
+}
+function renderSchema() {
+  const objs = q("SELECT name, type FROM sqlite_master WHERE type IN ('table', 'view') AND name NOT LIKE 'sqlite_%' ORDER BY type, name");
+  $('#sqlSchema').innerHTML = objs.map(o => {
+    const cols = q('SELECT name FROM pragma_table_info(?)', [o.name]).map(c => c.name);
+    return `<button type="button" class="sch" data-act="sqlpick" data-name="${esc(o.name)}"><span class="sch-n">${esc(o.name)}</span><span class="sch-t">${o.type === 'view' ? 'vue' : 'table'}</span><span class="sch-c">${esc(cols.join(', '))}</span></button>`;
+  }).join('');
+}
+function renderReglages() {
+  const n = q1('SELECT (SELECT COUNT(*) FROM commandes) c, (SELECT COUNT(*) FROM depenses) d, (SELECT COUNT(*) FROM recettes) r');
+  const last = param('derniere_sauvegarde');
+  const days = last ? Math.floor((Date.now() - Date.parse(last)) / 864e5) : null;
+  $('#bkInfo').textContent = `Base : ${plural(n.c, 'commande')} · ${plural(n.d, 'dépense')} · ${plural(n.r, 'recette')}. ` +
+    (last ? `Dernier export : ${new Date(last).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} (${days === 0 ? 'aujourd’hui' : 'il y a ' + plural(days, 'jour')}).` : 'Aucun export pour l’instant.');
+  $('#bkDot').hidden = !((n.c + n.d + n.r) > 0 && (days === null || days >= 7));
+  if (document.activeElement !== $('#taux')) $('#taux').value = param('taux_usd_fc') || '';
+}
+
+/* ================== SQL ================== */
+function runSQL() {
+  const src = $('#sqlIn').value; if (!src.trim()) return;
+  const out = $('#sqlOut');
+  try {
+    const before = q1('SELECT total_changes() n').n;
+    const res = db.exec(src);
+    const changed = q1('SELECT total_changes() n').n - before;
+    let h = '';
+    if (!res.length) h = `<p class="sql-ok">✓ Requête exécutée${changed ? ' · ' + plural(changed, 'ligne') + ' modifiée' + (changed > 1 ? 's' : '') : ''}</p>`;
+    res.forEach(r => {
+      h += `<p class="lbl" style="margin:6px 0 8px">${plural(r.values.length, 'ligne')}${r.values.length > 500 ? ' (500 affichées)' : ''}</p><div class="tbl-wrap"><table class="tbl"><thead><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${r.values.slice(0, 500).map(v => `<tr>${v.map(x => `<td class="${typeof x === 'number' ? 'num' : ''}">${x === null ? '<span class="null">NULL</span>' : esc(x instanceof Uint8Array ? '[blob]' : x)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    });
+    out.innerHTML = h;
+    if (changed || !/^\s*(select|with|explain)\b/i.test(src)) { persist(); renderAll(); }
+  } catch (e) { out.innerHTML = `<p class="sql-err">${esc(e.message)}</p>`; }
+}
+
+/* ================== SAUVEGARDE ================== */
+function download(blob, name) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+function exportDB() {
+  setParam('derniere_sauvegarde', new Date().toISOString());
+  const data = db.export(); db.run('PRAGMA foreign_keys = ON');
+  download(new Blob([data], { type: 'application/x-sqlite3' }), `creaty-carnet-${today()}.db`);
+  persist(); renderReglages(); toast('Base exportée');
+}
+function exportCSV(view, label) {
+  const res = db.exec(`SELECT * FROM ${view}`);
+  const cols = res[0] ? res[0].columns : q('SELECT name FROM pragma_table_info(?)', [view]).map(c => c.name);
+  const rows = res[0] ? res[0].values : [];
+  const cell = v => { if (v == null) return ''; const s = String(v); return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const csv = '﻿' + [cols, ...rows].map(r => r.map(cell).join(';')).join('\r\n');
+  download(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `creaty-${label}-${today()}.csv`);
+}
+async function importDB(file) {
+  let nd;
+  try {
+    nd = new SQL.Database(new Uint8Array(await file.arrayBuffer()));
+    const r = nd.exec("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name IN ('commandes', 'depenses', 'recettes')");
+    if (!r[0] || r[0].values[0][0] !== 3) throw new Error('Ce fichier n’est pas un carnet CREATY');
+  } catch (e) { if (nd) nd.close(); return toast(/not a database/i.test(e.message) ? 'Ce fichier n’est pas une base SQLite' : e.message, true); }
+  if (!confirm(`Remplacer toutes les données de cet appareil par celles de « ${file.name} » ?`)) { nd.close(); return; }
+  db.close(); db = nd; setup();
+  Object.keys(editing).forEach(t => resetForm($('#f-' + t)));
+  await persist(); renderAll(); toast('Carnet importé');
+}
+async function resetDB() {
+  if ($('#resetTxt').value.trim() !== 'EFFACER') return;
+  db.close(); db = new SQL.Database(); setup();
+  Object.keys(editing).forEach(t => resetForm($('#f-' + t)));
+  $('#resetTxt').value = ''; $('#resetBtn').disabled = true;
+  await persist(); renderAll(); toast('Carnet effacé');
+}
+
+/* ================== ÉVÉNEMENTS ================== */
+function bind() {
+  $$('[data-tab]').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  window.addEventListener('hashchange', () => showTab(location.hash.slice(1)));
+  $('#meSeg').addEventListener('click', e => { const b = e.target.closest('[data-me]'); if (b) setMe(+b.dataset.me); });
+  $('#fMois').addEventListener('change', e => { F.mois = e.target.value; renderAll(); });
+  $('#fQui').addEventListener('change', e => { F.qui = e.target.value; renderAll(); });
+  $$('form[data-table]').forEach(f => { f.addEventListener('submit', onSubmit); $('[data-cancel]', f).addEventListener('click', () => resetForm(f)); resetForm(f); });
+
+  // Commande : prix du site selon le format, total en direct, téléphone d'un client connu
+  const fc = $('#f-commandes');
+  E(fc, 'format').addEventListener('change', () => {
+    const p = PRIX[E(fc, 'format').value], pr = E(fc, 'prix_unitaire');
+    if (p && (pr.value === '' || pr.dataset.auto === '1')) { pr.value = p[0]; E(fc, 'devise').value = p[1]; pr.dataset.auto = '1'; }
+    liveTotal();
+  });
+  E(fc, 'prix_unitaire').addEventListener('input', e => e.target.dataset.auto = '0');
+  fc.addEventListener('input', liveTotal); fc.addEventListener('change', liveTotal);
+  E(fc, 'client').addEventListener('change', () => {
+    const tel = E(fc, 'telephone'); if (tel.value) return;
+    const r = q1("SELECT telephone FROM commandes WHERE client = ? AND IFNULL(telephone, '') <> '' ORDER BY id DESC LIMIT 1", [E(fc, 'client').value.trim()]);
+    if (r) tel.value = r.telephone;
+  });
+
+  // Dépense : nouveau type
+  $('#d-cat').addEventListener('change', toggleNewCat);
+
+  // Recette : pré-remplir depuis la commande choisie
+  const fr = $('#f-recettes');
+  E(fr, 'commande_id').addEventListener('change', e => {
+    const id = +e.target.value; if (!id) return;
+    const c = q1('SELECT * FROM v_commandes WHERE id = ?', [id]); if (!c) return;
+    const m = E(fr, 'montant'), d = E(fr, 'description');
+    if (m.value === '' || m.dataset.auto === '1') { m.value = c.reste > 0.004 ? c.reste : c.total; E(fr, 'devise').value = c.devise; m.dataset.auto = '1'; }
+    if (d.value === '' || d.dataset.auto === '1') { d.value = `Commande #${c.id} — ${c.client}`; d.dataset.auto = '1'; }
+  });
+  E(fr, 'montant').addEventListener('input', e => e.target.dataset.auto = '0');
+  E(fr, 'description').addEventListener('input', e => e.target.dataset.auto = '0');
+
+  // Recherche et filtres de liste
+  $$('[data-search]').forEach(inp => inp.addEventListener('input', () => {
+    const t = inp.dataset.search; SEARCH[t] = inp.value.trim();
+    ({ commandes: renderCommandes, depenses: renderDepenses, recettes: renderRecettes })[t]();
+  }));
+  $('#catFilter').addEventListener('change', e => { CAT_FILTER = e.target.value; renderDepenses(); });
+
+  // Actions dans les listes
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'SELECT') return;
+    const id = +b.dataset.id;
+    switch (b.dataset.act) {
+      case 'edit': startEdit(b.dataset.t, id); break;
+      case 'del': delRow(b.dataset.t, id); break;
+      case 'encaisser': encaisser(id); break;
+      case 'goto': showTab(b.dataset.tab); break;
+      case 'stf': ST_FILTER = b.dataset.v; renderCommandes(); break;
+      case 'ex': $('#sqlIn').value = EX[+b.dataset.i][1]; runSQL(); break;
+      case 'sqlpick': $('#sqlIn').value = `SELECT * FROM ${b.dataset.name} LIMIT 50;`; runSQL(); break;
+      case 'csv': exportCSV(b.dataset.name, b.dataset.label); break;
+    }
+  });
+  document.addEventListener('change', e => {
+    const s = e.target; if (s.dataset.act !== 'statut') return;
+    db.run('UPDATE commandes SET statut = ? WHERE id = ?', [s.value, +s.dataset.id]);
+    commit(); toast(`Commande #${s.dataset.id} : ${s.value}`);
+  });
+
+  // SQL
+  $('#sqlRun').addEventListener('click', runSQL);
+  $('#sqlIn').addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runSQL(); } });
+
+  // Sauvegarde
+  $('#bkExport').addEventListener('click', exportDB);
+  $('#bkImportBtn').addEventListener('click', () => $('#bkImport').click());
+  $('#bkImport').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; if (f) importDB(f); });
+  $('#taux').addEventListener('change', e => { const v = Number(e.target.value); setParam('taux_usd_fc', v > 0 ? String(v) : null); commit(); toast(v > 0 ? `Taux : 1 $ = ${nf.format(v)} FC` : 'Taux retiré'); });
+  $('#resetTxt').addEventListener('input', e => $('#resetBtn').disabled = e.target.value.trim() !== 'EFFACER');
+  $('#resetBtn').addEventListener('click', resetDB);
+}
+</script>
+</body>
+</html>
