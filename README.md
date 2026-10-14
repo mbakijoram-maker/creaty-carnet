@@ -9,7 +9,7 @@ Carnet de bord interne de JP CREATY (Joram & Plam's) : commandes, dépenses pers
 ## Données en ligne
 
 Le carnet est enregistré en ligne (Firestore, document `carnets/creaty`) : mêmes données sur tous les
-navigateurs et téléphones. On l'ouvre avec le mot de passe du carnet (compte unique partagé par les deux associés).
+navigateurs et téléphones. Pas de mot de passe : chaque navigateur se connecte tout seul (compte anonyme Firebase), donc toute personne qui a le lien peut voir et modifier le carnet.
 Chaque appareil garde aussi une copie locale ; sans connexion, les fiches partent dès que la connexion revient.
 Si les deux associés modifient en même temps, les changements sont fusionnés.
 
