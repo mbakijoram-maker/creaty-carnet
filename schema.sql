@@ -2,11 +2,10 @@
 --  CARNET CREATY — schéma de la base de données (SQLite)
 --  Associés : Joram & Plam's · Kinshasa
 --
---  Ce fichier est la référence du schéma. Le carnet (carnet.html)
---  crée exactement ces tables tout seul au premier lancement.
---  Il peut aussi servir à recréer la base avec n'importe quel outil
---  SQLite (DB Browser for SQLite, sqlite3, etc.) :
---      sqlite3 creaty-carnet.db < schema.sql
+--  Référence du schéma. Le carnet (index.html) crée exactement ces tables
+--  tout seul au premier lancement, et met à jour les anciens carnets.
+--  Une commande contient une ou plusieurs lignes (lignes_commande) :
+--  chaque ligne = un poster, son format, sans ou avec cadre, quantité, prix.
 -- =====================================================================
 
 PRAGMA foreign_keys = ON;
@@ -15,72 +14,65 @@ PRAGMA foreign_keys = ON;
 --  TABLES
 -- ---------------------------------------------------------------------
 
--- Les deux associés de CREATY
 CREATE TABLE IF NOT EXISTS associes (
   id   INTEGER PRIMARY KEY,
   nom  TEXT NOT NULL UNIQUE
 );
-
--- Types de dépenses (Transport, Achat de cadres, Achat de posters, Autre…)
 CREATE TABLE IF NOT EXISTS categories_depense (
   id   INTEGER PRIMARY KEY,
   nom  TEXT NOT NULL UNIQUE COLLATE NOCASE
 );
-
--- Commandes des clients
 CREATE TABLE IF NOT EXISTS commandes (
   id              INTEGER PRIMARY KEY AUTOINCREMENT,
   date_commande   TEXT    NOT NULL DEFAULT (date('now')),
   client          TEXT    NOT NULL,
   telephone       TEXT,
-  article         TEXT    NOT NULL,                -- nom du poster / produit
-  format          TEXT,                            -- A5, A4, A3, A2, A1, Magazine…
-  avec_cadre      INTEGER NOT NULL DEFAULT 0 CHECK (avec_cadre IN (0, 1)), -- 1 = poster + cadre
-  quantite        INTEGER NOT NULL DEFAULT 1  CHECK (quantite > 0),
-  prix_unitaire   REAL    NOT NULL DEFAULT 0  CHECK (prix_unitaire >= 0),
-  devise          TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD')),
   statut          TEXT    NOT NULL DEFAULT 'En attente'
                   CHECK (statut IN ('En attente','En cours','Livrée','Annulée')),
   lieu_livraison  TEXT,
-  associe_id      INTEGER REFERENCES associes(id), -- qui gère la commande
+  associe_id      INTEGER REFERENCES associes(id),
   note            TEXT,
   cree_le         TEXT    NOT NULL DEFAULT (datetime('now'))
 );
-
--- Dépenses personnelles : ce que chaque associé a payé pour CREATY
+CREATE TABLE IF NOT EXISTS lignes_commande (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  commande_id    INTEGER NOT NULL REFERENCES commandes(id) ON DELETE CASCADE,
+  article        TEXT    NOT NULL,
+  format         TEXT,
+  avec_cadre     INTEGER NOT NULL DEFAULT 0 CHECK (avec_cadre IN (0, 1)),
+  quantite       INTEGER NOT NULL DEFAULT 1 CHECK (quantite > 0),
+  prix_unitaire  REAL    NOT NULL DEFAULT 0 CHECK (prix_unitaire >= 0),
+  devise         TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD'))
+);
 CREATE TABLE IF NOT EXISTS depenses (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
   date_depense  TEXT    NOT NULL DEFAULT (date('now')),
-  associe_id    INTEGER NOT NULL REFERENCES associes(id),           -- qui a payé
+  associe_id    INTEGER NOT NULL REFERENCES associes(id),
   categorie_id  INTEGER NOT NULL REFERENCES categories_depense(id),
   description   TEXT    NOT NULL,
   montant       REAL    NOT NULL CHECK (montant > 0),
   devise        TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD')),
-  commande_id   INTEGER REFERENCES commandes(id) ON DELETE SET NULL, -- facultatif
+  commande_id   INTEGER REFERENCES commandes(id) ON DELETE SET NULL,
   cree_le       TEXT    NOT NULL DEFAULT (datetime('now'))
 );
-
--- Recettes de l'entreprise : l'argent qui rentre
 CREATE TABLE IF NOT EXISTS recettes (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
   date_recette   TEXT    NOT NULL DEFAULT (date('now')),
-  associe_id     INTEGER NOT NULL REFERENCES associes(id),          -- qui a encaissé
+  associe_id     INTEGER NOT NULL REFERENCES associes(id),
   description    TEXT    NOT NULL,
   montant        REAL    NOT NULL CHECK (montant > 0),
   devise         TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD')),
   mode_paiement  TEXT    NOT NULL DEFAULT 'Cash'
                  CHECK (mode_paiement IN ('Cash','Mobile Money','Virement','Autre')),
-  commande_id    INTEGER REFERENCES commandes(id) ON DELETE SET NULL, -- facultatif
+  commande_id    INTEGER REFERENCES commandes(id) ON DELETE SET NULL,
   cree_le        TEXT    NOT NULL DEFAULT (datetime('now'))
 );
-
--- Réglages du carnet (taux du dollar, date du dernier export…)
 CREATE TABLE IF NOT EXISTS parametres (
   cle     TEXT PRIMARY KEY,
   valeur  TEXT
 );
-
 CREATE INDEX IF NOT EXISTS idx_commandes_date ON commandes(date_commande);
+CREATE INDEX IF NOT EXISTS idx_lignes_cmd     ON lignes_commande(commande_id);
 CREATE INDEX IF NOT EXISTS idx_depenses_date  ON depenses(date_depense);
 CREATE INDEX IF NOT EXISTS idx_recettes_date  ON recettes(date_recette);
 CREATE INDEX IF NOT EXISTS idx_recettes_cmd   ON recettes(commande_id);
@@ -89,18 +81,12 @@ CREATE INDEX IF NOT EXISTS idx_recettes_cmd   ON recettes(commande_id);
 --  DONNÉES DE DÉPART
 -- ---------------------------------------------------------------------
 
-INSERT OR IGNORE INTO associes (id, nom) VALUES
-  (1, 'Joram'),
-  (2, 'Plam''s');
-
+INSERT OR IGNORE INTO associes (id, nom) VALUES (1, 'Joram'), (2, 'Plam''s');
 INSERT OR IGNORE INTO categories_depense (id, nom) VALUES
-  (1, 'Transport'),
-  (2, 'Achat de cadres'),
-  (3, 'Achat de posters'),
-  (4, 'Autre');
+  (1, 'Transport'), (2, 'Achat de cadres'), (3, 'Achat de posters'), (4, 'Autre');
 
 -- ---------------------------------------------------------------------
---  VUES (requêtes prêtes à l'emploi)
+--  VUES
 -- ---------------------------------------------------------------------
 
 DROP VIEW IF EXISTS v_commandes;
@@ -109,34 +95,36 @@ DROP VIEW IF EXISTS v_recettes;
 DROP VIEW IF EXISTS v_bilan_mensuel;
 DROP VIEW IF EXISTS v_soldes_associes;
 
--- Commandes avec total, montant déjà encaissé et reste à payer
 CREATE VIEW v_commandes AS
-SELECT x.*, x.total - x.encaisse AS reste
+SELECT x.*, x.total_fc - x.paye_fc AS reste_fc, x.total_usd - x.paye_usd AS reste_usd
 FROM (
-  SELECT c.*,
-         c.quantite * c.prix_unitaire AS total,
-         a.nom AS gere_par,
-         COALESCE((SELECT SUM(r.montant) FROM recettes r
-                   WHERE r.commande_id = c.id AND r.devise = c.devise), 0) AS encaisse
+  SELECT c.*, a.nom AS gere_par,
+    (SELECT group_concat(l.quantite || ' × ' || l.article
+              || COALESCE(' ' || l.format, '')
+              || CASE WHEN l.avec_cadre = 1 THEN ' + cadre' ELSE '' END, ' ; ')
+       FROM lignes_commande l WHERE l.commande_id = c.id) AS articles,
+    COALESCE((SELECT SUM(l.quantite) FROM lignes_commande l WHERE l.commande_id = c.id), 0) AS nb_pieces,
+    COALESCE((SELECT SUM(l.quantite * l.prix_unitaire) FROM lignes_commande l
+              WHERE l.commande_id = c.id AND l.devise = 'FC'), 0) AS total_fc,
+    COALESCE((SELECT SUM(l.quantite * l.prix_unitaire) FROM lignes_commande l
+              WHERE l.commande_id = c.id AND l.devise = 'USD'), 0) AS total_usd,
+    COALESCE((SELECT SUM(r.montant) FROM recettes r
+              WHERE r.commande_id = c.id AND r.devise = 'FC'), 0) AS paye_fc,
+    COALESCE((SELECT SUM(r.montant) FROM recettes r
+              WHERE r.commande_id = c.id AND r.devise = 'USD'), 0) AS paye_usd
   FROM commandes c
   LEFT JOIN associes a ON a.id = c.associe_id
 ) x;
-
--- Dépenses avec le nom de l'associé et de la catégorie
 CREATE VIEW v_depenses AS
 SELECT d.*, a.nom AS paye_par, k.nom AS categorie
 FROM depenses d
 JOIN associes a           ON a.id = d.associe_id
 JOIN categories_depense k ON k.id = d.categorie_id;
-
--- Recettes avec le nom de l'associé et du client
 CREATE VIEW v_recettes AS
 SELECT r.*, a.nom AS encaisse_par, c.client AS client
 FROM recettes r
 JOIN associes a       ON a.id = r.associe_id
 LEFT JOIN commandes c ON c.id = r.commande_id;
-
--- Bilan par mois et par devise : recettes, dépenses, bénéfice
 CREATE VIEW v_bilan_mensuel AS
 SELECT mois, devise,
        SUM(CASE WHEN t = 'R' THEN montant ELSE 0 END)        AS recettes,
@@ -149,9 +137,6 @@ FROM (
 )
 GROUP BY mois, devise
 ORDER BY mois DESC, devise;
-
--- Ce que chaque associé a encaissé / dépensé.
--- Solde négatif = l'associé a payé de sa poche, CREATY lui doit cette somme.
 CREATE VIEW v_soldes_associes AS
 SELECT a.nom AS associe, x.devise,
        SUM(CASE WHEN x.t = 'R' THEN x.montant ELSE 0 END)          AS encaisse,
@@ -164,13 +149,3 @@ JOIN (
   SELECT associe_id, devise, montant, 'D' FROM depenses
 ) x ON x.associe_id = a.id
 GROUP BY a.id, x.devise;
-
--- ---------------------------------------------------------------------
---  EXEMPLES DE REQUÊTES
--- ---------------------------------------------------------------------
--- Dépenses par type :
---   SELECT categorie, devise, SUM(montant) FROM v_depenses GROUP BY categorie, devise;
--- Commandes pas encore payées :
---   SELECT * FROM v_commandes WHERE statut <> 'Annulée' AND reste > 0;
--- Meilleurs clients :
---   SELECT client, SUM(total) FROM v_commandes WHERE statut <> 'Annulée' GROUP BY client ORDER BY 2 DESC;

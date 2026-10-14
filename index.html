@@ -16,6 +16,7 @@
   --lime:#9be619;--fu:#d946ef;--fu-ink:#f0abfc;--red:#ff6b6b;
   --chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%239be619' stroke-width='1.6'/%3E%3C/svg%3E");
   --chev2:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23f5f2ea' stroke-opacity='.6' stroke-width='1.6'/%3E%3C/svg%3E");
+  --chev3:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23111' stroke-width='1.6'/%3E%3C/svg%3E");
   color-scheme:dark;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -83,16 +84,35 @@ textarea.in{resize:vertical;min-height:64px}
 .f>label,.f>.flabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.2em;color:var(--mut)}
 .f .opt{font-style:normal;letter-spacing:.06em;color:var(--mut2);text-transform:none;font-weight:400}
 .f .hint{font-size:11px;color:var(--mut2)}
+.f .hint.fu{color:var(--fu-ink);font-weight:700}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .gridm{display:grid;grid-template-columns:1fr 92px;gap:12px}
+.gridq{display:grid;grid-template-columns:1fr 84px;gap:10px}
 .rseg{display:grid;grid-template-columns:repeat(2,1fr);border:1px solid var(--line2)}
 .rseg label{position:relative;display:block;cursor:pointer}
 .rseg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;width:100%;height:100%}
 .rseg span{display:flex;align-items:center;justify-content:center;min-height:44px;padding:8px;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
 .rseg label+label span{border-left:1px solid var(--line2)}
 .rseg input:checked+span{background:var(--lime);color:#111}
-.rseg input[value="2"]:checked+span{background:var(--fu);color:#fff}
+.rseg.assoc input[value="2"]:checked+span{background:var(--fu);color:#fff}
 .rseg input:focus-visible+span{outline:2px solid var(--lime);outline-offset:-2px}
+
+/* lignes de commande */
+.lines{display:flex;flex-direction:column;gap:10px}
+.line{border:1px solid var(--line2);background:var(--bg3);padding:12px;display:flex;flex-direction:column;gap:10px}
+.line.cadre{border-left:3px solid var(--lime)}
+.line-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.line-n{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--lime)}
+.line .in{background:var(--bg2);min-height:40px;padding:9px 10px}
+.line select.in{padding-right:30px}
+.line .rseg span{min-height:38px;font-size:10px}
+.ll{display:block;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mut2);margin-bottom:5px}
+.line-f{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:8px}
+.linkbtn{background:none;border:0;color:var(--lime);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:6px 0;text-decoration:underline;text-underline-offset:3px;min-height:32px}
+.linkbtn:hover{color:var(--ink)}
+.line-sub{font-family:'Arial Black',Arial,sans-serif;font-size:14px;letter-spacing:-.03em;white-space:nowrap}
+.addline{border:1px dashed var(--line2);background:none;color:var(--lime);min-height:44px;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
+.addline:hover{border-color:var(--lime)}
 
 /* boutons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:12px 18px;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;border:1px solid transparent;background:none;transition:transform .15s,background .15s,color .15s,border-color .15s;text-decoration:none;white-space:nowrap}
@@ -104,19 +124,22 @@ textarea.in{resize:vertical;min-height:64px}
 .btn-d:hover:not(:disabled){background:var(--red);color:#111}
 .btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
 .btn-sm{min-height:34px;padding:8px 12px;font-size:9px}
-.ib{width:34px;height:34px;display:inline-grid;place-items:center;border:1px solid var(--line);background:none;color:var(--mut);transition:color .15s,border-color .15s}
-.ib:hover{color:var(--ink);border-color:var(--line2)}
-.ib.del:hover{color:var(--red);border-color:var(--red)}
-.form-act{display:flex;gap:10px}
+.ib{width:34px;height:34px;display:inline-grid;place-items:center;border:1px solid var(--line);background:none;color:var(--mut);transition:color .15s,border-color .15s;flex-shrink:0}
+.ib:hover{color:var(--red);border-color:var(--red)}
+.abtn{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:6px 10px;border:1px solid var(--line2);background:none;color:var(--mut);font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;transition:color .15s,border-color .15s}
+.abtn:hover{color:var(--ink);border-color:var(--ink)}
+.abtn.del{color:#ff9b9b;border-color:rgba(255,107,107,.4)}
+.abtn.del:hover{color:#111;background:var(--red);border-color:var(--red)}
+.form-act{display:flex;gap:10px;flex-wrap:wrap}
 .form-act .btn-p{flex:1}
 
 /* titres de page */
 .ph{padding:40px 0 28px;display:flex;flex-direction:column;gap:14px}
 .ph h1,.ph h2{font-size:clamp(2.4rem,8vw,5.6rem);line-height:.84;letter-spacing:-.085em;text-transform:uppercase}
 .ph .lime{color:var(--lime)}
-.ph .ghost{color:rgba(245,242,234,.22)}
 .ph .outline{-webkit-text-stroke:2px var(--lime);color:transparent}
 .ph p{max-width:52ch;color:var(--mut);font-size:13px}
+.ph-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
 
 /* panneaux */
 .panel{background:var(--bg2);border:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:14px}
@@ -124,11 +147,11 @@ textarea.in{resize:vertical;min-height:64px}
 .panel-h h3{font-size:18px;letter-spacing:-.05em;text-transform:uppercase}
 .badge-edit{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;background:var(--fu);color:#fff;padding:4px 8px}
 .form-panel.editing{border-color:var(--fu);box-shadow:6px 6px 0 var(--fu)}
-.live{display:flex;justify-content:space-between;align-items:baseline;border-top:1px dashed var(--line2);padding-top:12px}
-.live b{font-family:'Arial Black',Arial,sans-serif;font-size:22px;letter-spacing:-.04em;color:var(--lime)}
+.live{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-top:1px dashed var(--line2);padding-top:12px}
+.live b{font-family:'Arial Black',Arial,sans-serif;font-size:22px;letter-spacing:-.04em;color:var(--lime);text-align:right}
 .split{display:grid;gap:28px;align-items:start;padding-bottom:64px}
 @media(min-width:980px){
-  .split{grid-template-columns:minmax(340px,400px) 1fr}
+  .split{grid-template-columns:minmax(360px,420px) 1fr}
   .split>.form-panel{position:sticky;top:124px;max-height:calc(100vh - 140px);overflow:auto}
 }
 
@@ -143,17 +166,27 @@ textarea.in{resize:vertical;min-height:64px}
 .chipf{background:none;border:1px solid var(--line);padding:7px 11px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);min-height:32px}
 .chipf:hover{color:var(--ink)}
 .chipf.on{border-color:var(--lime);color:var(--lime)}
+.chipf.fu.on{border-color:var(--fu);color:var(--fu-ink)}
 .lsum{font-size:11px;color:var(--mut);margin:14px 0 8px;letter-spacing:.04em}
 .list{border-top:1px solid var(--line)}
 .item{display:grid;grid-template-columns:1fr auto;gap:10px 16px;padding:16px 0;border-bottom:1px solid var(--line)}
+.item.is-avenir{border-left:3px solid var(--fu);padding-left:12px}
 .i-main{min-width:0}
 .i-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--mut2);margin-bottom:6px}
 .i-meta .id{color:var(--lime)}
+.avenir{display:inline-flex;align-items:center;gap:6px;background:var(--fu);color:#fff;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:5px 8px;margin-bottom:8px}
+.avenir.today{background:var(--lime);color:#111}
 .i-title{font-size:15px;font-weight:700;line-height:1.3;overflow-wrap:anywhere}
 .i-title .tel{font-size:12px;font-weight:400;color:var(--mut);text-decoration:none;margin-left:6px;white-space:nowrap}
 .i-title .tel:hover{color:var(--lime)}
 .i-sub{font-size:12px;color:var(--mut);margin-top:4px;overflow-wrap:anywhere}
 .i-note{font-size:12px;color:var(--mut2);font-style:italic;margin-top:4px;overflow-wrap:anywhere}
+.i-lines{margin-top:6px;display:flex;flex-direction:column;gap:3px}
+.i-line{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:var(--mut)}
+.i-line span:first-child{overflow-wrap:anywhere}
+.i-line b{color:var(--ink)}
+.i-line .cd{color:var(--lime);font-weight:700}
+.i-line span:last-child{white-space:nowrap}
 .i-amt{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}
 .i-amt .fd{font-size:17px;letter-spacing:-.04em;white-space:nowrap}
 .i-amt.rec .fd{color:var(--lime)}
@@ -162,7 +195,7 @@ textarea.in{resize:vertical;min-height:64px}
 .paid{color:var(--lime)}
 .due{color:var(--fu-ink)}
 .i-act{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-@media(min-width:1180px){.item{grid-template-columns:1fr auto auto;align-items:center}.i-act{grid-column:auto;justify-content:flex-end}}
+@media(max-width:599px){.item{grid-template-columns:1fr}.i-amt{flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 12px;text-align:left}}
 .st{appearance:none;-webkit-appearance:none;background:transparent var(--chev2) no-repeat right 9px center;border:1px solid;min-height:34px;padding:6px 26px 6px 10px;font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;border-radius:0;outline:none}
 .st-attente{border-color:var(--line2);color:var(--ink)}
 .st-cours{border-color:var(--fu);color:var(--fu-ink)}
@@ -214,29 +247,90 @@ textarea.in{resize:vertical;min-height:64px}
 .cat-h span:last-child{color:var(--mut);text-align:right}
 .bar{height:8px;background:var(--bg3)}
 .bar i{display:block;height:100%;background:var(--fu)}
-.ops{list-style:none}
+.ops,.up{list-style:none}
 .ops li{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:13px}
-.ops .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ops .t small{display:block;font-size:10px;color:var(--mut2);letter-spacing:.06em}
-.ops .a{font-weight:700;white-space:nowrap}
+.ops .t,.up .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ops .t small,.up .t small{display:block;font-size:10px;color:var(--mut2);letter-spacing:.06em}
+.ops .a,.up .a{font-weight:700;white-space:nowrap}
 .op-k{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:3px 6px;border:1px solid}
 .op-R{color:var(--lime);border-color:var(--lime)}
 .op-D{color:var(--fu-ink);border-color:var(--fu)}
 .op-C{color:var(--ink);border-color:var(--line2)}
 .ops .a.R{color:var(--lime)}
 .ops .a.D{color:var(--fu-ink)}
+.up li{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:13px}
+.up .d{background:var(--fu);color:#fff;text-align:center;padding:6px 0;line-height:1.05}
+.up .d b{display:block;font-family:'Arial Black',Arial,sans-serif;font-size:17px}
+.up .d small{font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.up .d.today{background:var(--lime);color:#111}
 .welcome{display:flex;flex-direction:column;gap:12px}
 .welcome .acts{display:flex;flex-wrap:wrap;gap:8px}
 
-/* réglages */
+/* sauvegarde */
 .rgrid{display:grid;gap:16px;padding-bottom:64px;align-items:start}
 @media(min-width:900px){.rgrid{grid-template-columns:1fr 1fr}}
 .panel p.txt{color:var(--mut);font-size:13px}
 .panel .acts{display:flex;flex-wrap:wrap;gap:8px}
+.panel.hl{border-color:var(--lime);box-shadow:6px 6px 0 var(--lime)}
 .panel.danger{border-color:rgba(255,107,107,.3)}
 .kv{font-size:12px;color:var(--mut2)}
-.taux{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.taux .in{max-width:160px}
+.inline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.inline .in{max-width:180px}
+
+/* fenêtre d'export (style des fenêtres du site) */
+.sheet-bd{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.72)}
+.sheet{position:fixed;z-index:71;left:50%;top:50%;transform:translate(-50%,-50%);width:min(540px,calc(100vw - 32px));max-height:calc(100vh - 32px);overflow:auto;background:#f5f2ea;color:#111;box-shadow:10px 10px 0 var(--lime);display:flex;flex-direction:column;color-scheme:light}
+@keyframes popIn{from{opacity:0;transform:translate(-50%,-50%) scale(.96)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.sheet:not([hidden]){animation:popIn .2s ease}
+@media(max-width:600px){
+  .sheet{left:0;right:0;bottom:0;top:auto;transform:none;width:100%;max-height:92vh;box-shadow:0 -6px 0 var(--lime)}
+  @keyframes up{from{transform:translateY(30px);opacity:0}to{transform:none;opacity:1}}
+  .sheet:not([hidden]){animation:up .22s ease}
+}
+@media(prefers-reduced-motion:reduce){.sheet:not([hidden]){animation:none}}
+.sheet :focus-visible{outline:2px solid #111;outline-offset:2px}
+.sheet-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 20px 16px;border-bottom:1px solid rgba(0,0,0,.1)}
+.sheet-k{font-size:9px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:rgba(0,0,0,.45);margin-bottom:6px}
+.sheet-h h3{font-size:24px;letter-spacing:-.07em;text-transform:uppercase;line-height:.95}
+.sheet-x{background:none;border:0;font-size:22px;line-height:1;color:rgba(0,0,0,.35);width:40px;height:40px;flex-shrink:0}
+.sheet-x:hover{color:#111}
+.sheet-b{padding:16px 20px;display:flex;flex-direction:column;gap:16px}
+.sheet-l{font-size:9px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:rgba(0,0,0,.5);margin-bottom:8px}
+.sin{width:100%;background:#fff var(--chev3) no-repeat right 12px center;border:1px solid rgba(0,0,0,.15);min-height:44px;padding:10px 34px 10px 12px;appearance:none;-webkit-appearance:none;color:#111;border-radius:0;font-size:14px}
+.sin option{background:#fff;color:#111}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.xchips{display:flex;flex-wrap:wrap;gap:6px}
+.xchip{position:relative}
+.xchip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.xchip span{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:8px 12px;border:1px solid rgba(0,0,0,.18);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(0,0,0,.5)}
+.xchip input:checked+span{background:#111;color:#f5f2ea;border-color:#111}
+.xchip input:checked+span::before{content:"✓";color:var(--lime)}
+.xchip input:focus-visible+span{outline:2px solid #111;outline-offset:2px}
+.fmts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fmt{position:relative;cursor:pointer;display:block}
+.fmt input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.fmt span{display:flex;flex-direction:column;gap:4px;border:1px solid rgba(0,0,0,.15);padding:12px 14px;min-height:84px;background:rgba(255,255,255,.4);transition:box-shadow .15s,border-color .15s,background .15s}
+.fmt i{font-style:normal;font-size:8px;font-weight:700;letter-spacing:.22em;color:rgba(0,0,0,.4)}
+.fmt b{font-family:'Arial Black',Arial,sans-serif;font-size:17px;letter-spacing:-.05em;text-transform:uppercase;line-height:1}
+.fmt small{font-size:11px;color:rgba(0,0,0,.55);line-height:1.3}
+.fmt:hover span{border-color:var(--lime)}
+.fmt input:checked+span{border-color:#111;background:#fff;box-shadow:4px 4px 0 var(--lime)}
+.fmt input:checked+span i{color:#111}
+.fmt input:focus-visible+span{outline:2px solid #111;outline-offset:2px}
+.sheet-f{padding:16px 20px 20px;border-top:1px solid rgba(0,0,0,.1);display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sbtn{min-height:50px;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;border:1px solid #111;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,color .15s,border-color .15s}
+.sbtn-p{background:#111;color:#fff}
+.sbtn-p:hover:not(:disabled){background:var(--lime);color:#111;border-color:var(--lime)}
+.sbtn-g{background:none;color:#111}
+.sbtn-g:hover:not(:disabled){background:#111;color:#fff}
+.sbtn:disabled{opacity:.5;cursor:wait}
+.sheet-n{grid-column:1/-1;font-size:11px;color:rgba(0,0,0,.5);text-align:center}
+.sheet-fb{grid-column:1/-1;background:#fff;border:1px solid rgba(0,0,0,.12);border-left:3px solid var(--fu);padding:12px 14px;font-size:12px;line-height:1.5;display:flex;flex-direction:column;gap:10px}
+.sheet-fb .acts{display:flex;flex-wrap:wrap;gap:6px}
+.sheet-fb a{display:inline-flex;align-items:center;min-height:36px;padding:8px 12px;border:1px solid #111;color:#111;text-decoration:none;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.sheet-fb a:hover{background:#111;color:#fff}
+.xsum{background:#fff;border:1px solid rgba(0,0,0,.12);padding:12px 14px;font-size:13px;display:flex;justify-content:space-between;gap:12px}
+.xsum b{font-family:'Arial Black',Arial,sans-serif;letter-spacing:-.03em;white-space:nowrap}
 
 /* divers */
 .ftr{border-top:1px solid var(--line);background:#090909}
@@ -244,9 +338,12 @@ textarea.in{resize:vertical;min-height:64px}
 .ftr span{font-size:12px;font-weight:700;color:rgba(245,242,234,.22)}
 .ftr a{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--lime);text-decoration:none;border:1px solid var(--lime);padding:10px 14px}
 .ftr a:hover{background:var(--lime);color:#111}
-#toast{position:fixed;bottom:24px;left:50%;z-index:60;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 32px);background:var(--lime);color:#111;padding:12px 18px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translate(-50%,12px);transition:opacity .25s,transform .25s;pointer-events:none}
+#toast{position:fixed;bottom:24px;left:50%;z-index:90;display:flex;align-items:center;gap:10px;max-width:calc(100vw - 32px);background:var(--lime);color:#111;padding:10px 12px 10px 18px;min-height:44px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translate(-50%,12px);transition:opacity .25s,transform .25s;pointer-events:none}
 #toast.on{opacity:1;transform:translate(-50%,0)}
+#toast.on.act{pointer-events:auto}
 #toast.err{background:var(--fu);color:#fff}
+#toastAct{background:#111;color:var(--lime);border:0;padding:8px 12px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;white-space:nowrap}
+#toastAct:hover{background:#fff;color:#111}
 .boot{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
 .boot .fd{font-size:40px;letter-spacing:-.12em}
 .boot p{max-width:42ch}
@@ -292,7 +389,10 @@ textarea.in{resize:vertical;min-height:64px}
     <div class="ph">
       <p class="eyebrow">Kinshasa · Carnet de bord</p>
       <h1 class="fd">Le carnet<br><span class="outline">de bord.</span></h1>
-      <p id="dashScope"></p>
+      <div class="ph-row">
+        <p id="dashScope"></p>
+        <button type="button" class="btn btn-g btn-sm" data-act="export">Exporter le rapport</button>
+      </div>
     </div>
     <div id="dash"></div>
   </section>
@@ -304,37 +404,32 @@ textarea.in{resize:vertical;min-height:64px}
       <h2 class="fd">Les<br><span class="lime">commandes.</span></h2>
     </div>
     <div class="split">
-      <form class="panel form-panel" id="f-commandes" data-table="commandes" data-add="Ajouter la commande">
+      <form class="panel form-panel" id="f-commandes" data-table="commandes" data-add="Enregistrer la commande">
         <div class="panel-h"><h3 class="fd">Nouvelle commande</h3><span class="badge-edit" hidden></span></div>
         <div class="grid2">
           <div class="f"><label for="c-date">Date</label><input class="in" id="c-date" type="date" name="date_commande" required data-today></div>
           <div class="f"><label for="c-st">Statut</label>
             <select class="in" id="c-st" name="statut"><option>En attente</option><option>En cours</option><option>Livrée</option><option>Annulée</option></select></div>
         </div>
-        <div class="f"><span class="flabel">Gérée par</span><div class="rseg" data-assoc="associe_id"></div></div>
+        <span class="hint fu" id="c-date-hint" hidden></span>
+        <div class="f"><span class="flabel">Gérée par</span><div class="rseg assoc" data-assoc="associe_id"></div></div>
         <div class="f"><label for="c-client">Client</label><input class="in" id="c-client" name="client" required placeholder="Nom du client" autocomplete="off" list="dl-clients"></div>
-        <div class="f"><label for="c-tel">Téléphone <span class="opt">facultatif</span></label><input class="in" id="c-tel" type="tel" name="telephone" placeholder="+243 …" autocomplete="off"></div>
-        <div class="f"><label for="c-art">Article / poster</label><input class="in" id="c-art" name="article" required placeholder="ex. Naruto Uzumaki" autocomplete="off" list="dl-articles"></div>
         <div class="grid2">
-          <div class="f"><label for="c-fmt">Format</label>
-            <select class="in" id="c-fmt" name="format">
-              <option value="">—</option><option>A5</option><option>A4</option><option>A3</option><option>A2</option><option>A1</option>
-              <option>Magazine 5 pages</option><option>Magazine 10 pages</option><option>Autre</option>
-            </select></div>
-          <div class="f"><label for="c-qte">Quantité</label><input class="in" id="c-qte" type="number" name="quantite" min="1" step="1" value="1" required data-num inputmode="numeric"></div>
+          <div class="f"><label for="c-tel">Téléphone <span class="opt">facultatif</span></label><input class="in" id="c-tel" type="tel" name="telephone" placeholder="+243 …" autocomplete="off"></div>
+          <div class="f"><label for="c-lieu">Livraison <span class="opt">facultatif</span></label><input class="in" id="c-lieu" name="lieu_livraison" placeholder="ex. Gombe"></div>
         </div>
-        <div class="f"><span class="flabel">Finition</span><div class="rseg" id="c-cadre">
-          <label><input type="radio" name="avec_cadre" value="0" data-num checked><span>Poster seul</span></label>
-          <label><input type="radio" name="avec_cadre" value="1" data-num><span>Avec cadre</span></label>
-        </div></div>
-        <div class="gridm">
-          <div class="f"><label for="c-prix">Prix unitaire</label><input class="in" id="c-prix" type="number" name="prix_unitaire" min="0" step="any" required data-num inputmode="decimal" placeholder="0"></div>
-          <div class="f"><label for="c-dev">Devise</label><select class="in" id="c-dev" name="devise"><option value="FC">FC</option><option value="USD">$</option></select></div>
+        <div class="f">
+          <span class="flabel">Posters commandés</span>
+          <div class="lines" id="lines"></div>
+          <button type="button" class="addline" id="addLine">+ Ajouter un autre poster</button>
         </div>
-        <div class="f"><label for="c-lieu">Lieu de livraison <span class="opt">facultatif</span></label><input class="in" id="c-lieu" name="lieu_livraison" placeholder="ex. Gombe, Limete…"></div>
         <div class="f"><label for="c-note">Note <span class="opt">facultatif</span></label><textarea class="in" id="c-note" name="note" rows="2"></textarea></div>
-        <div class="live"><span class="lbl">Total</span><b id="c-total">0 FC</b></div>
-        <div class="form-act"><button class="btn btn-p" type="submit">Ajouter la commande</button><button class="btn btn-g" type="button" data-cancel hidden>Annuler</button></div>
+        <div class="live"><span class="lbl">Total de la commande</span><b id="c-total">0 FC</b></div>
+        <div class="form-act">
+          <button class="btn btn-p" type="submit">Enregistrer la commande</button>
+          <button class="btn btn-g" type="button" data-cancel hidden>Annuler</button>
+          <button class="btn btn-d" type="button" data-delete hidden>Supprimer</button>
+        </div>
       </form>
       <div>
         <div class="lh">
@@ -363,7 +458,7 @@ textarea.in{resize:vertical;min-height:64px}
     <div class="split">
       <form class="panel form-panel" id="f-depenses" data-table="depenses" data-add="Ajouter la dépense">
         <div class="panel-h"><h3 class="fd">Nouvelle dépense</h3><span class="badge-edit" hidden></span></div>
-        <div class="f"><span class="flabel">Payée par</span><div class="rseg" data-assoc="associe_id"></div></div>
+        <div class="f"><span class="flabel">Payée par</span><div class="rseg assoc" data-assoc="associe_id"></div></div>
         <div class="grid2">
           <div class="f"><label for="d-date">Date</label><input class="in" id="d-date" type="date" name="date_depense" required data-today></div>
           <div class="f"><label for="d-cat">Type de dépense</label><select class="in" id="d-cat" name="categorie_id" required></select></div>
@@ -375,7 +470,11 @@ textarea.in{resize:vertical;min-height:64px}
           <div class="f"><label for="d-dev">Devise</label><select class="in" id="d-dev" name="devise"><option value="FC">FC</option><option value="USD">$</option></select></div>
         </div>
         <div class="f"><label for="d-cmd">Pour la commande <span class="opt">facultatif</span></label><select class="in" id="d-cmd" name="commande_id" data-num></select></div>
-        <div class="form-act"><button class="btn btn-p" type="submit">Ajouter la dépense</button><button class="btn btn-g" type="button" data-cancel hidden>Annuler</button></div>
+        <div class="form-act">
+          <button class="btn btn-p" type="submit">Ajouter la dépense</button>
+          <button class="btn btn-g" type="button" data-cancel hidden>Annuler</button>
+          <button class="btn btn-d" type="button" data-delete hidden>Supprimer</button>
+        </div>
       </form>
       <div>
         <div class="lh">
@@ -404,7 +503,7 @@ textarea.in{resize:vertical;min-height:64px}
     <div class="split">
       <form class="panel form-panel" id="f-recettes" data-table="recettes" data-add="Ajouter la recette">
         <div class="panel-h"><h3 class="fd">Nouvelle recette</h3><span class="badge-edit" hidden></span></div>
-        <div class="f"><span class="flabel">Encaissée par</span><div class="rseg" data-assoc="associe_id"></div></div>
+        <div class="f"><span class="flabel">Encaissée par</span><div class="rseg assoc" data-assoc="associe_id"></div></div>
         <div class="grid2">
           <div class="f"><label for="r-date">Date</label><input class="in" id="r-date" type="date" name="date_recette" required data-today></div>
           <div class="f"><label for="r-mode">Paiement</label>
@@ -416,7 +515,11 @@ textarea.in{resize:vertical;min-height:64px}
           <div class="f"><label for="r-mt">Montant</label><input class="in" id="r-mt" type="number" name="montant" min="0.01" step="any" required data-num inputmode="decimal" placeholder="0"></div>
           <div class="f"><label for="r-dev">Devise</label><select class="in" id="r-dev" name="devise"><option value="FC">FC</option><option value="USD">$</option></select></div>
         </div>
-        <div class="form-act"><button class="btn btn-p" type="submit">Ajouter la recette</button><button class="btn btn-g" type="button" data-cancel hidden>Annuler</button></div>
+        <div class="form-act">
+          <button class="btn btn-p" type="submit">Ajouter la recette</button>
+          <button class="btn btn-g" type="button" data-cancel hidden>Annuler</button>
+          <button class="btn btn-d" type="button" data-delete hidden>Supprimer</button>
+        </div>
       </form>
       <div>
         <div class="lh">
@@ -434,43 +537,33 @@ textarea.in{resize:vertical;min-height:64px}
     </div>
   </section>
 
-  <!-- REGLAGES / SAUVEGARDE -->
+  <!-- SAUVEGARDE -->
   <section class="tab" id="tab-reglages" hidden>
     <div class="ph">
-      <p class="eyebrow">Mettre à l'abri</p>
+      <p class="eyebrow">Exporter · partager · mettre à l'abri</p>
       <h2 class="fd">La<br><span class="lime">sauvegarde.</span></h2>
     </div>
     <div class="rgrid">
+      <div class="panel hl">
+        <div class="panel-h"><h3 class="fd">Exporter un rapport</h3></div>
+        <p class="txt">Un rapport aux couleurs de CREATY avec le résumé, les commandes, les dépenses et les recettes. Tu choisis la période et le format (PDF, Excel, Word ou Texte), puis tu l'enregistres ou tu le partages sur WhatsApp, Messenger ou par email.</p>
+        <div class="acts"><button type="button" class="btn btn-p" data-act="export">Exporter un rapport</button></div>
+      </div>
       <div class="panel">
-        <div class="panel-h"><h3 class="fd">Où sont les données ?</h3></div>
-        <p class="txt">Le carnet enregistre tout automatiquement dans <b>ce navigateur, sur cet appareil</b>. Rien n'est envoyé sur internet.</p>
-        <p class="txt">Pour mettre la base à l'abri ou la passer à l'autre associé, exporte le fichier <b>.db</b> et envoie-le (WhatsApp, OneDrive…). L'autre l'importe ici sur son téléphone. Une seule personne tient le carnet à la fois, ou vous vous repassez le fichier.</p>
+        <div class="panel-h"><h3 class="fd">Transférer le carnet</h3></div>
+        <p class="txt">Le carnet est enregistré automatiquement <b>dans ce navigateur, sur cet appareil</b>. Pour le passer à l'autre associé ou le mettre à l'abri, envoie le fichier du carnet (.db). L'autre l'importe ici, sur son téléphone.</p>
         <div class="acts">
-          <button class="btn btn-p" type="button" id="bkExport">Exporter la base (.db)</button>
-          <button class="btn btn-g" type="button" id="bkImportBtn">Importer une base</button>
-          <input type="file" id="bkImport" accept=".db,.sqlite,.sqlite3,application/x-sqlite3,application/octet-stream" hidden>
+          <button class="btn btn-g" type="button" id="bkShare">Partager le carnet</button>
+          <button class="btn btn-g" type="button" id="bkExport">Enregistrer</button>
+          <button class="btn btn-g" type="button" id="bkImportBtn">Importer</button>
+          <input type="file" id="bkImport" accept=".db,.sqlite,.sqlite3,application/x-sqlite3,application/vnd.sqlite3,application/octet-stream" hidden>
         </div>
         <p class="kv" id="bkInfo"></p>
       </div>
-      <div class="panel">
-        <div class="panel-h"><h3 class="fd">Exporter pour Excel</h3></div>
-        <p class="txt">Fichiers CSV qui s'ouvrent dans Excel ou Google Sheets.</p>
-        <div class="acts">
-          <button class="btn btn-g btn-sm" data-act="csv" data-name="v_commandes" data-label="commandes">Commandes</button>
-          <button class="btn btn-g btn-sm" data-act="csv" data-name="v_depenses" data-label="depenses">Dépenses</button>
-          <button class="btn btn-g btn-sm" data-act="csv" data-name="v_recettes" data-label="recettes">Recettes</button>
-          <button class="btn btn-g btn-sm" data-act="csv" data-name="v_bilan_mensuel" data-label="bilan-mensuel">Bilan mensuel</button>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-h"><h3 class="fd">Taux du dollar</h3></div>
-        <p class="txt">Facultatif. Sert seulement à afficher un total combiné « ≈ en FC » quand il y a des montants en FC et en $.</p>
-        <div class="taux"><span class="lbl">1 $ =</span><input class="in" type="number" id="taux" min="0" step="any" inputmode="decimal" placeholder="ex. 2800" aria-label="Taux du dollar en francs congolais"><span class="lbl">FC</span></div>
-      </div>
       <div class="panel danger">
         <div class="panel-h"><h3 class="fd">Tout effacer</h3></div>
-        <p class="txt">Supprime toutes les commandes, dépenses et recettes de cet appareil. Exporte la base avant. Tape <b>EFFACER</b> pour confirmer.</p>
-        <div class="taux"><input class="in" id="resetTxt" autocomplete="off" placeholder="EFFACER" aria-label="Tape EFFACER pour confirmer"><button class="btn btn-d" type="button" id="resetBtn" disabled>Effacer le carnet</button></div>
+        <p class="txt">Supprime toutes les commandes, dépenses et recettes de cet appareil. Enregistre le carnet avant. Tape <b>EFFACER</b> pour confirmer.</p>
+        <div class="inline"><input class="in" id="resetTxt" autocomplete="off" placeholder="EFFACER" aria-label="Tape EFFACER pour confirmer"><button class="btn btn-d" type="button" id="resetBtn" disabled>Effacer le carnet</button></div>
       </div>
     </div>
   </section>
@@ -487,13 +580,64 @@ textarea.in{resize:vertical;min-height:64px}
   </div>
 </footer>
 
+<!-- FENÊTRE D'EXPORT -->
+<div class="sheet-bd" id="xBd" hidden></div>
+<div class="sheet" id="xSheet" role="dialog" aria-modal="true" aria-labelledby="xTitle" hidden>
+  <div class="sheet-h">
+    <div><p class="sheet-k" id="xKicker">Exporter</p><h3 class="fd" id="xTitle">Rapport</h3></div>
+    <button type="button" class="sheet-x" data-x="close" aria-label="Fermer">&#x2715;</button>
+  </div>
+  <div class="sheet-b">
+    <div id="xScope">
+      <div class="sgrid">
+        <div><p class="sheet-l"><label for="xMois">Période</label></p><select class="sin" id="xMois"></select></div>
+        <div><p class="sheet-l"><label for="xQui">Associé</label></p><select class="sin" id="xQui"></select></div>
+      </div>
+      <p class="sheet-l" style="margin-top:14px">Contenu</p>
+      <div class="xchips">
+        <label class="xchip"><input type="checkbox" name="xpart" value="resume" checked><span>Résumé</span></label>
+        <label class="xchip"><input type="checkbox" name="xpart" value="commandes" checked><span>Commandes</span></label>
+        <label class="xchip"><input type="checkbox" name="xpart" value="depenses" checked><span>Dépenses</span></label>
+        <label class="xchip"><input type="checkbox" name="xpart" value="recettes" checked><span>Recettes</span></label>
+      </div>
+    </div>
+    <div class="xsum" id="xFact" hidden></div>
+    <div>
+      <p class="sheet-l">Choisis le format</p>
+      <div class="fmts" role="radiogroup" aria-label="Format du fichier">
+        <label class="fmt"><input type="radio" name="xfmt" value="pdf" checked><span><i>.PDF</i><b>PDF</b><small>Le plus beau, prêt à envoyer ou imprimer</small></span></label>
+        <label class="fmt"><input type="radio" name="xfmt" value="xlsx"><span><i>.XLSX</i><b>Excel</b><small>Tableaux à trier et à calculer</small></span></label>
+        <label class="fmt"><input type="radio" name="xfmt" value="docx"><span><i>.DOCX</i><b>Word</b><small>Document modifiable</small></span></label>
+        <label class="fmt"><input type="radio" name="xfmt" value="txt"><span><i>.TXT</i><b>Texte</b><small>Message simple pour WhatsApp</small></span></label>
+      </div>
+    </div>
+  </div>
+  <div class="sheet-f">
+    <button type="button" class="sbtn sbtn-p" data-x="share">Partager</button>
+    <button type="button" class="sbtn sbtn-g" data-x="save">Enregistrer</button>
+    <div class="sheet-fb" id="xFallback" hidden></div>
+    <p class="sheet-n">« Partager » ouvre WhatsApp, Messenger, Email… selon ton téléphone.</p>
+  </div>
+</div>
+
 <div id="toast" role="status" aria-live="polite">
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
   <span id="toastTxt"></span>
+  <button type="button" id="toastAct" hidden></button>
 </div>
 
 <script>
 /* ================== SCHÉMA SQL (identique à schema.sql) ================== */
+const COMMANDES_COLS = `
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  date_commande   TEXT    NOT NULL DEFAULT (date('now')),
+  client          TEXT    NOT NULL,
+  telephone       TEXT,
+  statut          TEXT    NOT NULL DEFAULT 'En attente'
+                  CHECK (statut IN ('En attente','En cours','Livrée','Annulée')),
+  lieu_livraison  TEXT,
+  associe_id      INTEGER REFERENCES associes(id),
+  note            TEXT,
+  cree_le         TEXT    NOT NULL DEFAULT (datetime('now'))`;
 const SCHEMA_TABLES = `
 CREATE TABLE IF NOT EXISTS associes (
   id   INTEGER PRIMARY KEY,
@@ -503,23 +647,17 @@ CREATE TABLE IF NOT EXISTS categories_depense (
   id   INTEGER PRIMARY KEY,
   nom  TEXT NOT NULL UNIQUE COLLATE NOCASE
 );
-CREATE TABLE IF NOT EXISTS commandes (
-  id              INTEGER PRIMARY KEY AUTOINCREMENT,
-  date_commande   TEXT    NOT NULL DEFAULT (date('now')),
-  client          TEXT    NOT NULL,
-  telephone       TEXT,
-  article         TEXT    NOT NULL,
-  format          TEXT,
-  avec_cadre      INTEGER NOT NULL DEFAULT 0 CHECK (avec_cadre IN (0, 1)),
-  quantite        INTEGER NOT NULL DEFAULT 1  CHECK (quantite > 0),
-  prix_unitaire   REAL    NOT NULL DEFAULT 0  CHECK (prix_unitaire >= 0),
-  devise          TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD')),
-  statut          TEXT    NOT NULL DEFAULT 'En attente'
-                  CHECK (statut IN ('En attente','En cours','Livrée','Annulée')),
-  lieu_livraison  TEXT,
-  associe_id      INTEGER REFERENCES associes(id),
-  note            TEXT,
-  cree_le         TEXT    NOT NULL DEFAULT (datetime('now'))
+CREATE TABLE IF NOT EXISTS commandes (${COMMANDES_COLS}
+);
+CREATE TABLE IF NOT EXISTS lignes_commande (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  commande_id    INTEGER NOT NULL REFERENCES commandes(id) ON DELETE CASCADE,
+  article        TEXT    NOT NULL,
+  format         TEXT,
+  avec_cadre     INTEGER NOT NULL DEFAULT 0 CHECK (avec_cadre IN (0, 1)),
+  quantite       INTEGER NOT NULL DEFAULT 1 CHECK (quantite > 0),
+  prix_unitaire  REAL    NOT NULL DEFAULT 0 CHECK (prix_unitaire >= 0),
+  devise         TEXT    NOT NULL DEFAULT 'FC' CHECK (devise IN ('FC','USD'))
 );
 CREATE TABLE IF NOT EXISTS depenses (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -549,6 +687,7 @@ CREATE TABLE IF NOT EXISTS parametres (
   valeur  TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_commandes_date ON commandes(date_commande);
+CREATE INDEX IF NOT EXISTS idx_lignes_cmd     ON lignes_commande(commande_id);
 CREATE INDEX IF NOT EXISTS idx_depenses_date  ON depenses(date_depense);
 CREATE INDEX IF NOT EXISTS idx_recettes_date  ON recettes(date_recette);
 CREATE INDEX IF NOT EXISTS idx_recettes_cmd   ON recettes(commande_id);
@@ -558,20 +697,31 @@ INSERT OR IGNORE INTO associes (id, nom) VALUES (1, 'Joram'), (2, 'Plam''s');
 INSERT OR IGNORE INTO categories_depense (id, nom) VALUES
   (1, 'Transport'), (2, 'Achat de cadres'), (3, 'Achat de posters'), (4, 'Autre');
 `;
-const SCHEMA_VIEWS = `
+const DROP_VIEWS = `
 DROP VIEW IF EXISTS v_commandes;
 DROP VIEW IF EXISTS v_depenses;
 DROP VIEW IF EXISTS v_recettes;
 DROP VIEW IF EXISTS v_bilan_mensuel;
 DROP VIEW IF EXISTS v_soldes_associes;
+`;
+const SCHEMA_VIEWS = `
 CREATE VIEW v_commandes AS
-SELECT x.*, x.total - x.encaisse AS reste
+SELECT x.*, x.total_fc - x.paye_fc AS reste_fc, x.total_usd - x.paye_usd AS reste_usd
 FROM (
-  SELECT c.*,
-         c.quantite * c.prix_unitaire AS total,
-         a.nom AS gere_par,
-         COALESCE((SELECT SUM(r.montant) FROM recettes r
-                   WHERE r.commande_id = c.id AND r.devise = c.devise), 0) AS encaisse
+  SELECT c.*, a.nom AS gere_par,
+    (SELECT group_concat(l.quantite || ' × ' || l.article
+              || COALESCE(' ' || l.format, '')
+              || CASE WHEN l.avec_cadre = 1 THEN ' + cadre' ELSE '' END, ' ; ')
+       FROM lignes_commande l WHERE l.commande_id = c.id) AS articles,
+    COALESCE((SELECT SUM(l.quantite) FROM lignes_commande l WHERE l.commande_id = c.id), 0) AS nb_pieces,
+    COALESCE((SELECT SUM(l.quantite * l.prix_unitaire) FROM lignes_commande l
+              WHERE l.commande_id = c.id AND l.devise = 'FC'), 0) AS total_fc,
+    COALESCE((SELECT SUM(l.quantite * l.prix_unitaire) FROM lignes_commande l
+              WHERE l.commande_id = c.id AND l.devise = 'USD'), 0) AS total_usd,
+    COALESCE((SELECT SUM(r.montant) FROM recettes r
+              WHERE r.commande_id = c.id AND r.devise = 'FC'), 0) AS paye_fc,
+    COALESCE((SELECT SUM(r.montant) FROM recettes r
+              WHERE r.commande_id = c.id AND r.devise = 'USD'), 0) AS paye_usd
   FROM commandes c
   LEFT JOIN associes a ON a.id = c.associe_id
 ) x;
@@ -620,12 +770,16 @@ let ST_FILTER = '', CAT_FILTER = '';
 const editing = { commandes: null, depenses: null, recettes: null };
 const STATUTS = ['En attente', 'En cours', 'Livrée', 'Annulée'];
 const ST_CLASS = { 'En attente': 'attente', 'En cours': 'cours', 'Livrée': 'livree', 'Annulée': 'annulee' };
+const FORMATS = ['A5', 'A4', 'A3', 'A2', 'A1', 'Magazine 5 pages', 'Magazine 10 pages', 'Autre'];
 // Prix du site CREATY, pour pré-remplir les commandes
 const PRIX = { 'A5': [2500, 'FC'], 'A4': [3500, 'FC'], 'A3': [5000, 'FC'], 'A2': [10000, 'FC'], 'A1': [10, 'USD'], 'Magazine 5 pages': [5, 'USD'], 'Magazine 10 pages': [10, 'USD'] };
 const PRIX_CADRE = { 'A5': [15000, 'FC'], 'A4': [18000, 'FC'], 'A3': [22000, 'FC'], 'A2': [30000, 'FC'], 'A1': [40000, 'FC'] };
+const CONTACT = 'WhatsApp 824 120 177 · 961 293 567';
 const IC = {
-  edit: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
-  del: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>'
+  edit: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
+  del: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>',
+  doc: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg>',
+  x: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>'
 };
 
 /* ================== OUTILS ================== */
@@ -635,42 +789,63 @@ const E = (form, name) => form.elements.namedItem(name);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const nf = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 });
-const money = (n, dev) => { n = Math.round((n || 0) * 100) / 100 || 0; return nf.format(n) + (dev === 'USD' ? ' $' : ' FC'); };
-const fdate = s => { if (!s) return ''; const [y, m, d] = String(s).split('-').map(Number); const dt = new Date(y, m - 1, d); return isNaN(dt) ? s : dt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }); };
+const money = (n, dev) => { n = Math.round((n || 0) * 100) / 100 || 0; return nf.format(n).replace(/[  ]/g, ' ') + (dev === 'USD' ? ' $' : ' FC'); };
+const toDate = s => { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, m - 1, d); };
+const fdate = s => { if (!s) return ''; const dt = toDate(s); return isNaN(dt) ? s : dt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }); };
+const fdateS = s => { if (!s) return ''; const dt = toDate(s); return isNaN(dt) ? s : dt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }); };
 const fmois = s => { const [y, m] = s.split('-').map(Number); const t = new Date(y, m - 1, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }); return t.charAt(0).toUpperCase() + t.slice(1); };
+const daysTo = s => { const t = new Date(); t.setHours(0, 0, 0, 0); return Math.round((toDate(s) - t) / 864e5); };
+const whenTxt = n => n === 0 ? 'aujourd’hui' : n === 1 ? 'demain' : `dans ${n} jours`;
 const plural = (n, w) => n + ' ' + w + (n > 1 ? 's' : '');
+const slug = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const LS = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
 
 function q(sql, p = []) { const st = db.prepare(sql); try { st.bind(p); const out = []; while (st.step()) out.push(st.getAsObject()); return out; } finally { st.free(); } }
 const q1 = (sql, p) => q(sql, p)[0];
 const param = k => { const r = q1('SELECT valeur FROM parametres WHERE cle = ?', [k]); return r ? r.valeur : null; };
 const setParam = (k, v) => db.run('INSERT INTO parametres (cle, valeur) VALUES (?, ?) ON CONFLICT(cle) DO UPDATE SET valeur = excluded.valeur', [k, v]);
-const taux = () => Number(param('taux_usd_fc')) || 0;
 const nomAssoc = id => (ASSOC.find(a => a.id === id) || {}).nom || '—';
 const who = id => id ? `<span class="whon"><span class="who who-${id}">${esc(nomAssoc(id).charAt(0))}</span>${esc(nomAssoc(id))}</span>` : '';
 
-// WHERE construit à partir des filtres (période + associé) et de conditions en plus
-function W(dateCol, extra = [], qui = F.qui) {
+// WHERE construit à partir de la période, de l'associé et de conditions en plus
+function W(dateCol, extra = [], qui = F.qui, mois = F.mois) {
   const c = extra.map(x => x[0]), p = extra.flatMap(x => x.slice(1));
-  if (F.mois) { c.push(`strftime('%Y-%m', ${dateCol}) = ?`); p.push(F.mois); }
+  if (mois) { c.push(`strftime('%Y-%m', ${dateCol}) = ?`); p.push(mois); }
   if (qui) { c.push('associe_id = ?'); p.push(+qui); }
   return [c.length ? 'WHERE ' + c.join(' AND ') : '', p];
 }
 function totals(sql, p) { const t = { FC: 0, USD: 0 }; for (const r of q(sql, p)) t[r.devise] = (t[r.devise] || 0) + (r.s || 0); return t; }
-const sumBy = (table, col, qui = F.qui) => { const [w, p] = W(col, [], qui); return totals(`SELECT devise, SUM(montant) s FROM ${table} ${w} GROUP BY devise`, p); };
+const sumBy = (table, col, qui = F.qui, mois = F.mois) => { const [w, p] = W(col, [], qui, mois); return totals(`SELECT devise, SUM(montant) s FROM ${table} ${w} GROUP BY devise`, p); };
 const diff = (a, b) => ({ FC: a.FC - b.FC, USD: a.USD - b.USD });
-function inline(t) { const a = []; if (t.FC || !t.USD) a.push(money(t.FC, 'FC')); if (t.USD) a.push(money(t.USD, 'USD')); return a.join(' · '); }
-function fmtT(t) {
-  const parts = []; if (t.FC || !t.USD) parts.push(money(t.FC, 'FC')); if (t.USD) parts.push(money(t.USD, 'USD'));
-  let h = `<div class="v fd">${parts[0]}</div>`;
-  if (parts[1]) h += `<div class="v2">${t.USD < 0 ? '' : '+ '}${parts[1]}</div>`;
-  const tx = taux(); if (tx && t.USD && t.FC) h += `<div class="v3">≈ ${money(t.FC + t.USD * tx, 'FC')} au total</div>`;
-  return h;
-}
+const pos = t => ({ FC: t.FC > 0.004 ? t.FC : 0, USD: t.USD > 0.004 ? t.USD : 0 });
+const cmdTot = c => ({ FC: c.total_fc, USD: c.total_usd });
+const cmdReste = c => pos({ FC: c.reste_fc, USD: c.reste_usd });
+const cmdPaye = c => ({ FC: c.paye_fc, USD: c.paye_usd });
+const hasAmt = t => Math.abs(t.FC) > 0.004 || Math.abs(t.USD) > 0.004;
+function parts(t) { const a = []; if (t.FC || !t.USD) a.push(money(t.FC, 'FC')); if (t.USD) a.push(money(t.USD, 'USD')); return a; }
+const inline = t => parts(t).join(' + ').replace('+ -', '- ');
+function fmtT(t) { const a = parts(t); return `<div class="v fd">${a[0]}</div>` + (a[1] ? `<div class="v2">${t.USD < 0 ? '' : '+ '}${a[1]}</div>` : ''); }
 const emptyState = (title, txt) => `<div class="empty"><b>${title}</b><p>${txt}</p></div>`;
+const lineTxt = l => `${l.quantite} × ${l.article}${l.format ? ' · ' + l.format : ''}${l.avec_cadre ? ' · avec cadre' : ''}`;
+function linesMap(ids) {
+  const m = {}; if (!ids.length) return m;
+  q(`SELECT * FROM lignes_commande WHERE commande_id IN (${ids.map(() => '?').join(',')}) ORDER BY id`, ids).forEach(l => (m[l.commande_id] = m[l.commande_id] || []).push(l));
+  return m;
+}
+const upcoming = c => (c.statut === 'En attente' || c.statut === 'En cours') && daysTo(c.date_commande) >= 0;
 
 let toastT;
-function toast(msg, err) { const t = $('#toast'); $('#toastTxt').textContent = msg; t.classList.toggle('err', !!err); t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), err ? 4500 : 2400); }
+function toast(msg, err, action) {
+  const t = $('#toast'), b = $('#toastAct');
+  $('#toastTxt').textContent = msg;
+  t.classList.toggle('err', !!err);
+  t.classList.toggle('act', !!action);
+  b.hidden = !action;
+  b.onclick = action ? () => { t.classList.remove('on'); action.fn(); } : null;
+  if (action) b.textContent = action.label;
+  t.classList.add('on'); clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('on'), action ? 7000 : err ? 4500 : 2400);
+}
 
 /* ================== STOCKAGE (IndexedDB) ================== */
 function idb(mode, fn) {
@@ -688,23 +863,39 @@ function idb(mode, fn) {
 const idbGet = k => idb('readonly', st => st.get(k));
 const idbSet = (k, v) => idb('readwrite', st => st.put(v, k));
 let saving = Promise.resolve();
+function snapshot() { const data = db.export(); db.run('PRAGMA foreign_keys = ON'); return data; } // export() rouvre la base et remet les pragmas à zéro
 function persist() {
-  const data = db.export();
-  db.run('PRAGMA foreign_keys = ON'); // export() rouvre la base et remet les pragmas à zéro
-  saving = saving.then(() => idbSet('db', data)).catch(e => { console.error(e); toast('Enregistrement impossible ici — exporte la base', true); });
+  const data = snapshot();
+  saving = saving.then(() => idbSet('db', data)).catch(e => { console.error(e); toast('Enregistrement impossible ici — enregistre le carnet', true); });
   return saving;
 }
 function commit() { persist(); renderAll(); }
 
 function setup() {
-  db.run('PRAGMA foreign_keys = ON');
+  db.run('PRAGMA foreign_keys = OFF');
+  db.exec(DROP_VIEWS);
   db.exec(SCHEMA_TABLES);
-  // Mise à jour d'une ancienne base : ajout de la colonne avec_cadre
-  if (!q("SELECT 1 FROM pragma_table_info('commandes') WHERE name = 'avec_cadre'").length)
-    db.run('ALTER TABLE commandes ADD COLUMN avec_cadre INTEGER NOT NULL DEFAULT 0 CHECK (avec_cadre IN (0, 1))');
+  migrate();
   db.exec(SCHEMA_SEED);
   db.exec(SCHEMA_VIEWS);
+  db.run('PRAGMA foreign_keys = ON');
   ASSOC = q('SELECT id, nom FROM associes ORDER BY id');
+}
+// Ancienne version : un seul poster par commande -> on le déplace dans lignes_commande
+function migrate() {
+  const cols = q("SELECT name FROM pragma_table_info('commandes')").map(r => r.name);
+  if (!cols.includes('article')) return;
+  const cadre = cols.includes('avec_cadre') ? 'avec_cadre' : '0';
+  db.exec(`BEGIN;
+    INSERT INTO lignes_commande (commande_id, article, format, avec_cadre, quantite, prix_unitaire, devise)
+      SELECT id, article, format, ${cadre}, quantite, prix_unitaire, devise FROM commandes;
+    CREATE TABLE commandes_v2 (${COMMANDES_COLS});
+    INSERT INTO commandes_v2 (id, date_commande, client, telephone, statut, lieu_livraison, associe_id, note, cree_le)
+      SELECT id, date_commande, client, telephone, statut, lieu_livraison, associe_id, note, cree_le FROM commandes;
+    DROP TABLE commandes;
+    ALTER TABLE commandes_v2 RENAME TO commandes;
+    CREATE INDEX IF NOT EXISTS idx_commandes_date ON commandes(date_commande);
+    COMMIT;`);
 }
 
 /* ================== DÉMARRAGE ================== */
@@ -716,7 +907,7 @@ function setup() {
     try { saved = await idbGet('db'); } catch (e) { console.warn(e); }
     db = saved ? new SQL.Database(saved) : new SQL.Database();
     setup();
-    if (!saved) await persist();
+    await persist();
     ME = Number(LS.get('creaty-me')) || 1;
     if (!ASSOC.some(a => a.id === ME)) ME = ASSOC[0].id;
     buildStatic();
@@ -734,10 +925,10 @@ function setup() {
 
 function buildStatic() {
   $('#meSeg').innerHTML = ASSOC.map(a => `<button type="button" data-me="${a.id}" class="p${a.id}">${esc(a.nom)}</button>`).join('');
-  $('#fQui').innerHTML = '<option value="">Les deux</option>' + ASSOC.map(a => `<option value="${a.id}">${esc(a.nom)}</option>`).join('');
+  const quiOpts = '<option value="">Les deux</option>' + ASSOC.map(a => `<option value="${a.id}">${esc(a.nom)}</option>`).join('');
+  $('#fQui').innerHTML = quiOpts; $('#xQui').innerHTML = quiOpts;
   $$('[data-assoc]').forEach(el => {
-    const name = el.dataset.assoc;
-    el.innerHTML = ASSOC.map(a => `<label><input type="radio" name="${name}" value="${a.id}" data-num required><span>${esc(a.nom)}</span></label>`).join('');
+    el.innerHTML = ASSOC.map(a => `<label><input type="radio" name="${el.dataset.assoc}" value="${a.id}" data-num required><span>${esc(a.nom)}</span></label>`).join('');
   });
   updateMe();
 }
@@ -759,11 +950,72 @@ function setMe(id) {
 }
 function updateMe() { $$('#meSeg button').forEach(b => { b.classList.toggle('on', +b.dataset.me === ME); b.setAttribute('aria-pressed', +b.dataset.me === ME); }); }
 
+/* ================== LIGNES DE COMMANDE ================== */
+let lineUid = 0;
+const LF = (el, k) => $(`[data-k="${k}"]`, el);
+const isCadre = el => $('input[type=radio]:checked', el)?.value === '1';
+function addLine(l = {}, after = null) {
+  const u = ++lineUid, el = document.createElement('div');
+  el.className = 'line';
+  el.dataset.auto = l.prix_unitaire != null ? '0' : '1';
+  el.innerHTML = `
+    <div class="line-h"><span class="line-n">Poster</span><button type="button" class="ib" data-line="rm" title="Retirer ce poster" aria-label="Retirer ce poster">${IC.x}</button></div>
+    <div><label class="ll" for="la-${u}">Poster</label><input class="in" id="la-${u}" data-k="article" required placeholder="ex. Naruto Uzumaki" list="dl-articles" autocomplete="off" value="${esc(l.article || '')}"></div>
+    <div class="gridq">
+      <div><label class="ll" for="lf-${u}">Format</label><select class="in" id="lf-${u}" data-k="format"><option value="">—</option>${FORMATS.map(f => `<option>${f}</option>`).join('')}</select></div>
+      <div><label class="ll" for="lq-${u}">Qté</label><input class="in" id="lq-${u}" data-k="quantite" type="number" min="1" step="1" required inputmode="numeric" value="${l.quantite || 1}"></div>
+    </div>
+    <div class="rseg" role="radiogroup" aria-label="Finition">
+      <label><input type="radio" name="cadre-${u}" value="0"${l.avec_cadre ? '' : ' checked'}><span>Sans cadre</span></label>
+      <label><input type="radio" name="cadre-${u}" value="1"${l.avec_cadre ? ' checked' : ''}><span>Avec cadre</span></label>
+    </div>
+    <div class="gridm">
+      <div><label class="ll" for="lp-${u}">Prix unitaire</label><input class="in" id="lp-${u}" data-k="prix_unitaire" type="number" min="0" step="any" required inputmode="decimal" placeholder="0" value="${l.prix_unitaire ?? ''}"></div>
+      <div><label class="ll" for="ld-${u}">Devise</label><select class="in" id="ld-${u}" data-k="devise"><option value="FC">FC</option><option value="USD">$</option></select></div>
+    </div>
+    <div class="line-f"><button type="button" class="linkbtn" data-line="dup"></button><span class="line-sub"></span></div>`;
+  after ? after.after(el) : $('#lines').appendChild(el);
+  LF(el, 'format').value = l.format || '';
+  LF(el, 'devise').value = l.devise || 'FC';
+  autoPrice(el);
+  refreshLines();
+  return el;
+}
+function lineData(el) {
+  return {
+    article: LF(el, 'article').value.trim(), format: LF(el, 'format').value || null, avec_cadre: isCadre(el) ? 1 : 0,
+    quantite: Math.max(1, parseInt(LF(el, 'quantite').value, 10) || 1),
+    prix_unitaire: Number(LF(el, 'prix_unitaire').value) || 0, devise: LF(el, 'devise').value
+  };
+}
+function autoPrice(el) {
+  const fmt = LF(el, 'format').value, p = (isCadre(el) ? PRIX_CADRE : PRIX)[fmt], pr = LF(el, 'prix_unitaire');
+  if (p && (pr.value === '' || el.dataset.auto === '1')) { pr.value = p[0]; LF(el, 'devise').value = p[1]; el.dataset.auto = '1'; }
+}
+function refreshLines() {
+  const els = $$('#lines .line'), t = { FC: 0, USD: 0 };
+  els.forEach((el, i) => {
+    const d = lineData(el), sub = d.quantite * d.prix_unitaire;
+    t[d.devise] += sub;
+    $('.line-n', el).textContent = 'Poster ' + (i + 1);
+    $('.line-sub', el).textContent = '= ' + money(sub, d.devise);
+    $('[data-line=dup]', el).textContent = d.avec_cadre ? '+ Même poster sans cadre' : '+ Même poster avec cadre';
+    el.classList.toggle('cadre', !!d.avec_cadre);
+  });
+  $('#c-total').textContent = inline(t);
+}
+function dateHint() {
+  const v = E($('#f-commandes'), 'date_commande').value, h = $('#c-date-hint');
+  const n = v ? daysTo(v) : -1;
+  h.hidden = n <= 0;
+  if (n > 0) h.textContent = `Commande à venir — à livrer le ${fdate(v)} (${whenTxt(n)})`;
+}
+
 /* ================== FORMULAIRES ================== */
 function readForm(form) {
   const o = {};
   for (const el of form.elements) {
-    if (!el.name || el.disabled) continue;
+    if (!el.name || el.disabled || el.closest('.line')) continue;
     if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) continue;
     const v = el.value.trim();
     o[el.name] = v === '' ? null : ('num' in el.dataset ? Number(v) : v);
@@ -772,7 +1024,7 @@ function readForm(form) {
 }
 function fillForm(form, row) {
   for (const el of form.elements) {
-    if (!el.name || !(el.name in row)) continue;
+    if (!el.name || el.closest('.line') || !(el.name in row)) continue;
     const v = row[el.name];
     if (el.type === 'radio') el.checked = String(el.value) === String(v);
     else el.value = v ?? '';
@@ -782,8 +1034,9 @@ function setMode(form) {
   const id = editing[form.dataset.table], b = $('.badge-edit', form);
   form.classList.toggle('editing', !!id);
   b.hidden = !id; if (id) b.textContent = 'Modification #' + id;
-  $('[type=submit]', form).textContent = id ? 'Enregistrer' : form.dataset.add;
+  $('[type=submit]', form).textContent = id ? 'Enregistrer les modifications' : form.dataset.add;
   $('[data-cancel]', form).hidden = !id;
+  $('[data-delete]', form).hidden = !id;
 }
 function resetForm(form) {
   form.reset();
@@ -795,7 +1048,7 @@ function resetForm(form) {
   editing[form.dataset.table] = null;
   setMode(form);
   if (form.id === 'f-depenses') toggleNewCat();
-  if (form.id === 'f-commandes') liveTotal();
+  if (form.id === 'f-commandes') { $('#lines').innerHTML = ''; addLine(); dateHint(); }
 }
 function friendly(e) {
   const m = String(e.message || e);
@@ -817,14 +1070,22 @@ function onSubmit(e) {
         data.categorie_id = q1('SELECT id FROM categories_depense WHERE nom = ? COLLATE NOCASE', [nom]).id;
       } else data.categorie_id = data.categorie_id == null ? null : Number(data.categorie_id);
     }
+    const lines = t === 'commandes' ? $$('#lines .line').map(lineData) : null;
+    if (lines && !lines.length) return toast('Ajoute au moins un poster', true);
     const cols = Object.keys(data), vals = cols.map(c => data[c]);
-    if (editing[t]) {
-      db.run(`UPDATE ${t} SET ${cols.map(c => c + ' = ?').join(', ')} WHERE id = ?`, [...vals, editing[t]]);
-      toast('Fiche #' + editing[t] + ' mise à jour');
-    } else {
-      db.run(`INSERT INTO ${t} (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`, vals);
-      toast({ commandes: 'Commande ajoutée', depenses: 'Dépense ajoutée', recettes: 'Recette ajoutée' }[t]);
-    }
+    let id = editing[t];
+    db.exec('BEGIN');
+    try {
+      if (id) db.run(`UPDATE ${t} SET ${cols.map(c => c + ' = ?').join(', ')} WHERE id = ?`, [...vals, id]);
+      else { db.run(`INSERT INTO ${t} (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`, vals); id = q1('SELECT last_insert_rowid() id').id; }
+      if (lines) {
+        db.run('DELETE FROM lignes_commande WHERE commande_id = ?', [id]);
+        lines.forEach(l => db.run('INSERT INTO lignes_commande (commande_id, article, format, avec_cadre, quantite, prix_unitaire, devise) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [id, l.article, l.format, l.avec_cadre, l.quantite, l.prix_unitaire, l.devise]));
+      }
+      db.exec('COMMIT');
+    } catch (err) { db.exec('ROLLBACK'); throw err; }
+    toast(editing[t] ? `Fiche #${id} mise à jour` : { commandes: `Commande #${id} enregistrée`, depenses: 'Dépense ajoutée', recettes: 'Recette ajoutée' }[t]);
     resetForm(form);
     commit();
   } catch (err) { console.error(err); toast(friendly(err), true); }
@@ -834,35 +1095,33 @@ function startEdit(t, id) {
   const form = $('#f-' + t);
   resetForm(form);
   fillForm(form, row);
+  if (t === 'commandes') {
+    $('#lines').innerHTML = '';
+    const ls = q('SELECT * FROM lignes_commande WHERE commande_id = ? ORDER BY id', [id]);
+    (ls.length ? ls : [{}]).forEach(l => addLine(l));
+    dateHint();
+  }
   editing[t] = id; setMode(form);
   if (t === 'depenses') toggleNewCat();
-  if (t === 'commandes') liveTotal();
   form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  setTimeout(() => form.querySelector('.in').focus({ preventScroll: true }), 300);
 }
+// Suppression en un clic, avec « Annuler » pendant quelques secondes
 function delRow(t, id) {
   const r = q1(`SELECT * FROM ${t} WHERE id = ?`, [id]); if (!r) return;
-  const label = t === 'commandes' ? `la commande #${id} (${r.client})` : `${t === 'depenses' ? 'la dépense' : 'la recette'} #${id} (${r.description})`;
-  let extra = '';
-  if (t === 'commandes') { const n = q1('SELECT (SELECT COUNT(*) FROM recettes WHERE commande_id = ?) + (SELECT COUNT(*) FROM depenses WHERE commande_id = ?) n', [id, id]).n; if (n) extra = `\n${plural(n, 'fiche')} liée(s) resteront, sans lien vers la commande.`; }
-  if (!confirm(`Supprimer ${label} ?${extra}\nCette action est définitive.`)) return;
+  const label = t === 'commandes' ? `Commande #${id} supprimée` : t === 'depenses' ? `Dépense #${id} supprimée` : `Recette #${id} supprimée`;
+  const before = snapshot();
   db.run(`DELETE FROM ${t} WHERE id = ?`, [id]);
   if (editing[t] === id) resetForm($('#f-' + t));
-  commit(); toast('Fiche #' + id + ' supprimée');
+  commit();
+  toast(label, false, { label: 'Annuler', fn: () => { db.close(); db = new SQL.Database(before); setup(); commit(); toast('Suppression annulée'); } });
 }
 function encaisser(id) {
-  const c = q1('SELECT * FROM v_commandes WHERE id = ?', [id]);
-  if (!c || c.reste <= 0.004) return;
-  db.run('INSERT INTO recettes (date_recette, associe_id, description, montant, devise, mode_paiement, commande_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
-    [today(), ME, `Commande #${id} — ${c.client}`, c.reste, c.devise, 'Cash', id]);
-  if (c.statut === 'En attente' || c.statut === 'En cours') db.run("UPDATE commandes SET statut = 'Livrée' WHERE id = ?", [id]);
-  commit(); toast(`${money(c.reste, c.devise)} encaissés par ${nomAssoc(ME)}`);
-}
-
-function liveTotal() {
-  const f = $('#f-commandes');
-  const t = (Number(E(f, 'quantite').value) || 0) * (Number(E(f, 'prix_unitaire').value) || 0);
-  $('#c-total').textContent = money(t, E(f, 'devise').value);
+  const c = q1('SELECT * FROM v_commandes WHERE id = ?', [id]); if (!c) return;
+  const reste = cmdReste(c); if (!hasAmt(reste)) return;
+  ['FC', 'USD'].forEach(cur => { if (reste[cur] > 0) db.run('INSERT INTO recettes (date_recette, associe_id, description, montant, devise, mode_paiement, commande_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [today(), ME, `Commande #${id} — ${c.client}`, reste[cur], cur, 'Cash', id]); });
+  if ((c.statut === 'En attente' || c.statut === 'En cours') && daysTo(c.date_commande) <= 0) db.run("UPDATE commandes SET statut = 'Livrée' WHERE id = ?", [id]);
+  commit(); toast(`${inline(reste)} encaissés par ${nomAssoc(ME)}`);
 }
 function toggleNewCat() {
   const on = $('#d-cat').value === '__new';
@@ -873,38 +1132,41 @@ function toggleNewCat() {
 /* ================== RENDU ================== */
 function renderAll() {
   fillMonths(); fillSelects();
-  renderDash(); renderCommandes(); renderDepenses(); renderRecettes();
-  renderReglages();
+  renderDash(); renderCommandes(); renderDepenses(); renderRecettes(); renderReglages();
 }
 function setOptions(sel, html) { const v = sel.value; sel.innerHTML = html; if ([...sel.options].some(o => o.value === v)) sel.value = v; }
-function fillMonths() {
+function monthsList() {
   const ms = q(`SELECT m FROM (SELECT strftime('%Y-%m', date_commande) m FROM commandes UNION SELECT strftime('%Y-%m', date_depense) FROM depenses UNION SELECT strftime('%Y-%m', date_recette) FROM recettes) WHERE m IS NOT NULL`).map(r => r.m);
   const cur = today().slice(0, 7); if (!ms.includes(cur)) ms.push(cur);
-  ms.sort().reverse();
+  return ms.sort().reverse();
+}
+const monthOpts = ms => '<option value="">Toute la période</option>' + ms.map(m => `<option value="${m}">${fmois(m)}</option>`).join('');
+function fillMonths() {
+  const ms = monthsList();
   if (F.mois && !ms.includes(F.mois)) F.mois = '';
-  $('#fMois').innerHTML = '<option value="">Toute la période</option>' + ms.map(m => `<option value="${m}">${fmois(m)}</option>`).join('');
-  $('#fMois').value = F.mois;
-  $('#fQui').value = F.qui;
+  $('#fMois').innerHTML = monthOpts(ms);
+  $('#fMois').value = F.mois; $('#fQui').value = F.qui;
 }
 function fillSelects() {
   const cats = q("SELECT id, nom FROM categories_depense ORDER BY CASE WHEN nom = 'Autre' THEN 1 ELSE 0 END, id");
   setOptions($('#d-cat'), '<option value="">Choisir…</option>' + cats.map(c => `<option value="${c.id}">${esc(c.nom)}</option>`).join('') + '<option value="__new">＋ Nouveau type…</option>');
   setOptions($('#catFilter'), '<option value="">Tous les types</option>' + cats.map(c => `<option value="${c.id}">${esc(c.nom)}</option>`).join(''));
   CAT_FILTER = $('#catFilter').value;
-  const cmds = q('SELECT id, client, article FROM commandes ORDER BY id DESC');
-  const opts = '<option value="">Aucune</option>' + cmds.map(c => `<option value="${c.id}">#${c.id} · ${esc(c.client)} — ${esc(c.article)}</option>`).join('');
+  const cmds = q('SELECT id, client, articles FROM v_commandes ORDER BY id DESC');
+  const short = s => { s = s || ''; return s.length > 38 ? s.slice(0, 37) + '…' : s; };
+  const opts = '<option value="">Aucune</option>' + cmds.map(c => `<option value="${c.id}">#${c.id} · ${esc(c.client)} — ${esc(short(c.articles))}</option>`).join('');
   setOptions($('#d-cmd'), opts); setOptions($('#r-cmd'), opts);
   $('#dl-clients').innerHTML = q('SELECT DISTINCT client FROM commandes ORDER BY client').map(r => `<option value="${esc(r.client)}">`).join('');
-  $('#dl-articles').innerHTML = q('SELECT DISTINCT article FROM commandes ORDER BY article').map(r => `<option value="${esc(r.article)}">`).join('');
+  $('#dl-articles').innerHTML = q('SELECT DISTINCT article FROM lignes_commande ORDER BY article').map(r => `<option value="${esc(r.article)}">`).join('');
 }
 
 function renderDash() {
-  const scope = (F.mois ? fmois(F.mois) : 'Toute la période') + ' · ' + (F.qui ? nomAssoc(+F.qui) : 'Joram & Plam\'s');
-  $('#dashScope').textContent = scope;
+  $('#dashScope').textContent = (F.mois ? fmois(F.mois) : 'Toute la période') + ' · ' + (F.qui ? nomAssoc(+F.qui) : 'Joram & Plam\'s');
   const R = sumBy('recettes', 'date_recette'), D = sumBy('depenses', 'date_depense'), B = diff(R, D);
   const [wc, pc] = W('date_commande'); const nC = q1(`SELECT COUNT(*) n FROM commandes ${wc}`, pc).n;
   const [wa, pa] = W('date_commande', [["statut IN ('En attente', 'En cours')"]]); const nA = q1(`SELECT COUNT(*) n FROM commandes ${wa}`, pa).n;
-  const [wr, pr] = W('date_commande', [["statut <> 'Annulée' AND reste > 0.004"]]); const AE = totals(`SELECT devise, SUM(reste) s FROM v_commandes ${wr} GROUP BY devise`, pr);
+  const [wr, pr] = W('date_commande', [["statut <> 'Annulée'"]]);
+  const ae = q1(`SELECT SUM(MAX(reste_fc, 0)) fc, SUM(MAX(reste_usd, 0)) usd FROM v_commandes ${wr}`, pr); const AE = pos({ FC: ae.fc || 0, USD: ae.usd || 0 });
   const neg = (B.FC < 0 && B.USD <= 0) || (B.USD < 0 && B.FC <= 0);
   const hasAny = q1('SELECT (SELECT COUNT(*) FROM commandes) + (SELECT COUNT(*) FROM depenses) + (SELECT COUNT(*) FROM recettes) n').n > 0;
 
@@ -912,28 +1174,38 @@ function renderDash() {
     <div class="kpi k-rec"><p class="lbl">Recettes</p>${fmtT(R)}</div>
     <div class="kpi k-dep"><p class="lbl">Dépenses</p>${fmtT(D)}</div>
     <div class="kpi hl${neg ? ' neg' : ''}"><p class="lbl">Bénéfice</p>${fmtT(B)}</div>
-    <div class="kpi"><p class="lbl">Commandes</p><div class="v fd">${nC}</div><div class="v2">${nA} à livrer</div>${(AE.FC || AE.USD) ? `<div class="v3">À encaisser : ${inline(AE)}</div>` : ''}</div>
+    <div class="kpi"><p class="lbl">Commandes</p><div class="v fd">${nC}</div><div class="v2">${nA} à livrer</div>${hasAmt(AE) ? `<div class="v3">À encaisser : ${inline(AE)}</div>` : ''}</div>
   </div><div class="dgrid">`;
 
   if (!hasAny) {
     h += `<div class="blk full welcome">
       <div class="blk-h"><h3 class="fd">Bienvenue dans le carnet</h3></div>
-      <p class="lbl" style="letter-spacing:.06em;text-transform:none;font-weight:400">Choisis qui tu es en haut à droite, puis ajoute la première fiche. Tout s'enregistre tout seul.</p>
+      <p style="color:var(--mut);font-size:13px">Choisis qui tu es en haut à droite, puis ajoute la première fiche. Tout s'enregistre tout seul.</p>
       <div class="acts"><button class="btn btn-p btn-sm" data-act="goto" data-tab="commandes">Ajouter une commande</button><button class="btn btn-g btn-sm" data-act="goto" data-tab="depenses">Ajouter une dépense</button><button class="btn btn-g btn-sm" data-act="goto" data-tab="recettes">Ajouter une recette</button></div>
     </div>`;
   }
+
+  // À livrer (aujourd'hui et dates futures)
+  const [wu, pu] = W('date_commande', [["date_commande >= ? AND statut IN ('En attente', 'En cours')", today()]], F.qui, '');
+  const up = q(`SELECT * FROM v_commandes ${wu} ORDER BY date_commande, id LIMIT 6`, pu);
+  h += `<div class="blk full"><div class="blk-h"><h3 class="fd">À livrer</h3><button class="btn btn-g btn-sm" data-act="avenir">Voir les commandes à venir</button></div>`;
+  h += up.length ? `<ul class="up">${up.map(c => { const n = daysTo(c.date_commande), dt = toDate(c.date_commande); return `<li>
+      <span class="d${n === 0 ? ' today' : ''}"><b>${dt.getDate()}</b><small>${dt.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}</small></span>
+      <span class="t">#${c.id} · ${esc(c.client)}<small>${n === 0 ? 'À livrer aujourd’hui' : 'Commande à venir · ' + whenTxt(n)} · ${esc(c.articles || '')}</small></span>
+      <span class="a">${inline(cmdTot(c))}</span></li>`; }).join('')}</ul>`
+    : emptyState('Rien à livrer', 'Les commandes du jour et celles prévues à une date future s’afficheront ici.');
+  h += `</div>`;
 
   // Par associé
   h += `<div class="blk full"><div class="blk-h"><h3 class="fd">Par associé</h3></div><div class="pcards">`;
   for (const a of ASSOC) {
     if (F.qui && +F.qui !== a.id) continue;
     const Ra = sumBy('recettes', 'date_recette', a.id), Da = sumBy('depenses', 'date_depense', a.id), Sa = diff(Ra, Da);
-    const sneg = Sa.FC < 0 || Sa.USD < 0;
     h += `<div class="pcard pc-${a.id}">
       <h4 class="fd"><span class="who who-${a.id}">${esc(a.nom.charAt(0))}</span>${esc(a.nom)}</h4>
       <div class="row"><span>Dépenses payées</span><span>${inline(Da)}</span></div>
       <div class="row"><span>Recettes encaissées</span><span>${inline(Ra)}</span></div>
-      <div class="row solde${sneg ? ' neg' : ''}"><span>Solde</span><span>${inline(Sa)}</span></div>
+      <div class="row solde${Sa.FC < 0 || Sa.USD < 0 ? ' neg' : ''}"><span>Solde</span><span>${inline(Sa)}</span></div>
     </div>`;
   }
   h += `</div><p class="note">Solde = encaissé − dépensé. Un solde négatif veut dire que l'associé a payé de sa poche : CREATY lui doit cette somme.</p></div>`;
@@ -942,9 +1214,8 @@ function renderDash() {
   const [wd, pd] = W('d.date_depense');
   const rows = q(`SELECT k.nom cat, d.devise, SUM(d.montant) s FROM depenses d JOIN categories_depense k ON k.id = d.categorie_id ${wd.replace('associe_id', 'd.associe_id')} GROUP BY k.id, d.devise`, pd);
   const cats = {}; rows.forEach(r => { (cats[r.cat] = cats[r.cat] || { cat: r.cat, FC: 0, USD: 0 })[r.devise] += r.s; });
-  const tx = taux(); let list = Object.values(cats);
-  const anyFC = list.some(c => c.FC);
-  list.forEach(c => c.w = anyFC || tx ? c.FC + c.USD * tx : c.USD);
+  const list = Object.values(cats), anyFC = list.some(c => c.FC);
+  list.forEach(c => c.w = anyFC ? c.FC : c.USD);
   list.sort((a, b) => b.w - a.w); const max = Math.max(...list.map(c => c.w), 0);
   h += `<div class="blk"><div class="blk-h"><h3 class="fd">Dépenses par type</h3><button class="btn btn-g btn-sm" data-act="goto" data-tab="depenses">Voir tout</button></div>`;
   h += list.length ? list.map(c => `<div class="cat"><div class="cat-h"><span>${esc(c.cat)}</span><span>${inline(c)}</span></div><div class="bar"><i style="width:${max ? Math.max(2, c.w / max * 100) : 0}%"></i></div></div>`).join('')
@@ -956,8 +1227,8 @@ function renderDash() {
   const ops = q(`SELECT * FROM (
       SELECT 'R' t, id, date_recette d, description lib, montant m, devise, associe_id, cree_le FROM recettes
       UNION ALL SELECT 'D', dp.id, date_depense, k.nom || ' — ' || description, montant, devise, associe_id, dp.cree_le FROM depenses dp JOIN categories_depense k ON k.id = dp.categorie_id
-      UNION ALL SELECT 'C', id, date_commande, client || ' — ' || article, quantite * prix_unitaire, devise, associe_id, cree_le FROM commandes
-    ) ${wo} ORDER BY d DESC, cree_le DESC LIMIT 8`, po);
+      UNION ALL SELECT 'C', id, date_commande, client || ' — ' || IFNULL(articles, ''), CASE WHEN total_fc > 0 THEN total_fc ELSE total_usd END, CASE WHEN total_fc > 0 THEN 'FC' ELSE 'USD' END, associe_id, cree_le FROM v_commandes
+    ) ${wo} ORDER BY cree_le DESC LIMIT 8`, po);
   const K = { R: 'Recette', D: 'Dépense', C: 'Commande' }, SIGN = { R: '+ ', D: '− ', C: '' };
   h += `<div class="blk"><div class="blk-h"><h3 class="fd">Dernières fiches</h3></div>`;
   h += ops.length ? `<ul class="ops">${ops.map(o => `<li><span class="op-k op-${o.t}">${K[o.t]}</span><span class="t">${esc(o.lib)}<small>${fdate(o.d)} · ${esc(nomAssoc(o.associe_id))}</small></span><span class="a ${o.t}">${SIGN[o.t]}${money(o.m, o.devise)}</span></li>`).join('')}</ul>`
@@ -966,35 +1237,49 @@ function renderDash() {
   $('#dash').innerHTML = h;
 }
 
-function like(s) { return '%' + s + '%'; }
+const like = s => '%' + s + '%';
+const actBtn = (act, t, id, label, icon, cls = '') => `<button type="button" class="abtn ${cls}" data-act="${act}" data-t="${t}" data-id="${id}" aria-label="${label} #${id}">${icon}<span>${label}</span></button>`;
+function avenirBadge(c) {
+  if (!upcoming(c)) return '';
+  const n = daysTo(c.date_commande);
+  return n === 0 ? '<span class="avenir today">À livrer aujourd’hui</span>' : `<span class="avenir">Commande à venir · à livrer le ${fdate(c.date_commande)} (${whenTxt(n)})</span>`;
+}
 function renderCommandes() {
   const counts = {}; q('SELECT statut, COUNT(*) n FROM commandes GROUP BY statut').forEach(r => counts[r.statut] = r.n);
-  $('#stChips').innerHTML = ['', ...STATUTS].map(s => `<button type="button" class="chipf${ST_FILTER === s ? ' on' : ''}" data-act="stf" data-v="${s}">${s || 'Toutes'}${s && counts[s] ? ' · ' + counts[s] : ''}</button>`).join('');
+  const nAv = q1("SELECT COUNT(*) n FROM commandes WHERE date_commande > ? AND statut IN ('En attente', 'En cours')", [today()]).n;
+  $('#stChips').innerHTML = [['', 'Toutes'], ['__avenir', 'À venir' + (nAv ? ' · ' + nAv : '')], ...STATUTS.map(s => [s, s + (counts[s] ? ' · ' + counts[s] : '')])]
+    .map(([v, l]) => `<button type="button" class="chipf${v === '__avenir' ? ' fu' : ''}${ST_FILTER === v ? ' on' : ''}" data-act="stf" data-v="${v}">${l}</button>`).join('');
   const extra = [];
-  if (ST_FILTER) extra.push(['statut = ?', ST_FILTER]);
-  const s = SEARCH.commandes; if (s) extra.push(["(client LIKE ? OR article LIKE ? OR IFNULL(telephone, '') LIKE ? OR IFNULL(lieu_livraison, '') LIKE ?)", like(s), like(s), like(s), like(s)]);
+  if (ST_FILTER === '__avenir') extra.push(["date_commande > ? AND statut IN ('En attente', 'En cours')", today()]);
+  else if (ST_FILTER) extra.push(['statut = ?', ST_FILTER]);
+  const s = SEARCH.commandes; if (s) extra.push(["(client LIKE ? OR IFNULL(articles, '') LIKE ? OR IFNULL(telephone, '') LIKE ? OR IFNULL(lieu_livraison, '') LIKE ?)", like(s), like(s), like(s), like(s)]);
   const [w, p] = W('date_commande', extra);
-  const rows = q(`SELECT * FROM v_commandes ${w} ORDER BY date_commande DESC, id DESC`, p);
-  const tot = { FC: 0, USD: 0 }; rows.forEach(r => { if (r.statut !== 'Annulée') tot[r.devise] += r.total; });
+  const rows = q(`SELECT * FROM v_commandes ${w} ORDER BY ${ST_FILTER === '__avenir' ? 'date_commande ASC' : 'date_commande DESC'}, id DESC`, p);
+  const lm = linesMap(rows.map(r => r.id));
+  const tot = { FC: 0, USD: 0 }; rows.forEach(r => { if (r.statut !== 'Annulée') { tot.FC += r.total_fc; tot.USD += r.total_usd; } });
   $('#sum-commandes').textContent = rows.length ? `${plural(rows.length, 'commande')} · ${inline(tot)} (hors annulées)` : '';
   $('#l-commandes').innerHTML = rows.length ? rows.map(r => {
-    const live = r.statut !== 'Annulée' && r.total > 0, paye = live && r.reste <= 0.004;
-    return `<article class="item">
+    const T = cmdTot(r), reste = cmdReste(r), live = r.statut !== 'Annulée' && hasAmt(T), paye = live && !hasAmt(reste), badge = avenirBadge(r);
+    const ls = lm[r.id] || [];
+    return `<article class="item${badge && daysTo(r.date_commande) > 0 ? ' is-avenir' : ''}">
       <div class="i-main">
+        ${badge}
         <div class="i-meta"><span class="id">#${r.id}</span><span>${fdate(r.date_commande)}</span>${who(r.associe_id)}</div>
         <h4 class="i-title">${esc(r.client)}${r.telephone ? `<a class="tel" href="tel:${esc(r.telephone.replace(/\s/g, ''))}">${esc(r.telephone)}</a>` : ''}</h4>
-        <p class="i-sub">${esc(r.article)}${r.format ? ' · ' + esc(r.format) : ''}${r.avec_cadre ? ' + cadre' : ''} × ${r.quantite}${r.lieu_livraison ? ' · ' + esc(r.lieu_livraison) : ''}</p>
+        <div class="i-lines">${ls.map(l => `<div class="i-line"><span><b>${l.quantite} ×</b> ${esc(l.article)}${l.format ? ' · ' + esc(l.format) : ''} · ${l.avec_cadre ? '<span class="cd">avec cadre</span>' : 'sans cadre'}</span><span>${money(l.quantite * l.prix_unitaire, l.devise)}</span></div>`).join('')}</div>
+        ${r.lieu_livraison ? `<p class="i-sub">Livraison : ${esc(r.lieu_livraison)}</p>` : ''}
         ${r.note ? `<p class="i-note">${esc(r.note)}</p>` : ''}
       </div>
-      <div class="i-amt"><span class="fd">${money(r.total, r.devise)}</span>${paye ? '<span class="paid">✓ Payée</span>' : (live && r.encaisse > 0 ? `<span class="due">Reste ${money(r.reste, r.devise)}</span>` : '')}</div>
+      <div class="i-amt"><span class="fd">${inline(T)}</span>${paye ? '<span class="paid">✓ Payée</span>' : (live && hasAmt(cmdPaye(r)) ? `<span class="due">Reste ${inline(reste)}</span>` : '')}</div>
       <div class="i-act">
         <select class="st st-${ST_CLASS[r.statut]}" data-act="statut" data-id="${r.id}" aria-label="Statut de la commande #${r.id}">${STATUTS.map(x => `<option${x === r.statut ? ' selected' : ''}>${x}</option>`).join('')}</select>
-        ${live && !paye ? `<button type="button" class="btn btn-p btn-sm" data-act="encaisser" data-id="${r.id}">Encaisser ${money(r.reste, r.devise)}</button>` : ''}
-        <button type="button" class="ib" data-act="edit" data-t="commandes" data-id="${r.id}" title="Modifier" aria-label="Modifier la commande #${r.id}">${IC.edit}</button>
-        <button type="button" class="ib del" data-act="del" data-t="commandes" data-id="${r.id}" title="Supprimer" aria-label="Supprimer la commande #${r.id}">${IC.del}</button>
+        ${live && !paye ? `<button type="button" class="btn btn-p btn-sm" data-act="encaisser" data-id="${r.id}">Encaisser ${inline(reste)}</button>` : ''}
+        ${actBtn('facture', 'commandes', r.id, 'Facture', IC.doc)}
+        ${actBtn('edit', 'commandes', r.id, 'Modifier', IC.edit)}
+        ${actBtn('del', 'commandes', r.id, 'Supprimer', IC.del, 'del')}
       </div>
     </article>`;
-  }).join('') : (s || ST_FILTER || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune commande ne correspond aux filtres.') : emptyState('Aucune commande', 'Ajoute la première avec le formulaire. Le prix se remplit tout seul quand tu choisis le format et la finition.'));
+  }).join('') : (s || ST_FILTER || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune commande ne correspond aux filtres.') : emptyState('Aucune commande', 'Ajoute la première avec le formulaire. Le prix se remplit tout seul selon le format et le cadre.'));
 }
 function renderDepenses() {
   const extra = [];
@@ -1011,10 +1296,7 @@ function renderDepenses() {
         <p class="i-sub"><span class="tagc">${esc(r.categorie)}</span>${r.commande_id ? 'Commande #' + r.commande_id : ''}</p>
       </div>
       <div class="i-amt dep"><span class="fd">− ${money(r.montant, r.devise)}</span></div>
-      <div class="i-act">
-        <button type="button" class="ib" data-act="edit" data-t="depenses" data-id="${r.id}" title="Modifier" aria-label="Modifier la dépense #${r.id}">${IC.edit}</button>
-        <button type="button" class="ib del" data-act="del" data-t="depenses" data-id="${r.id}" title="Supprimer" aria-label="Supprimer la dépense #${r.id}">${IC.del}</button>
-      </div>
+      <div class="i-act">${actBtn('edit', 'depenses', r.id, 'Modifier', IC.edit)}${actBtn('del', 'depenses', r.id, 'Supprimer', IC.del, 'del')}</div>
     </article>`).join('') : (s || CAT_FILTER || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune dépense ne correspond aux filtres.') : emptyState('Aucune dépense', 'Note ici chaque dépense : transport, achat de cadres, achat de posters…'));
 }
 function renderRecettes() {
@@ -1031,10 +1313,7 @@ function renderRecettes() {
         <p class="i-sub"><span class="tagc">${esc(r.mode_paiement)}</span>${r.commande_id ? 'Commande #' + r.commande_id + (r.client ? ' · ' + esc(r.client) : '') : ''}</p>
       </div>
       <div class="i-amt rec"><span class="fd">+ ${money(r.montant, r.devise)}</span></div>
-      <div class="i-act">
-        <button type="button" class="ib" data-act="edit" data-t="recettes" data-id="${r.id}" title="Modifier" aria-label="Modifier la recette #${r.id}">${IC.edit}</button>
-        <button type="button" class="ib del" data-act="del" data-t="recettes" data-id="${r.id}" title="Supprimer" aria-label="Supprimer la recette #${r.id}">${IC.del}</button>
-      </div>
+      <div class="i-act">${actBtn('edit', 'recettes', r.id, 'Modifier', IC.edit)}${actBtn('del', 'recettes', r.id, 'Supprimer', IC.del, 'del')}</div>
     </article>`).join('') : (s || F.mois || F.qui ? emptyState('Aucun résultat', 'Aucune recette ne correspond aux filtres.') : emptyState('Aucune recette', 'Encaisse une commande ou ajoute une recette avec le formulaire.'));
 }
 function renderReglages() {
@@ -1042,29 +1321,478 @@ function renderReglages() {
   const last = param('derniere_sauvegarde');
   const days = last ? Math.floor((Date.now() - Date.parse(last)) / 864e5) : null;
   $('#bkInfo').textContent = `Carnet : ${plural(n.c, 'commande')} · ${plural(n.d, 'dépense')} · ${plural(n.r, 'recette')}. ` +
-    (last ? `Dernier export : ${new Date(last).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} (${days === 0 ? 'aujourd’hui' : 'il y a ' + plural(days, 'jour')}).` : 'Aucun export pour l’instant.');
+    (last ? `Dernier envoi : ${new Date(last).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} (${days === 0 ? 'aujourd’hui' : 'il y a ' + plural(days, 'jour')}).` : 'Pas encore envoyé ni enregistré.');
   $('#bkDot').hidden = !((n.c + n.d + n.r) > 0 && (days === null || days >= 7));
-  if (document.activeElement !== $('#taux')) $('#taux').value = param('taux_usd_fc') || '';
 }
 
-/* ================== SAUVEGARDE ================== */
+/* ================== RAPPORTS & FACTURES : contenu ================== */
+// Cellule monétaire : { n, cur } ; plusieurs devises : { t: { FC, USD } }
+const Mc = (n, cur) => ({ n: Math.round(n * 100) / 100, cur });
+const Mt = t => ({ t });
+const cellText = c => c == null ? '' : typeof c !== 'object' ? String(c) : 'n' in c ? money(c.n, c.cur) : inline(c.t);
+function buildReport(o) {
+  const per = o.mois ? fmois(o.mois) : 'Toute la période', quiTxt = o.qui ? nomAssoc(+o.qui) : 'Joram & Plam\'s';
+  const m = {
+    tag: 'RAPPORT', kicker: 'Carnet de bord · ' + per, title: o.mois ? 'Rapport ' + fmois(o.mois) : 'Rapport complet',
+    meta: [['Période', per], ['Associé', quiTxt], ['Généré le', fdate(today())], ['Par', nomAssoc(ME)]],
+    kpis: [], sections: [], filename: 'creaty-rapport-' + slug(o.mois ? fmois(o.mois) : 'complet')
+  };
+  if (o.parts.includes('resume')) {
+    const R = sumBy('recettes', 'date_recette', o.qui, o.mois), D = sumBy('depenses', 'date_depense', o.qui, o.mois);
+    m.kpis = [{ label: 'Recettes', t: R, tone: 'dark' }, { label: 'Dépenses', t: D, tone: 'plain' }, { label: 'Bénéfice', t: diff(R, D), tone: 'lime' }];
+    m.sections.push({
+      title: 'Par associé', columns: [{ h: 'Associé', w: 3 }, { h: 'Dépenses payées', w: 3, r: 1 }, { h: 'Recettes encaissées', w: 3, r: 1 }, { h: 'Solde', w: 3, r: 1 }],
+      rows: ASSOC.filter(a => !o.qui || +o.qui === a.id).map(a => { const Ra = sumBy('recettes', 'date_recette', a.id, o.mois), Da = sumBy('depenses', 'date_depense', a.id, o.mois); return [a.nom, Mt(Da), Mt(Ra), Mt(diff(Ra, Da))]; }),
+      note: 'Solde = encaissé − dépensé. Un solde négatif veut dire que CREATY doit cette somme à l’associé.',
+      txt: r => `${r[0]} : dépensé ${cellText(r[1])} · encaissé ${cellText(r[2])} · solde ${cellText(r[3])}`
+    });
+    const [wd, pd] = W('d.date_depense', [], o.qui, o.mois);
+    const cats = {};
+    q(`SELECT k.nom cat, d.devise, SUM(d.montant) s, COUNT(*) n FROM depenses d JOIN categories_depense k ON k.id = d.categorie_id ${wd.replace('associe_id', 'd.associe_id')} GROUP BY k.id, d.devise`, pd)
+      .forEach(r => { const c = cats[r.cat] = cats[r.cat] || { cat: r.cat, n: 0, t: { FC: 0, USD: 0 } }; c.n += r.n; c.t[r.devise] += r.s; });
+    m.sections.push({
+      title: 'Dépenses par type', tone: 'dep', columns: [{ h: 'Type', w: 5 }, { h: 'Nombre', w: 2, r: 1 }, { h: 'Total', w: 4, r: 1, money: 1 }],
+      rows: Object.values(cats).sort((a, b) => b.t.FC - a.t.FC || b.t.USD - a.t.USD).map(c => [c.cat, c.n, Mt(c.t)]),
+      txt: r => `${r[0]} (${r[1]}) : ${cellText(r[2])}`
+    });
+  }
+  if (o.parts.includes('commandes')) {
+    const [w, p] = W('date_commande', [], o.qui, o.mois);
+    const cs = q(`SELECT * FROM v_commandes ${w} ORDER BY date_commande, id`, p), lm = linesMap(cs.map(c => c.id));
+    const T = { FC: 0, USD: 0 }, Rr = { FC: 0, USD: 0 };
+    cs.forEach(c => { if (c.statut !== 'Annulée') { const r = cmdReste(c); T.FC += c.total_fc; T.USD += c.total_usd; Rr.FC += r.FC; Rr.USD += r.USD; } });
+    const st = c => upcoming(c) && daysTo(c.date_commande) > 0 ? 'À venir' : c.statut;
+    m.sections.push({
+      title: 'Commandes', columns: [{ h: 'N°', w: 1.3 }, { h: 'Date', w: 2.2 }, { h: 'Client', w: 3 }, { h: 'Posters', w: 6 }, { h: 'Statut', w: 2 }, { h: 'Total', w: 2.6, r: 1, money: 1 }, { h: 'Reste', w: 2.6, r: 1, money: 1 }],
+      rows: cs.map(c => ['#' + c.id, fdateS(c.date_commande), c.client, (lm[c.id] || []).map(lineTxt).join('\n'), st(c), Mt(cmdTot(c)), c.statut === 'Annulée' ? '—' : Mt(cmdReste(c))]),
+      foot: ['', '', plural(cs.length, 'commande'), '', '', Mt(T), Mt(Rr)], txtTotal: inline(T) + ' · reste à encaisser ' + inline(Rr),
+      txt: r => `${r[0]} · ${r[1]} · ${r[2]} — ${r[3].replace(/\n/g, ' + ')} — ${cellText(r[5])} (${r[4]})`
+    });
+  }
+  if (o.parts.includes('depenses')) {
+    const [w, p] = W('date_depense', [], o.qui, o.mois);
+    const ds = q(`SELECT * FROM v_depenses ${w} ORDER BY date_depense, id`, p), T = { FC: 0, USD: 0 };
+    ds.forEach(d => T[d.devise] += d.montant);
+    m.sections.push({
+      title: 'Dépenses', tone: 'dep', columns: [{ h: 'Date', w: 2.2 }, { h: 'Payée par', w: 2.2 }, { h: 'Type', w: 3 }, { h: 'Description', w: 6 }, { h: 'Montant', w: 3, r: 1, money: 1 }],
+      rows: ds.map(d => [fdateS(d.date_depense), d.paye_par, d.categorie, d.description, Mc(d.montant, d.devise)]),
+      foot: ['', '', plural(ds.length, 'dépense'), '', Mt(T)], txtTotal: inline(T),
+      txt: r => `${r[0]} · ${r[1]} · ${r[2]} — ${r[3]} : ${cellText(r[4])}`
+    });
+  }
+  if (o.parts.includes('recettes')) {
+    const [w, p] = W('date_recette', [], o.qui, o.mois);
+    const rs = q(`SELECT * FROM v_recettes ${w} ORDER BY date_recette, id`, p), T = { FC: 0, USD: 0 };
+    rs.forEach(r => T[r.devise] += r.montant);
+    m.sections.push({
+      title: 'Recettes', columns: [{ h: 'Date', w: 2.2 }, { h: 'Encaissée par', w: 2.4 }, { h: 'Description', w: 6 }, { h: 'Paiement', w: 2.6 }, { h: 'Montant', w: 3, r: 1, money: 1 }],
+      rows: rs.map(r => [fdateS(r.date_recette), r.encaisse_par, r.description, r.mode_paiement, Mc(r.montant, r.devise)]),
+      foot: ['', plural(rs.length, 'recette'), '', '', Mt(T)], txtTotal: inline(T),
+      txt: r => `${r[0]} · ${r[1]} — ${r[2]} (${r[3]}) : ${cellText(r[4])}`
+    });
+  }
+  return m;
+}
+function buildFacture(id) {
+  const c = q1('SELECT * FROM v_commandes WHERE id = ?', [id]);
+  const ls = q('SELECT * FROM lignes_commande WHERE commande_id = ? ORDER BY id', [id]);
+  const num = 'CR-' + String(id).padStart(4, '0'), n = daysTo(c.date_commande);
+  const statut = upcoming(c) && n > 0 ? `À venir · à livrer le ${fdate(c.date_commande)}` : c.statut;
+  return {
+    tag: 'FACTURE', kicker: 'Facture · ' + fdate(c.date_commande), title: 'Facture ' + num, kpisAfter: true,
+    meta: [['Client', c.client], ['Téléphone', c.telephone || '—'], ['Livraison', c.lieu_livraison || 'Kinshasa'], ['Date', fdate(c.date_commande)], ['Statut', statut], ['Suivi par', c.gere_par || '—']],
+    sections: [{
+      title: 'Détail de la commande', columns: [{ h: 'Poster', w: 5 }, { h: 'Format', w: 2.2 }, { h: 'Finition', w: 2.4 }, { h: 'Qté', w: 1.2, r: 1 }, { h: 'Prix unit.', w: 2.6, r: 1, money: 1 }, { h: 'Total', w: 2.8, r: 1, money: 1 }],
+      rows: ls.map(l => [l.article, l.format || '—', l.avec_cadre ? 'Avec cadre' : 'Sans cadre', l.quantite, Mc(l.prix_unitaire, l.devise), Mc(l.quantite * l.prix_unitaire, l.devise)]),
+      foot: ['', '', '', ls.reduce((s, l) => s + l.quantite, 0), 'Total', Mt(cmdTot(c))],
+      txt: r => `${r[3]} × ${r[0]} (${r[1]}, ${r[2].toLowerCase()}) = ${cellText(r[5])}`
+    }],
+    kpis: [{ label: 'Total', t: cmdTot(c), tone: 'dark' }, { label: 'Déjà payé', t: cmdPaye(c), tone: 'plain' }, { label: 'Reste à payer', t: cmdReste(c), tone: 'lime' }],
+    note: c.note || '',
+    closing: { title: 'Merci pour votre confiance !', text: 'Paiement à la livraison, partout à Kinshasa. Pour toute question : ' + CONTACT + '.' },
+    filename: 'creaty-facture-' + num
+  };
+}
+
+/* ================== RAPPORTS & FACTURES : fichiers ================== */
+const LIBS = {
+  pdf: ['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'],
+  xlsx: ['https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js'],
+  docx: ['https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js']
+};
+const libLoads = {};
+const loadScript = src => new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('chargement impossible, vérifie ta connexion')); document.head.appendChild(s); });
+function loadLib(k) {
+  if (!LIBS[k]) return Promise.resolve();
+  return libLoads[k] = libLoads[k] || LIBS[k].reduce((p, src) => p.then(() => loadScript(src)), Promise.resolve()).catch(e => { delete libLoads[k]; throw e; });
+}
+const MIME = { pdf: 'application/pdf', xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', txt: 'text/plain;charset=utf-8' };
+const TAGLINE = '•  LIVRAISON PARTOUT À KINSHASA     •  PAIEMENT À LA LIVRAISON     •  COMMANDES VIA WHATSAPP     •  OPTION AVEC CADRE';
+const pdfSafe = s => String(s).replace(/[  ]/g, ' ').replace(/[−–]/g, '-').replace(/[’‘]/g, "'").replace(/[^\x00-\xFF€‚„…•—™œŒŠšŽžŸ]/g, '?');
+
+async function toPDF(m) {
+  await loadLib('pdf');
+  const doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+  const W = 210, H = 297, X = 14, CW = W - 2 * X;
+  const C = { ink: [17, 17, 17], bg: [13, 13, 13], lime: [155, 230, 25], fu: [192, 38, 211], cream: [245, 242, 234], grey: [115, 115, 115], soft: [175, 175, 175], line: [222, 218, 208] };
+  const T = pdfSafe;
+  // En-tête noir façon site
+  doc.setFillColor(...C.bg); doc.rect(0, 0, W, 30, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(22); doc.setTextColor(...C.cream);
+  doc.text('JP CREATY', X, 18.5);
+  const bw = doc.getTextWidth('JP CREATY');
+  doc.setFontSize(7); const tagW = doc.getTextWidth(m.tag) + m.tag.length * 0.45 + 5;
+  doc.setFillColor(...C.lime); doc.rect(X + bw + 4, 12.6, tagW, 6.6, 'F');
+  doc.setTextColor(...C.ink); doc.text(m.tag, X + bw + 6.5, 17.1, { charSpace: 0.45 });
+  doc.setFontSize(7); doc.setTextColor(...C.soft);
+  doc.text('POSTERS SUR MESURE · KINSHASA', W - X, 14.5, { align: 'right' });
+  doc.setFont('helvetica', 'normal'); doc.text(T(CONTACT), W - X, 19.5, { align: 'right' });
+  doc.setFillColor(...C.lime); doc.rect(0, 30, W, 6.5, 'F');
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(6); doc.setTextColor(...C.ink);
+  doc.text(T(TAGLINE), X, 34.3, { charSpace: 0.3 });
+  let y = 50;
+  doc.setFillColor(...C.lime); doc.circle(X + 1, y - 1.1, 1, 'F');
+  doc.setFontSize(7); doc.setTextColor(...C.grey); doc.text(T(m.kicker.toUpperCase()), X + 4, y, { charSpace: 0.7 });
+  y += 11;
+  doc.setFontSize(25); doc.setTextColor(...C.ink);
+  const tl = doc.splitTextToSize(T(m.title.toUpperCase()), CW); doc.text(tl, X, y); y += (tl.length - 1) * 9.5 + 4;
+  doc.setFillColor(...C.lime); doc.rect(X, y, 24, 2.2, 'F'); y += 11;
+  const mc = 3, mw = CW / mc;
+  m.meta.forEach((p, i) => {
+    const cx = X + (i % mc) * mw, cy = y + Math.floor(i / mc) * 13;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...C.grey); doc.text(T(p[0].toUpperCase()), cx, cy, { charSpace: 0.5 });
+    doc.setFontSize(10); doc.setTextColor(...C.ink); doc.text(doc.splitTextToSize(T(p[1]), mw - 4)[0], cx, cy + 5.5);
+  });
+  y += Math.ceil(m.meta.length / mc) * 13 + 4;
+  const page = need => { if (y + need > H - 22) { doc.addPage(); y = 20; } };
+  const drawKpis = () => {
+    if (!m.kpis.length) return;
+    page(34);
+    const n = m.kpis.length, gap = 5, kw = (CW - gap * (n - 1) - 2) / n, kh = 25;
+    m.kpis.forEach((k, i) => {
+      const kx = X + i * (kw + gap), dark = k.tone === 'dark';
+      if (k.tone === 'lime') { doc.setFillColor(...C.fu); doc.rect(kx + 1.8, y + 1.8, kw, kh, 'F'); doc.setFillColor(...C.lime); }
+      else doc.setFillColor(...(dark ? C.ink : C.cream));
+      doc.rect(kx, y, kw, kh, 'F');
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...(dark ? C.soft : C.grey));
+      doc.text(T(k.label.toUpperCase()), kx + 4, y + 7, { charSpace: 0.5 });
+      const ps = parts(k.t).map(T);
+      doc.setFontSize(ps[0].length > 13 ? 12.5 : 15.5); doc.setTextColor(...(dark ? C.lime : C.ink)); doc.text(ps[0], kx + 4, y + 16);
+      if (ps[1]) { doc.setFontSize(8.5); doc.setTextColor(...(dark ? C.cream : C.ink)); doc.text((k.t.USD < 0 ? '' : '+ ') + ps[1], kx + 4, y + 21.5); }
+    });
+    y += kh + 12;
+  };
+  if (!m.kpisAfter) drawKpis();
+  m.sections.forEach((s, si) => {
+    page(40);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(...C.fu); doc.text(String(si + 1).padStart(2, '0') + ' /', X, y);
+    doc.setFontSize(12.5); doc.setTextColor(...C.ink); doc.text(T(s.title.toUpperCase()), X + 9, y);
+    doc.setFontSize(7); doc.setTextColor(...C.grey); doc.text(T(plural(s.rows.length, 'ligne')), W - X, y, { align: 'right' });
+    y += 4;
+    doc.autoTable({
+      startY: y, margin: { left: X, right: X, top: 18, bottom: 22 },
+      head: [s.columns.map(c => T(c.h.toUpperCase()))],
+      body: s.rows.length ? s.rows.map(r => r.map(c => T(cellText(c)))) : [[{ content: 'Aucune donnée pour cette période', colSpan: s.columns.length, styles: { textColor: C.grey, fontStyle: 'italic' } }]],
+      foot: s.foot && s.rows.length ? [s.foot.map(c => T(cellText(c)))] : undefined,
+      showFoot: 'lastPage', theme: 'plain',
+      styles: { font: 'helvetica', fontSize: 8, cellPadding: { top: 2.4, bottom: 2.4, left: 2.2, right: 2.2 }, textColor: C.ink, lineColor: C.line, lineWidth: { bottom: 0.2 }, valign: 'middle', overflow: 'linebreak' },
+      headStyles: { fillColor: C.ink, textColor: C.lime, fontStyle: 'bold', fontSize: 6.8, lineWidth: 0 },
+      footStyles: { fillColor: C.lime, textColor: C.ink, fontStyle: 'bold', lineWidth: 0 },
+      alternateRowStyles: { fillColor: C.cream },
+      columnStyles: Object.fromEntries(s.columns.map((c, i) => [i, c.r ? { halign: 'right', fontStyle: c.money ? 'bold' : 'normal' } : {}])),
+      didParseCell: d => { const col = s.columns[d.column.index]; if (col?.r) d.cell.styles.halign = 'right'; if (d.section === 'body' && s.tone === 'dep' && col?.money) d.cell.styles.textColor = C.fu; }
+    });
+    y = doc.lastAutoTable.finalY + 5;
+    if (s.note) { doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(...C.grey); doc.text(doc.splitTextToSize(T(s.note), CW), X, y + 1); y += 6; }
+    y += 9;
+  });
+  if (m.kpisAfter) drawKpis();
+  if (m.note) { page(14); doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5); doc.setTextColor(...C.grey); doc.text('NOTE', X, y, { charSpace: 0.5 }); doc.setFont('helvetica', 'normal'); doc.setFontSize(9); doc.setTextColor(...C.ink); const nl = doc.splitTextToSize(T(m.note), CW); doc.text(nl, X, y + 5); y += 8 + nl.length * 4; }
+  if (m.closing) {
+    page(22);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(15); doc.setTextColor(...C.ink); doc.text(T(m.closing.title.toUpperCase()), X, y + 4);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5); doc.setTextColor(...C.grey); doc.text(doc.splitTextToSize(T(m.closing.text), CW), X, y + 10);
+  }
+  const np = doc.getNumberOfPages();
+  for (let i = 1; i <= np; i++) {
+    doc.setPage(i);
+    doc.setDrawColor(...C.ink); doc.setLineWidth(0.4); doc.line(X, H - 14, W - X, H - 14);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7); doc.setTextColor(...C.ink); doc.text('JP CREATY', X, H - 9);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(...C.grey); doc.text(T('Kinshasa, RDC · ' + CONTACT), X + 17, H - 9);
+    doc.text(`Page ${i} / ${np}`, W - X, H - 9, { align: 'right' });
+  }
+  return doc.output('blob');
+}
+
+async function toXLSX(m) {
+  await loadLib('xlsx');
+  const wb = new window.ExcelJS.Workbook(); wb.creator = 'JP CREATY'; wb.created = new Date();
+  const fill = c => ({ type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF' + c } });
+  const font = (o = {}) => ({ name: o.name || 'Arial', size: o.size || 10, bold: !!o.bold, color: { argb: 'FF' + (o.color || '111111') } });
+  const thin = { bottom: { style: 'thin', color: { argb: 'FFDEDAD0' } } };
+  const numFmt = (n, cur) => (Number.isInteger(n) ? '#,##0' : '#,##0.00') + (cur === 'USD' ? ' "$"' : ' "FC"');
+  const put = (cell, v) => {
+    if (v && typeof v === 'object') {
+      const t = 'n' in v ? { [v.cur]: v.n } : v.t, cs = ['FC', 'USD'].filter(k => t[k]);
+      if (cs.length <= 1) { const cur = cs[0] || 'FC', n = t[cur] || 0; cell.value = n; cell.numFmt = numFmt(n, cur); return; }
+      cell.value = cellText(v); return;
+    }
+    cell.value = v;
+  };
+  const banner = (ws, ncols) => {
+    ws.mergeCells(1, 1, 1, ncols);
+    const a = ws.getCell(1, 1); a.value = 'JP CREATY   ·   ' + m.tag; a.font = font({ name: 'Arial Black', size: 18, color: 'F5F2EA' }); a.fill = fill('0D0D0D'); a.alignment = { vertical: 'middle', indent: 1 };
+    ws.getRow(1).height = 40;
+    ws.mergeCells(2, 1, 2, ncols);
+    const b = ws.getCell(2, 1); b.value = TAGLINE.replace(/\s+/g, ' '); b.font = font({ size: 8, bold: true }); b.fill = fill('9BE619'); b.alignment = { vertical: 'middle', indent: 1 };
+    ws.getRow(2).height = 18;
+    const t = ws.getCell(4, 1); t.value = m.title.toUpperCase(); t.font = font({ name: 'Arial Black', size: 16 });
+    const k = ws.getCell(5, 1); k.value = m.kicker.toUpperCase() + '   ·   ' + CONTACT; k.font = font({ size: 8, bold: true, color: '737373' });
+    return 7;
+  };
+  const table = (ws, r, s) => {
+    const c0 = ws.getCell(r, 1); c0.value = s.title.toUpperCase(); c0.font = font({ name: 'Arial Black', size: 12 }); r++;
+    s.columns.forEach((c, i) => { const cell = ws.getCell(r, i + 1); cell.value = c.h.toUpperCase(); cell.font = font({ size: 9, bold: true, color: '9BE619' }); cell.fill = fill('111111'); cell.alignment = { horizontal: c.r ? 'right' : 'left', vertical: 'middle' }; });
+    ws.getRow(r).height = 22; const headRow = r; r++;
+    if (!s.rows.length) { const e = ws.getCell(r, 1); e.value = 'Aucune donnée pour cette période'; e.font = font({ color: '737373' }); r++; }
+    s.rows.forEach((row, ri) => {
+      row.forEach((v, i) => {
+        const cell = ws.getCell(r, i + 1), col = s.columns[i];
+        put(cell, v);
+        cell.font = font({ bold: !!col.money, color: s.tone === 'dep' && col.money ? 'C026D3' : '111111' });
+        cell.alignment = { ...(cell.alignment || {}), horizontal: col.r ? 'right' : 'left', vertical: 'top', wrapText: true };
+        cell.border = thin; if (ri % 2) cell.fill = fill('F5F2EA');
+      });
+      const lines = Math.max(...row.map(v => typeof v === 'string' ? v.split('\n').length : 1));
+      if (lines > 1) ws.getRow(r).height = 15 * lines;
+      r++;
+    });
+    if (s.foot && s.rows.length) {
+      s.foot.forEach((v, i) => { const cell = ws.getCell(r, i + 1); put(cell, v); cell.font = font({ bold: true }); cell.fill = fill('9BE619'); cell.alignment = { horizontal: s.columns[i].r ? 'right' : 'left' }; });
+      r++;
+    }
+    if (s.note) { const nc = ws.getCell(r, 1); nc.value = s.note; nc.font = font({ size: 8, color: '737373' }); r++; }
+    return { r: r + 2, headRow };
+  };
+  const kpiRows = (ws, r) => {
+    m.kpis.forEach(k => {
+      const l = ws.getCell(r, 1), v = ws.getCell(r, 2);
+      l.value = k.label.toUpperCase(); put(v, Mt(k.t));
+      const bg = k.tone === 'dark' ? '111111' : k.tone === 'lime' ? '9BE619' : 'F5F2EA';
+      l.fill = fill(bg); v.fill = fill(bg);
+      l.font = font({ size: 9, bold: true, color: k.tone === 'dark' ? 'AFAFAF' : '555555' });
+      v.font = font({ name: 'Arial Black', size: 14, color: k.tone === 'dark' ? '9BE619' : '111111' });
+      ws.getRow(r).height = 26; l.alignment = v.alignment = { vertical: 'middle', indent: 1 };
+      r++;
+    });
+    return r + 1;
+  };
+  // Feuille principale : infos + résumé (+ détail de la facture)
+  const main = m.sections.filter(s => !['Commandes', 'Dépenses', 'Recettes'].includes(s.title));
+  const ws = wb.addWorksheet(m.tag === 'FACTURE' ? 'Facture' : 'Résumé', { views: [{ showGridLines: false }] });
+  const ncol = Math.max(4, ...main.map(s => s.columns.length));
+  let r = banner(ws, ncol);
+  m.meta.forEach(p => { const a = ws.getCell(r, 1), b = ws.getCell(r, 2); a.value = p[0].toUpperCase(); a.font = font({ size: 8, bold: true, color: '737373' }); b.value = p[1]; b.font = font({ bold: true }); r++; });
+  r++;
+  if (!m.kpisAfter) r = kpiRows(ws, r);
+  main.forEach(s => { r = table(ws, r, s).r; });
+  if (m.kpisAfter) r = kpiRows(ws, r);
+  if (m.note) { ws.getCell(r, 1).value = 'NOTE : ' + m.note; ws.getCell(r, 1).font = font({ size: 9 }); r += 2; }
+  if (m.closing) { const c = ws.getCell(r, 1); c.value = m.closing.title.toUpperCase(); c.font = font({ name: 'Arial Black', size: 12 }); ws.getCell(r + 1, 1).value = m.closing.text; ws.getCell(r + 1, 1).font = font({ size: 9, color: '737373' }); }
+  for (let i = 1; i <= ncol; i++) ws.getColumn(i).width = i === 1 ? 26 : 20;
+  // Une feuille par registre
+  m.sections.filter(s => !main.includes(s)).forEach(s => {
+    const sh = wb.addWorksheet(s.title, { views: [{ showGridLines: false }] });
+    const start = banner(sh, s.columns.length);
+    const { headRow } = table(sh, start, s);
+    s.columns.forEach((c, i) => sh.getColumn(i + 1).width = Math.max(10, Math.round(c.w * 5.2)));
+    sh.views = [{ state: 'frozen', ySplit: headRow, showGridLines: false }];
+  });
+  const buf = await wb.xlsx.writeBuffer();
+  return new Blob([buf], { type: MIME.xlsx });
+}
+
+async function toDOCX(m) {
+  await loadLib('docx');
+  const d = window.docx;
+  const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, ShadingType, AlignmentType, BorderStyle, Footer, PageNumber, VerticalAlign, TableLayoutType } = d;
+  const PW = 11906 - 2 * 850;
+  const none = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
+  const NB = { top: none, bottom: none, left: none, right: none, insideHorizontal: none, insideVertical: none };
+  const shade = c => ({ type: ShadingType.CLEAR, color: 'auto', fill: c });
+  const run = (text, o = {}) => new TextRun({ text, font: o.font || 'Arial', size: o.size || 19, bold: !!o.bold, color: o.color || '111111', characterSpacing: o.cs, italics: !!o.it });
+  const runs = (text, o) => String(text).split('\n').map((t, i) => new TextRun({ text: t, break: i ? 1 : 0, font: o.font || 'Arial', size: o.size || 18, bold: !!o.bold, color: o.color || '111111' }));
+  const para = (children, o = {}) => new Paragraph({ children: [].concat(children), alignment: o.align, spacing: { before: o.before || 0, after: o.after ?? 80 }, border: o.border, indent: o.indent });
+  const cell = (children, o = {}) => new TableCell({ children: [].concat(children), width: { size: Math.round(o.w), type: WidthType.DXA }, shading: o.fill ? shade(o.fill) : undefined, margins: { top: o.pt ?? 90, bottom: o.pb ?? 90, left: 140, right: 140 }, verticalAlign: VerticalAlign.CENTER, columnSpan: o.span, borders: o.borders });
+  const ch = [];
+  // En-tête noir + bande verte
+  ch.push(new Table({
+    width: { size: PW, type: WidthType.DXA }, columnWidths: [PW * 0.58, PW * 0.42].map(Math.round), layout: TableLayoutType.FIXED, borders: NB,
+    rows: [
+      new TableRow({ children: [
+        cell(para([run('JP CREATY', { font: 'Arial Black', size: 44, color: 'F5F2EA' }), run('    ' + m.tag, { size: 15, bold: true, color: '9BE619', cs: 40 })], { after: 0 }), { w: PW * 0.58, fill: '0D0D0D', pt: 260, pb: 260 }),
+        cell([para(run('POSTERS SUR MESURE · KINSHASA', { size: 14, bold: true, color: 'AFAFAF' }), { align: AlignmentType.RIGHT, after: 40 }), para(run(CONTACT, { size: 14, color: 'AFAFAF' }), { align: AlignmentType.RIGHT, after: 0 })], { w: PW * 0.42, fill: '0D0D0D' })
+      ] }),
+      new TableRow({ children: [cell(para(run(TAGLINE.replace(/\s+/g, ' '), { size: 12, bold: true, cs: 16 }), { after: 0 }), { w: PW, fill: '9BE619', span: 2, pt: 70, pb: 70 })] })
+    ]
+  }));
+  ch.push(para([run('●  ', { color: '9BE619', size: 16 }), run(m.kicker.toUpperCase(), { size: 14, bold: true, color: '737373', cs: 30 })], { before: 420, after: 60 }));
+  ch.push(para(run(m.title.toUpperCase(), { font: 'Arial Black', size: 48 }), { after: 40 }));
+  ch.push(new Paragraph({ children: [], border: { bottom: { style: BorderStyle.SINGLE, size: 24, color: '9BE619', space: 1 } }, indent: { right: PW - 1400 }, spacing: { after: 280 } }));
+  // Infos
+  const mw = PW / 3, mrows = [];
+  for (let i = 0; i < m.meta.length; i += 3) mrows.push(new TableRow({ children: [0, 1, 2].map(j => { const p = m.meta[i + j]; return cell(p ? [para(run(p[0].toUpperCase(), { size: 13, bold: true, color: '737373', cs: 20 }), { after: 20 }), para(run(p[1], { size: 20, bold: true }), { after: 0 })] : [para([])], { w: mw, pt: 40, pb: 120 }); }) }));
+  ch.push(new Table({ width: { size: PW, type: WidthType.DXA }, columnWidths: [mw, mw, mw].map(Math.round), layout: TableLayoutType.FIXED, borders: NB, rows: mrows }));
+  const kpis = () => {
+    if (!m.kpis.length) return;
+    const kw = PW / m.kpis.length, white = { style: BorderStyle.SINGLE, size: 36, color: 'FFFFFF' };
+    ch.push(para([], { after: 160 }));
+    ch.push(new Table({
+      width: { size: PW, type: WidthType.DXA }, columnWidths: m.kpis.map(() => Math.round(kw)), layout: TableLayoutType.FIXED,
+      borders: { ...NB, insideVertical: white },
+      rows: [new TableRow({ children: m.kpis.map(k => { const dark = k.tone === 'dark', bg = dark ? '111111' : k.tone === 'lime' ? '9BE619' : 'F5F2EA', ps = parts(k.t);
+        return cell([para(run(k.label.toUpperCase(), { size: 13, bold: true, color: dark ? 'AFAFAF' : '555555', cs: 20 }), { after: 60 }), para(run(ps[0], { font: 'Arial Black', size: 30, color: dark ? '9BE619' : '111111' }), { after: ps[1] ? 20 : 0 }), ...(ps[1] ? [para(run((k.t.USD < 0 ? '' : '+ ') + ps[1], { size: 18, bold: true, color: dark ? 'F5F2EA' : '111111' }), { after: 0 })] : [])], { w: kw, fill: bg, pt: 200, pb: 200 }); }) })]
+    }));
+  };
+  if (!m.kpisAfter) kpis();
+  m.sections.forEach((s, si) => {
+    ch.push(para([run(String(si + 1).padStart(2, '0') + ' /  ', { bold: true, size: 16, color: 'C026D3' }), run(s.title.toUpperCase(), { font: 'Arial Black', size: 26 })], { before: 420, after: 140 }));
+    const tw = s.columns.reduce((a, c) => a + c.w, 0), cw = s.columns.map(c => Math.round(PW * c.w / tw));
+    const line = { style: BorderStyle.SINGLE, size: 4, color: 'DEDAD0' };
+    const head = new TableRow({ tableHeader: true, children: s.columns.map((c, i) => cell(para(run(c.h.toUpperCase(), { size: 14, bold: true, color: '9BE619', cs: 10 }), { align: c.r ? AlignmentType.RIGHT : AlignmentType.LEFT, after: 0 }), { w: cw[i], fill: '111111' })) });
+    const body = s.rows.length ? s.rows.map((r, ri) => new TableRow({ children: r.map((v, i) => { const c = s.columns[i];
+      return cell(para(runs(cellText(v), { bold: !!c.money, color: s.tone === 'dep' && c.money ? 'C026D3' : '111111' }), { align: c.r ? AlignmentType.RIGHT : AlignmentType.LEFT, after: 0 }), { w: cw[i], fill: ri % 2 ? 'F5F2EA' : undefined }); }) }))
+      : [new TableRow({ children: [cell(para(run('Aucune donnée pour cette période', { it: true, color: '737373', size: 18 }), { after: 0 }), { w: PW, span: s.columns.length })] })];
+    const foot = s.foot && s.rows.length ? [new TableRow({ children: s.foot.map((v, i) => cell(para(run(cellText(v), { bold: true, size: 18 }), { align: s.columns[i].r ? AlignmentType.RIGHT : AlignmentType.LEFT, after: 0 }), { w: cw[i], fill: '9BE619' })) })] : [];
+    ch.push(new Table({ width: { size: PW, type: WidthType.DXA }, columnWidths: cw, layout: TableLayoutType.FIXED, borders: { ...NB, bottom: line, insideHorizontal: line }, rows: [head, ...body, ...foot] }));
+    if (s.note) ch.push(para(run(s.note, { size: 14, color: '737373' }), { before: 80 }));
+  });
+  if (m.kpisAfter) kpis();
+  if (m.note) ch.push(para([run('NOTE  ', { size: 14, bold: true, color: '737373' }), run(m.note, { size: 18 })], { before: 240 }));
+  if (m.closing) { ch.push(para(run(m.closing.title.toUpperCase(), { font: 'Arial Black', size: 28 }), { before: 420, after: 60 })); ch.push(para(run(m.closing.text, { size: 17, color: '737373' }))); }
+  const footer = new Footer({ children: [new Paragraph({
+    border: { top: { style: BorderStyle.SINGLE, size: 6, color: '111111', space: 6 } },
+    children: [run('JP CREATY   ', { bold: true, size: 14 }), run('Kinshasa, RDC · ' + CONTACT + '   ·   Page ', { size: 14, color: '737373' }),
+      new TextRun({ children: [PageNumber.CURRENT], size: 14, color: '737373', font: 'Arial' }), run(' / ', { size: 14, color: '737373' }),
+      new TextRun({ children: [PageNumber.TOTAL_PAGES], size: 14, color: '737373', font: 'Arial' })]
+  })] });
+  const doc = new Document({
+    creator: 'JP CREATY', title: m.title, styles: { default: { document: { run: { font: 'Arial', size: 19 } } } },
+    sections: [{ properties: { page: { margin: { top: 850, bottom: 850, left: 850, right: 850 } } }, footers: { default: footer }, children: ch }]
+  });
+  return Packer.toBlob(doc);
+}
+
+function toTXT(m) {
+  const L = [`*JP CREATY — ${m.tag}*`, `*${m.title.toUpperCase()}*`, ''];
+  m.meta.forEach(p => L.push(`${p[0]} : ${p[1]}`));
+  L.push('');
+  const k = () => { if (!m.kpis.length) return; m.kpis.forEach(x => L.push(`• *${x.label}* : ${inline(x.t)}`)); L.push(''); };
+  if (!m.kpisAfter) { L.push('*RÉSUMÉ*'); k(); }
+  m.sections.forEach(s => {
+    L.push(`*${s.title.toUpperCase()}*${s.rows.length ? ` (${s.rows.length})` : ''}`);
+    if (!s.rows.length) L.push('_Aucune donnée pour cette période_');
+    s.rows.forEach(r => L.push('• ' + (s.txt ? s.txt(r) : r.map(cellText).filter(Boolean).join(' · '))));
+    if (s.txtTotal && s.rows.length) L.push('→ *Total* : ' + s.txtTotal);
+    if (s.note) L.push(`_${s.note}_`);
+    L.push('');
+  });
+  if (m.kpisAfter) k();
+  if (m.note) { L.push('Note : ' + m.note); L.push(''); }
+  if (m.closing) { L.push(`*${m.closing.title}*`); L.push(m.closing.text); L.push(''); }
+  L.push('— JP CREATY · Posters sur mesure · Kinshasa');
+  return L.join('\n');
+}
+
+/* ================== FENÊTRE D'EXPORT & PARTAGE ================== */
+const XS = { kind: 'rapport', id: null, opener: null, ready: null };
+const xFmt = () => $('input[name=xfmt]:checked').value;
+function openExport(kind, id) {
+  XS.kind = kind; XS.id = id; XS.ready = null; XS.opener = document.activeElement;
+  const fact = kind === 'facture';
+  $('#xKicker').textContent = fact ? 'Facture client' : 'Exporter le carnet';
+  $('#xTitle').textContent = fact ? 'Facture CR-' + String(id).padStart(4, '0') : 'Rapport';
+  $('#xScope').hidden = fact;
+  $('#xFact').hidden = !fact;
+  if (fact) { const c = q1('SELECT * FROM v_commandes WHERE id = ?', [id]); $('#xFact').innerHTML = `<span>${esc(c.client)} · ${plural(c.nb_pieces, 'poster')}</span><b>${inline(cmdTot(c))}</b>`; }
+  else { $('#xMois').innerHTML = monthOpts(monthsList()); $('#xMois').value = F.mois; $('#xQui').value = F.qui; }
+  $('#xFallback').hidden = true;
+  resetShareBtn();
+  $('#xBd').hidden = false; $('#xSheet').hidden = false;
+  document.body.style.overflow = 'hidden';
+  loadLib(xFmt()).catch(() => {});
+  setTimeout(() => $('#xSheet input[name=xfmt]:checked').focus(), 50);
+}
+function closeExport() {
+  $('#xBd').hidden = true; $('#xSheet').hidden = true; document.body.style.overflow = '';
+  if (XS.opener && document.contains(XS.opener)) XS.opener.focus();
+}
+function resetShareBtn() { const b = $('[data-x=share]'); b.textContent = 'Partager'; b.disabled = false; $('[data-x=save]').disabled = false; XS.ready = null; }
+async function makeFile() {
+  const fmt = xFmt();
+  const m = XS.kind === 'facture' ? buildFacture(XS.id) : buildReport({ mois: $('#xMois').value, qui: $('#xQui').value, parts: $$('input[name=xpart]:checked').map(i => i.value) });
+  if (XS.kind !== 'facture' && !m.sections.length) throw new Error('choisis au moins un contenu');
+  const name = m.filename + '.' + fmt, title = 'JP CREATY — ' + m.title;
+  if (fmt === 'txt') { const text = toTXT(m); return { text, title, name, blob: new Blob(['﻿' + text], { type: MIME.txt }) }; }
+  const blob = fmt === 'pdf' ? await toPDF(m) : fmt === 'xlsx' ? await toXLSX(m) : await toDOCX(m);
+  return { blob, title, name };
+}
 function download(blob, name) {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
-function exportDB() {
-  setParam('derniere_sauvegarde', new Date().toISOString());
-  const data = db.export(); db.run('PRAGMA foreign_keys = ON');
-  download(new Blob([data], { type: 'application/x-sqlite3' }), `creaty-carnet-${today()}.db`);
-  persist(); renderReglages(); toast('Base exportée');
+// Partage : feuille de partage du téléphone (WhatsApp, Messenger, Email…) ; sinon téléchargement + raccourcis
+async function shareFile(f) {
+  const file = new File([f.blob], f.name, { type: f.blob.type });
+  if (f.text && navigator.share) {
+    try { await navigator.share({ title: f.title, text: f.text }); return 'ok'; }
+    catch (e) { if (e.name === 'AbortError') return 'abort'; if (e.name === 'NotAllowedError') return 'retry'; }
+  } else if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: f.title }); return 'ok'; }
+    catch (e) { if (e.name === 'AbortError') return 'abort'; if (e.name === 'NotAllowedError') return 'retry'; }
+  }
+  download(f.blob, f.name);
+  return 'fallback';
 }
-function exportCSV(view, label) {
-  const res = db.exec(`SELECT * FROM ${view}`);
-  const cols = res[0] ? res[0].columns : q('SELECT name FROM pragma_table_info(?)', [view]).map(c => c.name);
-  const rows = res[0] ? res[0].values : [];
-  const cell = v => { if (v == null) return ''; const s = String(v); return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
-  const csv = '﻿' + [cols, ...rows].map(r => r.map(cell).join(';')).join('\r\n');
-  download(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `creaty-${label}-${today()}.csv`);
+function showFallback(f, box) {
+  const msg = f.text || `${f.title} (fichier ${f.name} joint)`;
+  box.innerHTML = `<span><b>Fichier enregistré dans tes téléchargements.</b> Ce navigateur ne peut pas l'envoyer directement : ouvre l'appli de ton choix et joins le fichier <b>${esc(f.name)}</b>.</span>
+    <div class="acts">
+      <a href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="https://www.messenger.com/" target="_blank" rel="noopener">Messenger</a>
+      <a href="mailto:?subject=${encodeURIComponent(f.title)}&body=${encodeURIComponent(f.text || 'Bonjour,\n\nVoici le fichier ' + f.name + ' (en pièce jointe).\n\nJP CREATY')}">Email</a>
+    </div>`;
+  box.hidden = false;
+}
+async function doExport(mode) {
+  const sb = $('[data-x=share]'), vb = $('[data-x=save]');
+  if (mode === 'share' && XS.ready) { // second clic après un partage bloqué par le navigateur
+    const r = await shareFile(XS.ready); if (r === 'fallback') showFallback(XS.ready, $('#xFallback')); if (r !== 'retry') resetShareBtn(); return;
+  }
+  const btn = mode === 'share' ? sb : vb, lbl = btn.textContent;
+  sb.disabled = vb.disabled = true; btn.textContent = 'Préparation…';
+  let keep = false;
+  try {
+    const f = await makeFile();
+    if (mode === 'save') { download(f.blob, f.name); toast('Fichier enregistré'); closeExport(); return; }
+    const r = await shareFile(f);
+    if (r === 'ok') { toast('Partagé'); closeExport(); }
+    else if (r === 'retry') { XS.ready = f; keep = true; sb.textContent = 'Partager maintenant'; }
+    else if (r === 'fallback') showFallback(f, $('#xFallback'));
+  } catch (e) { console.error(e); toast('Export impossible : ' + e.message, true); }
+  finally { sb.disabled = vb.disabled = false; if (!keep) btn.textContent = lbl; }
+}
+
+/* ================== TRANSFERT DU CARNET (.db) ================== */
+function dbFile() {
+  setParam('derniere_sauvegarde', new Date().toISOString());
+  const data = snapshot(); persist(); renderReglages();
+  return { blob: new Blob([data], { type: 'application/vnd.sqlite3' }), name: `creaty-carnet-${today()}.db`, title: 'Carnet CREATY' };
+}
+async function shareDB() {
+  const f = dbFile(), r = await shareFile(f);
+  if (r === 'ok') toast('Carnet partagé');
+  else if (r === 'fallback' || r === 'retry') { if (r === 'retry') download(f.blob, f.name); toast('Carnet enregistré — joins-le dans WhatsApp ou par email', false); }
 }
 async function importDB(file) {
   let nd;
@@ -1072,7 +1800,7 @@ async function importDB(file) {
     nd = new SQL.Database(new Uint8Array(await file.arrayBuffer()));
     const r = nd.exec("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name IN ('commandes', 'depenses', 'recettes')");
     if (!r[0] || r[0].values[0][0] !== 3) throw new Error('Ce fichier n’est pas un carnet CREATY');
-  } catch (e) { if (nd) nd.close(); return toast(/not a database/i.test(e.message) ? 'Ce fichier n’est pas une base SQLite' : e.message, true); }
+  } catch (e) { if (nd) nd.close(); return toast(/not a database/i.test(e.message) ? 'Ce fichier n’est pas un carnet CREATY' : e.message, true); }
   if (!confirm(`Remplacer toutes les données de cet appareil par celles de « ${file.name} » ?`)) { nd.close(); return; }
   db.close(); db = nd; setup();
   Object.keys(editing).forEach(t => resetForm($('#f-' + t)));
@@ -1093,27 +1821,31 @@ function bind() {
   $('#meSeg').addEventListener('click', e => { const b = e.target.closest('[data-me]'); if (b) setMe(+b.dataset.me); });
   $('#fMois').addEventListener('change', e => { F.mois = e.target.value; renderAll(); });
   $('#fQui').addEventListener('change', e => { F.qui = e.target.value; renderAll(); });
-  $$('form[data-table]').forEach(f => { f.addEventListener('submit', onSubmit); $('[data-cancel]', f).addEventListener('click', () => resetForm(f)); resetForm(f); });
+  $$('form[data-table]').forEach(f => {
+    f.addEventListener('submit', onSubmit);
+    $('[data-cancel]', f).addEventListener('click', () => resetForm(f));
+    $('[data-delete]', f).addEventListener('click', () => { const id = editing[f.dataset.table]; if (id) delRow(f.dataset.table, id); });
+    resetForm(f);
+  });
 
-  // Commande : prix du site selon le format, total en direct, téléphone d'un client connu
-  const fc = $('#f-commandes');
-  const autoPrix = () => {
-    const fmt = E(fc, 'format').value, cadre = $('input[name="avec_cadre"]:checked', fc)?.value === '1';
-    const p = (cadre ? PRIX_CADRE : PRIX)[fmt], pr = E(fc, 'prix_unitaire');
-    if (p && (pr.value === '' || pr.dataset.auto === '1')) { pr.value = p[0]; E(fc, 'devise').value = p[1]; pr.dataset.auto = '1'; }
-    liveTotal();
-  };
-  E(fc, 'format').addEventListener('change', autoPrix);
-  $$('input[name="avec_cadre"]', fc).forEach(r => r.addEventListener('change', autoPrix));
-  E(fc, 'prix_unitaire').addEventListener('input', e => e.target.dataset.auto = '0');
-  fc.addEventListener('input', liveTotal); fc.addEventListener('change', liveTotal);
+  // Commande : lignes de posters, prix automatique selon format + cadre
+  const fc = $('#f-commandes'), lines = $('#lines');
+  $('#addLine').addEventListener('click', () => { const el = addLine(); LF(el, 'article').focus(); });
+  lines.addEventListener('input', e => { const el = e.target.closest('.line'); if (!el) return; if (e.target.dataset.k === 'prix_unitaire') el.dataset.auto = '0'; refreshLines(); });
+  lines.addEventListener('change', e => { const el = e.target.closest('.line'); if (!el) return; if (e.target.dataset.k === 'format' || e.target.type === 'radio') autoPrice(el); refreshLines(); });
+  lines.addEventListener('click', e => {
+    const b = e.target.closest('[data-line]'); if (!b) return;
+    const el = b.closest('.line');
+    if (b.dataset.line === 'rm') { if ($$('.line', lines).length > 1) el.remove(); else { el.remove(); addLine(); } refreshLines(); }
+    else { const d = lineData(el); const n = addLine({ article: d.article, format: d.format, avec_cadre: d.avec_cadre ? 0 : 1, quantite: 1 }, el); LF(n, 'quantite').focus(); }
+  });
+  E(fc, 'date_commande').addEventListener('input', dateHint);
   E(fc, 'client').addEventListener('change', () => {
     const tel = E(fc, 'telephone'); if (tel.value) return;
     const r = q1("SELECT telephone FROM commandes WHERE client = ? AND IFNULL(telephone, '') <> '' ORDER BY id DESC LIMIT 1", [E(fc, 'client').value.trim()]);
     if (r) tel.value = r.telephone;
   });
 
-  // Dépense : nouveau type
   $('#d-cat').addEventListener('change', toggleNewCat);
 
   // Recette : pré-remplir depuis la commande choisie
@@ -1121,21 +1853,20 @@ function bind() {
   E(fr, 'commande_id').addEventListener('change', e => {
     const id = +e.target.value; if (!id) return;
     const c = q1('SELECT * FROM v_commandes WHERE id = ?', [id]); if (!c) return;
-    const m = E(fr, 'montant'), d = E(fr, 'description');
-    if (m.value === '' || m.dataset.auto === '1') { m.value = c.reste > 0.004 ? c.reste : c.total; E(fr, 'devise').value = c.devise; m.dataset.auto = '1'; }
+    const m = E(fr, 'montant'), d = E(fr, 'description'), r = cmdReste(c);
+    const cur = r.FC > 0 ? 'FC' : r.USD > 0 ? 'USD' : (c.total_fc > 0 ? 'FC' : 'USD');
+    if (m.value === '' || m.dataset.auto === '1') { m.value = r[cur] || (cur === 'FC' ? c.total_fc : c.total_usd); E(fr, 'devise').value = cur; m.dataset.auto = '1'; }
     if (d.value === '' || d.dataset.auto === '1') { d.value = `Commande #${c.id} — ${c.client}`; d.dataset.auto = '1'; }
   });
   E(fr, 'montant').addEventListener('input', e => e.target.dataset.auto = '0');
   E(fr, 'description').addEventListener('input', e => e.target.dataset.auto = '0');
 
-  // Recherche et filtres de liste
   $$('[data-search]').forEach(inp => inp.addEventListener('input', () => {
     const t = inp.dataset.search; SEARCH[t] = inp.value.trim();
     ({ commandes: renderCommandes, depenses: renderDepenses, recettes: renderRecettes })[t]();
   }));
   $('#catFilter').addEventListener('change', e => { CAT_FILTER = e.target.value; renderDepenses(); });
 
-  // Actions dans les listes
   document.addEventListener('click', e => {
     const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'SELECT') return;
     const id = +b.dataset.id;
@@ -1143,9 +1874,11 @@ function bind() {
       case 'edit': startEdit(b.dataset.t, id); break;
       case 'del': delRow(b.dataset.t, id); break;
       case 'encaisser': encaisser(id); break;
+      case 'facture': openExport('facture', id); break;
+      case 'export': openExport('rapport'); break;
       case 'goto': showTab(b.dataset.tab); break;
+      case 'avenir': ST_FILTER = '__avenir'; renderCommandes(); showTab('commandes'); break;
       case 'stf': ST_FILTER = b.dataset.v; renderCommandes(); break;
-      case 'csv': exportCSV(b.dataset.name, b.dataset.label); break;
     }
   });
   document.addEventListener('change', e => {
@@ -1154,11 +1887,26 @@ function bind() {
     commit(); toast(`Commande #${s.dataset.id} : ${s.value}`);
   });
 
-  // Sauvegarde
-  $('#bkExport').addEventListener('click', exportDB);
+  // Fenêtre d'export
+  $('#xBd').addEventListener('click', closeExport);
+  $('#xSheet').addEventListener('click', e => { const b = e.target.closest('[data-x]'); if (!b) return; if (b.dataset.x === 'close') closeExport(); else doExport(b.dataset.x); });
+  $('#xSheet').addEventListener('change', e => { if (e.target.name === 'xfmt') loadLib(e.target.value).catch(() => {}); $('#xFallback').hidden = true; resetShareBtn(); });
+  document.addEventListener('keydown', e => {
+    if ($('#xSheet').hidden) return;
+    if (e.key === 'Escape') return closeExport();
+    if (e.key === 'Tab') {
+      const fs = $$('#xSheet button:not([disabled]), #xSheet input, #xSheet select, #xSheet a').filter(x => x.offsetParent !== null && !(x.type === 'radio' && !x.checked));
+      const first = fs[0], last = fs[fs.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  // Transfert du carnet
+  $('#bkShare').addEventListener('click', shareDB);
+  $('#bkExport').addEventListener('click', () => { const f = dbFile(); download(f.blob, f.name); toast('Carnet enregistré'); });
   $('#bkImportBtn').addEventListener('click', () => $('#bkImport').click());
   $('#bkImport').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; if (f) importDB(f); });
-  $('#taux').addEventListener('change', e => { const v = Number(e.target.value); setParam('taux_usd_fc', v > 0 ? String(v) : null); commit(); toast(v > 0 ? `Taux : 1 $ = ${nf.format(v)} FC` : 'Taux retiré'); });
   $('#resetTxt').addEventListener('input', e => $('#resetBtn').disabled = e.target.value.trim() !== 'EFFACER');
   $('#resetBtn').addEventListener('click', resetDB);
 }
