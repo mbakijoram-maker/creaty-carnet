@@ -87,7 +87,6 @@ textarea.in{resize:vertical;min-height:64px}
 .f .hint.fu{color:var(--fu-ink);font-weight:700}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .gridm{display:grid;grid-template-columns:1fr 92px;gap:12px}
-.gridq{display:grid;grid-template-columns:1fr 84px;gap:10px}
 .rseg{display:grid;grid-template-columns:repeat(2,1fr);border:1px solid var(--line2)}
 .rseg label{position:relative;display:block;cursor:pointer}
 .rseg input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;width:100%;height:100%}
@@ -100,19 +99,21 @@ textarea.in{resize:vertical;min-height:64px}
 /* lignes de commande */
 .lines{display:flex;flex-direction:column;gap:10px}
 .line{border:1px solid var(--line2);background:var(--bg3);padding:12px;display:flex;flex-direction:column;gap:10px}
-.line.cadre{border-left:3px solid var(--lime)}
+.fins{display:grid;gap:8px}
+.fin{border:1px solid var(--line);background:var(--bg2);padding:10px;display:grid;gap:8px;transition:opacity .15s}
+.fin.cadre{border-left:3px solid var(--lime)}
+.fin.off{opacity:.5}
+.fin-top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.fin-l{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--ink)}
+.fin.cadre .fin-l{color:var(--lime)}
+.fin-s{font-family:'Arial Black',Arial,sans-serif;font-size:13px;letter-spacing:-.03em;white-space:nowrap}
+.fin-g{display:grid;grid-template-columns:70px 1fr 78px;gap:8px}
+.line .fin .in{background:var(--bg3)}
 .line-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .line-n{font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--lime)}
 .line .in{background:var(--bg2);min-height:40px;padding:9px 10px}
 .line select.in{padding-right:30px}
-.line .rseg span{min-height:38px;font-size:10px}
 .ll{display:block;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mut2);margin-bottom:5px}
-.line-f{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:8px}
-.linkbtn{background:none;border:0;color:var(--lime);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:6px 0;text-decoration:underline;text-underline-offset:3px;min-height:32px}
-.linkbtn:hover{color:var(--ink)}
-.line-sub{font-family:'Arial Black',Arial,sans-serif;font-size:14px;letter-spacing:-.03em;white-space:nowrap}
-.addline{border:1px dashed var(--line2);background:none;color:var(--lime);min-height:44px;font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
-.addline:hover{border-color:var(--lime)}
 
 /* boutons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:12px 18px;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;border:1px solid transparent;background:none;transition:transform .15s,background .15s,color .15s,border-color .15s;text-decoration:none;white-space:nowrap}
@@ -419,9 +420,9 @@ textarea.in{resize:vertical;min-height:64px}
           <div class="f"><label for="c-lieu">Livraison <span class="opt">facultatif</span></label><input class="in" id="c-lieu" name="lieu_livraison" placeholder="ex. Gombe"></div>
         </div>
         <div class="f">
-          <span class="flabel">Posters commandés</span>
+          <span class="flabel">Poster commandé</span>
           <div class="lines" id="lines"></div>
-          <button type="button" class="addline" id="addLine">+ Ajouter un autre poster</button>
+          <span class="hint">Mets la quantité sans cadre et/ou la quantité avec cadre : chacune a son prix.</span>
         </div>
         <div class="f"><label for="c-note">Note <span class="opt">facultatif</span></label><textarea class="in" id="c-note" name="note" rows="2"></textarea></div>
         <div class="live"><span class="lbl">Total de la commande</span><b id="c-total">0 FC</b></div>
@@ -953,54 +954,64 @@ function updateMe() { $$('#meSeg button').forEach(b => { b.classList.toggle('on'
 /* ================== LIGNES DE COMMANDE ================== */
 let lineUid = 0;
 const LF = (el, k) => $(`[data-k="${k}"]`, el);
-const isCadre = el => $('input[type=radio]:checked', el)?.value === '1';
-function addLine(l = {}, after = null) {
-  const u = ++lineUid, el = document.createElement('div');
+// Un poster = deux finitions, chacune avec sa propre quantité et son prix : sans cadre / avec cadre
+const FIN = [{ k: 0, label: 'Sans cadre', prix: PRIX }, { k: 1, label: 'Avec cadre', prix: PRIX_CADRE }];
+const FF = (el, f, k) => $(`.fin[data-fin="${f}"] [data-k="${k}"]`, el);
+function addLine(l = {}) {
+  const u = ++lineUid, el = document.createElement('div'), fins = l.fins || { 0: { q: 1 }, 1: { q: 0 } };
   el.className = 'line';
-  el.dataset.auto = l.prix_unitaire != null ? '0' : '1';
   el.innerHTML = `
     <div class="line-h"><span class="line-n">Poster</span><button type="button" class="ib" data-line="rm" title="Retirer ce poster" aria-label="Retirer ce poster">${IC.x}</button></div>
     <div><label class="ll" for="la-${u}">Poster</label><input class="in" id="la-${u}" data-k="article" required placeholder="ex. Naruto Uzumaki" list="dl-articles" autocomplete="off" value="${esc(l.article || '')}"></div>
-    <div class="gridq">
-      <div><label class="ll" for="lf-${u}">Format</label><select class="in" id="lf-${u}" data-k="format"><option value="">—</option>${FORMATS.map(f => `<option>${f}</option>`).join('')}</select></div>
-      <div><label class="ll" for="lq-${u}">Qté</label><input class="in" id="lq-${u}" data-k="quantite" type="number" min="1" step="1" required inputmode="numeric" value="${l.quantite || 1}"></div>
-    </div>
-    <div class="rseg" role="radiogroup" aria-label="Finition">
-      <label><input type="radio" name="cadre-${u}" value="0"${l.avec_cadre ? '' : ' checked'}><span>Sans cadre</span></label>
-      <label><input type="radio" name="cadre-${u}" value="1"${l.avec_cadre ? ' checked' : ''}><span>Avec cadre</span></label>
-    </div>
-    <div class="gridm">
-      <div><label class="ll" for="lp-${u}">Prix unitaire</label><input class="in" id="lp-${u}" data-k="prix_unitaire" type="number" min="0" step="any" required inputmode="decimal" placeholder="0" value="${l.prix_unitaire ?? ''}"></div>
-      <div><label class="ll" for="ld-${u}">Devise</label><select class="in" id="ld-${u}" data-k="devise"><option value="FC">FC</option><option value="USD">$</option></select></div>
-    </div>
-    <div class="line-f"><button type="button" class="linkbtn" data-line="dup"></button><span class="line-sub"></span></div>`;
-  after ? after.after(el) : $('#lines').appendChild(el);
+    <div><label class="ll" for="lf-${u}">Format</label><select class="in" id="lf-${u}" data-k="format"><option value="">—</option>${FORMATS.map(f => `<option>${f}</option>`).join('')}</select></div>
+    <div class="fins">${FIN.map(F => { const v = fins[F.k] || { q: 0 }; return `
+      <div class="fin${F.k ? ' cadre' : ''}" data-fin="${F.k}">
+        <div class="fin-top"><span class="fin-l">${F.label}</span><span class="fin-s"></span></div>
+        <div class="fin-g">
+          <div><label class="ll" for="lq${F.k}-${u}">Qté</label><input class="in" id="lq${F.k}-${u}" data-k="q" type="number" min="0" step="1" inputmode="numeric" value="${v.q || 0}"></div>
+          <div><label class="ll" for="lp${F.k}-${u}">Prix unitaire</label><input class="in" id="lp${F.k}-${u}" data-k="p" type="number" min="0" step="any" inputmode="decimal" placeholder="0" value="${v.p ?? ''}" data-auto="${v.p != null ? '0' : '1'}"></div>
+          <div><label class="ll" for="ld${F.k}-${u}">Devise</label><select class="in" id="ld${F.k}-${u}" data-k="d"><option value="FC">FC</option><option value="USD">$</option></select></div>
+        </div>
+      </div>`; }).join('')}
+    </div>`;
+  $('#lines').appendChild(el);
   LF(el, 'format').value = l.format || '';
-  LF(el, 'devise').value = l.devise || 'FC';
+  FIN.forEach(F => { FF(el, F.k, 'd').value = (fins[F.k] && fins[F.k].d) || 'FC'; });
   autoPrice(el);
   refreshLines();
   return el;
 }
-function lineData(el) {
-  return {
-    article: LF(el, 'article').value.trim(), format: LF(el, 'format').value || null, avec_cadre: isCadre(el) ? 1 : 0,
-    quantite: Math.max(1, parseInt(LF(el, 'quantite').value, 10) || 1),
-    prix_unitaire: Number(LF(el, 'prix_unitaire').value) || 0, devise: LF(el, 'devise').value
-  };
+// Lignes à enregistrer : une par finition dont la quantité est supérieure à 0
+function lineRows(el) {
+  const article = LF(el, 'article').value.trim(), format = LF(el, 'format').value || null;
+  return FIN.map(F => ({
+    article, format, avec_cadre: F.k,
+    quantite: Math.max(0, parseInt(FF(el, F.k, 'q').value, 10) || 0),
+    prix_unitaire: Number(FF(el, F.k, 'p').value) || 0, devise: FF(el, F.k, 'd').value,
+    sansPrix: FF(el, F.k, 'p').value === ''
+  })).filter(r => r.quantite > 0);
 }
 function autoPrice(el) {
-  const fmt = LF(el, 'format').value, p = (isCadre(el) ? PRIX_CADRE : PRIX)[fmt], pr = LF(el, 'prix_unitaire');
-  if (p && (pr.value === '' || el.dataset.auto === '1')) { pr.value = p[0]; LF(el, 'devise').value = p[1]; el.dataset.auto = '1'; }
+  const fmt = LF(el, 'format').value;
+  FIN.forEach(F => {
+    const p = F.prix[fmt], pr = FF(el, F.k, 'p');
+    if (p && (pr.value === '' || pr.dataset.auto === '1')) { pr.value = p[0]; FF(el, F.k, 'd').value = p[1]; pr.dataset.auto = '1'; }
+  });
 }
 function refreshLines() {
-  const els = $$('#lines .line'), t = { FC: 0, USD: 0 };
+  const t = { FC: 0, USD: 0 };
+  const els = $$('#lines .line');
   els.forEach((el, i) => {
-    const d = lineData(el), sub = d.quantite * d.prix_unitaire;
-    t[d.devise] += sub;
+    // Une commande = un poster ; plusieurs fiches seulement pour d'anciennes commandes
+    $('.line-h', el).hidden = els.length < 2;
     $('.line-n', el).textContent = 'Poster ' + (i + 1);
-    $('.line-sub', el).textContent = '= ' + money(sub, d.devise);
-    $('[data-line=dup]', el).textContent = d.avec_cadre ? '+ Même poster sans cadre' : '+ Même poster avec cadre';
-    el.classList.toggle('cadre', !!d.avec_cadre);
+    FIN.forEach(F => {
+      const qn = Math.max(0, parseInt(FF(el, F.k, 'q').value, 10) || 0), d = FF(el, F.k, 'd').value, sub = qn * (Number(FF(el, F.k, 'p').value) || 0);
+      t[d] += sub;
+      const box = $(`.fin[data-fin="${F.k}"]`, el);
+      box.classList.toggle('off', !qn);
+      $('.fin-s', box).textContent = qn ? `= ${money(sub, d)}` : 'aucun';
+    });
   });
   $('#c-total').textContent = inline(t);
 }
@@ -1070,8 +1081,18 @@ function onSubmit(e) {
         data.categorie_id = q1('SELECT id FROM categories_depense WHERE nom = ? COLLATE NOCASE', [nom]).id;
       } else data.categorie_id = data.categorie_id == null ? null : Number(data.categorie_id);
     }
-    const lines = t === 'commandes' ? $$('#lines .line').map(lineData) : null;
-    if (lines && !lines.length) return toast('Ajoute au moins un poster', true);
+    let lines = null;
+    if (t === 'commandes') {
+      lines = [];
+      for (const el of $$('#lines .line')) {
+        const rows = lineRows(el), nom = LF(el, 'article').value.trim() || 'ce poster';
+        if (!rows.length) { FF(el, 0, 'q').focus(); return toast(`Indique une quantité sans cadre ou avec cadre pour ${nom}`, true); }
+        const vide = rows.find(r => r.sansPrix);
+        if (vide) { FF(el, vide.avec_cadre, 'p').focus(); return toast(`Indique le prix ${vide.avec_cadre ? 'avec' : 'sans'} cadre pour ${nom}`, true); }
+        lines.push(...rows);
+      }
+      if (!lines.length) return toast('Ajoute au moins un poster', true);
+    }
     const cols = Object.keys(data), vals = cols.map(c => data[c]);
     let id = editing[t];
     db.exec('BEGIN');
@@ -1097,8 +1118,15 @@ function startEdit(t, id) {
   fillForm(form, row);
   if (t === 'commandes') {
     $('#lines').innerHTML = '';
-    const ls = q('SELECT * FROM lignes_commande WHERE commande_id = ? ORDER BY id', [id]);
-    (ls.length ? ls : [{}]).forEach(l => addLine(l));
+    // Regroupe les lignes « sans cadre » et « avec cadre » d'un même poster dans une seule fiche
+    const blocks = [];
+    q('SELECT * FROM lignes_commande WHERE commande_id = ? ORDER BY id', [id]).forEach(l => {
+      let b = blocks.find(b => b.article === l.article && b.format === l.format && !b.fins[l.avec_cadre]);
+      if (!b) blocks.push(b = { article: l.article, format: l.format, fins: {} });
+      b.fins[l.avec_cadre] = { q: l.quantite, p: l.prix_unitaire, d: l.devise };
+    });
+    blocks.forEach(b => { FIN.forEach(F => { b.fins[F.k] = b.fins[F.k] || { q: 0 }; }); addLine(b); });
+    if (!blocks.length) addLine();
     dateHint();
   }
   editing[t] = id; setMode(form);
@@ -1830,14 +1858,11 @@ function bind() {
 
   // Commande : lignes de posters, prix automatique selon format + cadre
   const fc = $('#f-commandes'), lines = $('#lines');
-  $('#addLine').addEventListener('click', () => { const el = addLine(); LF(el, 'article').focus(); });
-  lines.addEventListener('input', e => { const el = e.target.closest('.line'); if (!el) return; if (e.target.dataset.k === 'prix_unitaire') el.dataset.auto = '0'; refreshLines(); });
-  lines.addEventListener('change', e => { const el = e.target.closest('.line'); if (!el) return; if (e.target.dataset.k === 'format' || e.target.type === 'radio') autoPrice(el); refreshLines(); });
+  lines.addEventListener('input', e => { if (!e.target.closest('.line')) return; if (e.target.dataset.k === 'p') e.target.dataset.auto = '0'; refreshLines(); });
+  lines.addEventListener('change', e => { const el = e.target.closest('.line'); if (!el) return; if (e.target.dataset.k === 'format') autoPrice(el); refreshLines(); });
   lines.addEventListener('click', e => {
-    const b = e.target.closest('[data-line]'); if (!b) return;
-    const el = b.closest('.line');
-    if (b.dataset.line === 'rm') { if ($$('.line', lines).length > 1) el.remove(); else { el.remove(); addLine(); } refreshLines(); }
-    else { const d = lineData(el); const n = addLine({ article: d.article, format: d.format, avec_cadre: d.avec_cadre ? 0 : 1, quantite: 1 }, el); LF(n, 'quantite').focus(); }
+    const b = e.target.closest('[data-line=rm]'); if (!b) return;
+    b.closest('.line').remove(); if (!$$('.line', lines).length) addLine(); refreshLines();
   });
   E(fc, 'date_commande').addEventListener('input', dateHint);
   E(fc, 'client').addEventListener('change', () => {
