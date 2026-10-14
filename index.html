@@ -53,6 +53,15 @@ option{background:#181818;color:#f5f2ea}
 .me{display:flex;align-items:center;gap:10px}
 .me .lbl{display:none}
 @media(min-width:560px){.me .lbl{display:inline}}
+.sync{display:inline-flex;align-items:center;gap:7px;font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+.sync::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mut2)}
+.sync.ok::before{background:var(--lime)}
+.sync.off::before{background:var(--fu)}
+.sync.go::before{background:var(--lime);animation:blink 1s infinite}
+.sync span{display:none}
+@media(min-width:760px){.sync span{display:inline}}
+@keyframes blink{50%{opacity:.25}}
+@media(prefers-reduced-motion:reduce){.sync.go::before{animation:none}}
 .seg{display:inline-flex;border:1px solid var(--line2)}
 .seg button{background:none;border:0;padding:8px 11px;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);min-height:36px}
 .seg button+button{border-left:1px solid var(--line2)}
@@ -67,7 +76,6 @@ option{background:#181818;color:#f5f2ea}
 .tabs button.on{color:var(--lime)}
 .tabs button.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--lime)}
 .tabs button:first-child.on::after{left:0}
-.tabs .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--fu);margin-left:6px;vertical-align:middle}
 
 /* filtres */
 .filters{display:flex;flex-wrap:wrap;gap:10px 20px;align-items:center;padding-top:20px}
@@ -348,6 +356,8 @@ textarea.in{resize:vertical;min-height:64px}
 .boot{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
 .boot .fd{font-size:40px;letter-spacing:-.12em}
 .boot p{max-width:42ch}
+.login{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;text-align:left;margin-top:10px}
+.login .err{color:var(--fu-ink);font-size:12px;min-height:1.2em}
 </style>
 </head>
 <body>
@@ -355,6 +365,13 @@ textarea.in{resize:vertical;min-height:64px}
 <div class="boot" id="boot">
   <div class="fd">JP CREATY</div>
   <p class="lbl" id="bootMsg">Ouverture du carnet…</p>
+  <form class="login" id="login" hidden>
+    <input type="email" autocomplete="username" value="carnet@creaty-carnet-jp.firebaseapp.com" hidden aria-hidden="true" tabindex="-1">
+    <label class="lbl" for="loginPw">Mot de passe du carnet</label>
+    <input class="in" id="loginPw" type="password" autocomplete="current-password" required>
+    <button class="btn btn-p" type="submit" id="loginBtn">Ouvrir le carnet</button>
+    <p class="err" id="loginErr" role="alert"></p>
+  </form>
 </div>
 
 <div class="banner" aria-hidden="true">
@@ -367,14 +384,14 @@ textarea.in{resize:vertical;min-height:64px}
 <header class="hdr">
   <div class="wrap hdr-in">
     <a class="logo fd" href="https://creatyjp.github.io/Creaty-final/">JP CREATY <span class="tag">Carnet</span></a>
-    <div class="me"><span class="lbl">Je suis</span><div class="seg" id="meSeg" role="group" aria-label="Qui utilise le carnet"></div></div>
+    <div class="me"><span class="sync" id="sync" role="status" title="Connexion…"><span id="syncTxt">Connexion…</span></span><span class="lbl">Je suis</span><div class="seg" id="meSeg" role="group" aria-label="Qui utilise le carnet"></div></div>
   </div>
   <nav class="wrap tabs" aria-label="Sections">
     <button data-tab="tableau">Tableau</button>
     <button data-tab="commandes">Commandes</button>
     <button data-tab="depenses">Dépenses</button>
     <button data-tab="recettes">Recettes</button>
-    <button data-tab="reglages">Sauvegarde<span class="dot" id="bkDot" hidden></span></button>
+    <button data-tab="reglages">Sauvegarde</button>
   </nav>
 </header>
 
@@ -551,8 +568,10 @@ textarea.in{resize:vertical;min-height:64px}
         <div class="acts"><button type="button" class="btn btn-p" data-act="export">Exporter un rapport</button></div>
       </div>
       <div class="panel">
-        <div class="panel-h"><h3 class="fd">Transférer le carnet</h3></div>
-        <p class="txt">Le carnet est enregistré automatiquement <b>dans ce navigateur, sur cet appareil</b>. Pour le passer à l'autre associé ou le mettre à l'abri, envoie le fichier du carnet (.db). L'autre l'importe ici, sur son téléphone.</p>
+        <div class="panel-h"><h3 class="fd">Le carnet en ligne</h3></div>
+        <p class="txt">Le carnet est enregistré automatiquement <b>en ligne</b> : Joram et Plam's voient les mêmes données sur tous leurs téléphones et navigateurs. Sans connexion, les fiches restent sur l'appareil et partent dès que la connexion revient.</p>
+        <p class="kv" id="syncInfo"></p>
+        <p class="txt">Tu peux aussi garder une copie du carnet (.db) ou en importer une — l'import remplace le carnet pour vous deux.</p>
         <div class="acts">
           <button class="btn btn-g" type="button" id="bkShare">Partager le carnet</button>
           <button class="btn btn-g" type="button" id="bkExport">Enregistrer</button>
@@ -563,8 +582,13 @@ textarea.in{resize:vertical;min-height:64px}
       </div>
       <div class="panel danger">
         <div class="panel-h"><h3 class="fd">Tout effacer</h3></div>
-        <p class="txt">Supprime toutes les commandes, dépenses et recettes de cet appareil. Enregistre le carnet avant. Tape <b>EFFACER</b> pour confirmer.</p>
+        <p class="txt">Supprime toutes les commandes, dépenses et recettes du carnet, <b>pour vous deux</b>. Enregistre une copie avant. Tape <b>EFFACER</b> pour confirmer.</p>
         <div class="inline"><input class="in" id="resetTxt" autocomplete="off" placeholder="EFFACER" aria-label="Tape EFFACER pour confirmer"><button class="btn btn-d" type="button" id="resetBtn" disabled>Effacer le carnet</button></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 class="fd">Se déconnecter</h3></div>
+        <p class="txt">Ferme le carnet sur cet appareil (téléphone prêté, ordinateur partagé). Les données restent en ligne ; il faudra le mot de passe pour le rouvrir.</p>
+        <div class="acts"><button class="btn btn-g" type="button" id="logoutBtn">Se déconnecter</button></div>
       </div>
     </div>
   </section>
@@ -862,15 +886,180 @@ function idb(mode, fn) {
   });
 }
 const idbGet = k => idb('readonly', st => st.get(k));
-const idbSet = (k, v) => idb('readwrite', st => st.put(v, k));
-let saving = Promise.resolve();
+const idbPut = o => idb('readwrite', st => { Object.entries(o).forEach(([k, v]) => st.put(v, k)); });
+const idbClear = () => idb('readwrite', st => st.clear());
 function snapshot() { const data = db.export(); db.run('PRAGMA foreign_keys = ON'); return data; } // export() rouvre la base et remet les pragmas à zéro
-function persist() {
-  const data = snapshot();
-  saving = saving.then(() => idbSet('db', data)).catch(e => { console.error(e); toast('Enregistrement impossible ici — enregistre le carnet', true); });
+const withDb = (d, fn) => { const o = db; db = d; try { return fn(); } finally { db = o; } };
+const hasRows = d => withDb(d, () => q1('SELECT (SELECT COUNT(*) FROM commandes) + (SELECT COUNT(*) FROM depenses) + (SELECT COUNT(*) FROM recettes) n').n > 0);
+
+/* ================== EN LIGNE (Firebase) ==================
+   Tout le carnet (le fichier SQLite) est rangé dans un seul document Firestore, avec un numéro de version.
+   Chaque appareil en garde une copie (IndexedDB) + la « base » : la dernière version reçue ou envoyée.
+   Si Joram et Plam's modifient en même temps, on repart de la version en ligne et on y rejoue
+   ce que cet appareil a changé depuis la base (voir merge3). */
+const FB_VER = '10.14.1';
+const FB_CFG = {
+  apiKey: 'AIzaSyDz69yXdszU2SqWeSw-qrq3dIKgP5d6Riw', authDomain: 'creaty-carnet-jp.firebaseapp.com',
+  projectId: 'creaty-carnet-jp', storageBucket: 'creaty-carnet-jp.firebasestorage.app',
+  messagingSenderId: '1073048220264', appId: '1:1073048220264:web:a1b00c8d97287548e941dd'
+};
+const FB_EMAIL = 'carnet@creaty-carnet-jp.firebaseapp.com'; // compte unique partagé par les deux associés
+const MAX_BYTES = 1000000; // un document Firestore fait au plus ~1 Mo
+let FB, fbAuth, fbStore, fbDoc;
+let remoteVer = 0, baseData = null, dirty = false, pushing = false, again = false, lastRemote = null, syncState = 'go';
+
+async function fbLoad() {
+  const url = m => `https://www.gstatic.com/firebasejs/${FB_VER}/firebase-${m}.js`;
+  const [app, auth, fs] = await Promise.all(['app', 'auth', 'firestore'].map(m => import(url(m))));
+  const a = app.initializeApp(FB_CFG);
+  FB = { ...auth, ...fs };
+  fbAuth = auth.getAuth(a);
+  fbStore = fs.getFirestore(a);
+  fbDoc = fs.doc(fbStore, 'carnets', 'creaty');
+}
+async function ensureLogin() {
+  await fbAuth.authStateReady();
+  if (fbAuth.currentUser) return;
+  const f = $('#login'), pw = $('#loginPw'), err = $('#loginErr'), btn = $('#loginBtn');
+  $('#bootMsg').textContent = 'Carnet privé de Joram et Plam\'s';
+  f.hidden = false; pw.focus();
+  await new Promise(resolve => {
+    f.onsubmit = async e => {
+      e.preventDefault(); err.textContent = ''; btn.disabled = true; btn.textContent = 'Ouverture…';
+      try {
+        await FB.signInWithEmailAndPassword(fbAuth, FB_EMAIL, pw.value);
+        f.hidden = true; $('#bootMsg').textContent = 'Ouverture du carnet…'; resolve();
+      } catch (e) {
+        err.textContent = /network/.test(e.code) ? 'Pas de connexion internet. Vérifie et réessaie.'
+          : /too-many/.test(e.code) ? 'Trop d’essais. Attends quelques minutes puis réessaie.' : 'Mot de passe incorrect.';
+        pw.select();
+      } finally { btn.disabled = false; btn.textContent = 'Ouvrir le carnet'; }
+    };
+  });
+}
+async function logout() {
+  if (dirty && !confirm('Des fiches ne sont pas encore parties en ligne (pas de connexion). Si tu te déconnectes maintenant, elles seront perdues. Continuer ?')) return;
+  await FB.signOut(fbAuth);
+  try { await idbClear(); } catch (e) { console.warn(e); }
+  location.reload();
+}
+
+function setSync(s) {
+  syncState = s;
+  const txt = { ok: 'En ligne', go: 'Envoi…', off: 'Hors ligne' }[s];
+  $('#sync').className = 'sync ' + s; $('#syncTxt').textContent = txt;
+  $('#sync').title = s === 'off' ? 'Hors ligne — les fiches partiront dès que la connexion revient' : txt;
+  renderSyncInfo();
+}
+function renderSyncInfo() {
+  const r = lastRemote, when = r && r.maj_le ? r.maj_le.toLocaleString('fr-FR', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : null;
+  $('#syncInfo').textContent = ({ ok: 'Tout est en ligne.', go: 'Envoi en cours…', off: 'Hors ligne : les dernières fiches partiront dès que la connexion revient.' })[syncState] +
+    (when ? ` Dernière mise à jour : ${when}${r.par ? ' par ' + r.par : ''}.` : '');
+}
+const remoteInfo = cur => ({ par: cur.par, maj_le: cur.maj_le && cur.maj_le.toDate ? cur.maj_le.toDate() : null });
+
+let saving = Promise.resolve();
+function saveLocal() {
+  const o = { db: snapshot(), base: baseData, ver: remoteVer, dirty };
+  saving = saving.then(() => idbPut(o)).catch(e => console.warn(e)); // copie locale facultative (navigation privée…)
   return saving;
 }
+function persist() { dirty = true; const p = saveLocal(); push(); return p; }
 function commit() { persist(); renderAll(); }
+
+async function push() {
+  if (!fbDoc) return;
+  if (pushing) { again = true; return; }
+  pushing = true; setSync('go');
+  try {
+    do {
+      again = false;
+      const data = snapshot();
+      if (data.length > MAX_BYTES) throw Object.assign(new Error('Carnet trop gros pour être mis en ligne'), { big: true });
+      const r = await FB.runTransaction(fbStore, async tx => {
+        const s = await tx.get(fbDoc), cur = s.exists() ? s.data() : null;
+        if (cur && cur.version !== remoteVer) return { cur }; // l'autre associé a modifié entre-temps
+        const next = { data: FB.Bytes.fromUint8Array(data), version: (cur ? cur.version : 0) + 1, maj_le: FB.serverTimestamp(), par: nomAssoc(ME) };
+        tx.set(fbDoc, next);
+        return { next };
+      });
+      if (r.cur) { adoptRemote(r.cur); renderAll(); again = true; }
+      else { remoteVer = r.next.version; baseData = data; lastRemote = { par: r.next.par, maj_le: new Date() }; if (!again) dirty = false; }
+      await saveLocal();
+    } while (again);
+    setSync('ok');
+  } catch (e) {
+    console.warn(e); setSync('off');
+    if (e.big) toast(e.message + ' — enregistre une copie', true);
+  } finally { pushing = false; }
+}
+
+// Prend la version en ligne ; si cet appareil a des modifs pas encore parties, elles sont rejouées dessus.
+function adoptRemote(cur) {
+  const data = cur.data.toUint8Array(), theirs = new SQL.Database(data);
+  withDb(theirs, setup);
+  if (dirty) {
+    const base = baseData ? new SQL.Database(baseData) : null;
+    if (base) withDb(base, setup);
+    merge3(base, db, theirs);
+    if (base) base.close();
+  }
+  db.close(); db = theirs; setup();
+  remoteVer = cur.version; baseData = data; lastRemote = remoteInfo(cur);
+}
+
+function listen() {
+  FB.onSnapshot(fbDoc, s => {
+    if (!s.exists() || s.metadata.hasPendingWrites) return;
+    const cur = s.data();
+    if (cur.version <= remoteVer || pushing) return; // l'envoi en cours s'en occupe
+    const had = dirty;
+    adoptRemote(cur); saveLocal(); renderAll();
+    toast('Carnet mis à jour' + (cur.par ? ' par ' + cur.par : ''));
+    if (had) push(); else setSync('ok');
+  }, e => { console.warn(e); setSync('off'); });
+}
+
+/* Fusion à trois. On part de « theirs » (en ligne) et on y applique la différence entre « base » et « mine » :
+   fiches supprimées, modifiées et ajoutées ici. Les ajouts reçoivent un nouvel id (l'autre a pu prendre le même).
+   Sans base (ancien carnet resté dans un navigateur), toutes les fiches sont des ajouts, sauf celles déjà en ligne. */
+const SYNC_TABLES = ['commandes', 'lignes_commande', 'depenses', 'recettes']; // parents avant enfants
+function tableRows(d, t) {
+  const m = new Map(), r = d && d.exec(`SELECT * FROM ${t}`)[0];
+  if (r) r.values.forEach(v => { const o = {}; r.columns.forEach((c, i) => o[c] = v[i]); m.set(o.id, o); });
+  return m;
+}
+const sameRow = (a, b) => Object.keys(a).every(k => k === 'id' || a[k] === b[k]);
+function merge3(base, mine, theirs) {
+  const newCmd = new Map(); // id d'une commande ajoutée ici -> son id en ligne
+  const hasCmd = id => !!theirs.exec('SELECT 1 FROM commandes WHERE id = ?', [id])[0];
+  for (const t of SYNC_TABLES) {
+    const B = tableRows(base, t), M = tableRows(mine, t), T = tableRows(theirs, t);
+    for (const id of B.keys()) if (!M.has(id)) theirs.run(`DELETE FROM ${t} WHERE id = ?`, [id]);
+    for (const [id, row] of M) {
+      const r = { ...row };
+      if ('commande_id' in r && r.commande_id != null) {
+        if (newCmd.has(r.commande_id)) r.commande_id = newCmd.get(r.commande_id);
+        if (!hasCmd(r.commande_id)) { if (t === 'lignes_commande') continue; r.commande_id = null; } // commande supprimée en ligne
+      }
+      const cols = Object.keys(r).filter(k => k !== 'id'), vals = cols.map(k => r[k]);
+      if (B.has(id)) {
+        if (!sameRow(row, B.get(id)) && T.has(id)) theirs.run(`UPDATE ${t} SET ${cols.map(c => c + ' = ?').join(', ')} WHERE id = ?`, [...vals, id]);
+        continue;
+      }
+      const dup = [...T.values()].find(x => sameRow(r, x)); // déjà en ligne (même carnet ouvert ailleurs)
+      let nid = dup && dup.id;
+      if (!dup) {
+        theirs.run(`INSERT INTO ${t} (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`, vals);
+        nid = theirs.exec('SELECT last_insert_rowid()')[0].values[0][0];
+      }
+      if (t === 'commandes') newCmd.set(id, nid);
+    }
+  }
+  const P = d => new Map(d ? (d.exec('SELECT cle, valeur FROM parametres')[0] || { values: [] }).values : []);
+  const PB = P(base);
+  for (const [k, v] of P(mine)) if (PB.get(k) !== v) theirs.run('INSERT INTO parametres (cle, valeur) VALUES (?, ?) ON CONFLICT(cle) DO UPDATE SET valeur = excluded.valeur', [k, v]);
+}
 
 function setup() {
   db.run('PRAGMA foreign_keys = OFF');
@@ -903,12 +1092,25 @@ function migrate() {
 (async function boot() {
   try {
     if (typeof initSqlJs !== 'function') throw new Error('offline');
-    SQL = await initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/${SQLJS_VER}/${f}` });
-    let saved = null;
-    try { saved = await idbGet('db'); } catch (e) { console.warn(e); }
-    db = saved ? new SQL.Database(saved) : new SQL.Database();
+    [SQL] = await Promise.all([initSqlJs({ locateFile: f => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/${SQLJS_VER}/${f}` }), fbLoad()]);
+    await ensureLogin();
+    let st = {};
+    try { const [d, b, v, dt] = await Promise.all(['db', 'base', 'ver', 'dirty'].map(idbGet)); st = { db: d, base: b, ver: v, dirty: dt }; } catch (e) { console.warn(e); }
+    const local = st.db ? new SQL.Database(st.db) : null;
+    if (local) withDb(local, setup);
+    // st.ver absent = carnet d'avant la mise en ligne, jamais envoyé : ses fiches seront ajoutées au carnet en ligne
+    const legacy = !!local && st.ver == null && hasRows(local);
+    let s = null;
+    try { s = await FB.getDoc(fbDoc); } catch (e) { console.warn(e); }
+    db = local || new SQL.Database();
+    remoteVer = st.ver || 0; baseData = st.base || null; dirty = legacy || !!st.dirty;
+    if (s && !s.exists()) dirty = true;                   // premier appareil en ligne : il crée le carnet
+    else if (s && s.data().version !== remoteVer) {       // nouveautés en ligne : on les prend (+ les modifs d'ici)
+      adoptRemote(s.data());
+      if (legacy) setTimeout(() => toast('Les fiches de ce navigateur ont été ajoutées au carnet en ligne'), 600);
+    } else if (s) lastRemote = remoteInfo(s.data());
     setup();
-    await persist();
+    await saveLocal();
     ME = Number(LS.get('creaty-me')) || 1;
     if (!ASSOC.some(a => a.id === ME)) ME = ASSOC[0].id;
     buildStatic();
@@ -916,6 +1118,10 @@ function migrate() {
     renderAll();
     showTab((location.hash || '#tableau').slice(1), true);
     $('#boot').hidden = true;
+    listen();
+    if (dirty) push(); else setSync(s ? 'ok' : 'off');
+    window.addEventListener('online', () => { if (dirty) push(); });
+    setInterval(() => { if (dirty && !pushing) push(); }, 30000);
   } catch (e) {
     console.error(e);
     $('#bootMsg').textContent = e.message === 'offline' || /fetch|network|wasm/i.test(e.message)
@@ -1349,8 +1555,8 @@ function renderReglages() {
   const last = param('derniere_sauvegarde');
   const days = last ? Math.floor((Date.now() - Date.parse(last)) / 864e5) : null;
   $('#bkInfo').textContent = `Carnet : ${plural(n.c, 'commande')} · ${plural(n.d, 'dépense')} · ${plural(n.r, 'recette')}. ` +
-    (last ? `Dernier envoi : ${new Date(last).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} (${days === 0 ? 'aujourd’hui' : 'il y a ' + plural(days, 'jour')}).` : 'Pas encore envoyé ni enregistré.');
-  $('#bkDot').hidden = !((n.c + n.d + n.r) > 0 && (days === null || days >= 7));
+    (last ? `Dernière copie : ${new Date(last).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} (${days === 0 ? 'aujourd’hui' : 'il y a ' + plural(days, 'jour')}).` : 'Aucune copie enregistrée.');
+  renderSyncInfo();
 }
 
 /* ================== RAPPORTS & FACTURES : contenu ================== */
@@ -1829,7 +2035,7 @@ async function importDB(file) {
     const r = nd.exec("SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name IN ('commandes', 'depenses', 'recettes')");
     if (!r[0] || r[0].values[0][0] !== 3) throw new Error('Ce fichier n’est pas un carnet CREATY');
   } catch (e) { if (nd) nd.close(); return toast(/not a database/i.test(e.message) ? 'Ce fichier n’est pas un carnet CREATY' : e.message, true); }
-  if (!confirm(`Remplacer toutes les données de cet appareil par celles de « ${file.name} » ?`)) { nd.close(); return; }
+  if (!confirm(`Remplacer tout le carnet (pour Joram et Plam's) par « ${file.name} » ?`)) { nd.close(); return; }
   db.close(); db = nd; setup();
   Object.keys(editing).forEach(t => resetForm($('#f-' + t)));
   await persist(); renderAll(); toast('Carnet importé');
@@ -1934,6 +2140,7 @@ function bind() {
   $('#bkImport').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; if (f) importDB(f); });
   $('#resetTxt').addEventListener('input', e => $('#resetBtn').disabled = e.target.value.trim() !== 'EFFACER');
   $('#resetBtn').addEventListener('click', resetDB);
+  $('#logoutBtn').addEventListener('click', logout);
 }
 </script>
 </body>

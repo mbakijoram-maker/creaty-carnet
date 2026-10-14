@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Seul le compte du carnet (partagé par Joram et Plam's) peut lire et écrire.
+    match /carnets/creaty {
+      allow read: if request.auth != null && request.auth.uid == 'AqSORGECuYNJ0MXYu6kWKlP2lyf1';
+      allow write: if request.auth != null && request.auth.uid == 'AqSORGECuYNJ0MXYu6kWKlP2lyf1'
+        && request.resource.data.keys().hasOnly(['data', 'version', 'maj_le', 'par'])
+        && request.resource.data.data is bytes
+        && request.resource.data.version is int;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
