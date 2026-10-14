@@ -356,8 +356,6 @@ textarea.in{resize:vertical;min-height:64px}
 .boot{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
 .boot .fd{font-size:40px;letter-spacing:-.12em}
 .boot p{max-width:42ch}
-.login{display:flex;flex-direction:column;gap:10px;width:100%;max-width:320px;text-align:left;margin-top:10px}
-.login .err{color:var(--fu-ink);font-size:12px;min-height:1.2em}
 </style>
 </head>
 <body>
@@ -365,13 +363,6 @@ textarea.in{resize:vertical;min-height:64px}
 <div class="boot" id="boot">
   <div class="fd">JP CREATY</div>
   <p class="lbl" id="bootMsg">Ouverture du carnet…</p>
-  <form class="login" id="login" hidden>
-    <input type="email" autocomplete="username" value="carnet@creaty-carnet-jp.firebaseapp.com" hidden aria-hidden="true" tabindex="-1">
-    <label class="lbl" for="loginPw">Mot de passe du carnet</label>
-    <input class="in" id="loginPw" type="password" autocomplete="current-password" required>
-    <button class="btn btn-p" type="submit" id="loginBtn">Ouvrir le carnet</button>
-    <p class="err" id="loginErr" role="alert"></p>
-  </form>
 </div>
 
 <div class="banner" aria-hidden="true">
@@ -584,11 +575,6 @@ textarea.in{resize:vertical;min-height:64px}
         <div class="panel-h"><h3 class="fd">Tout effacer</h3></div>
         <p class="txt">Supprime toutes les commandes, dépenses et recettes du carnet, <b>pour vous deux</b>. Enregistre une copie avant. Tape <b>EFFACER</b> pour confirmer.</p>
         <div class="inline"><input class="in" id="resetTxt" autocomplete="off" placeholder="EFFACER" aria-label="Tape EFFACER pour confirmer"><button class="btn btn-d" type="button" id="resetBtn" disabled>Effacer le carnet</button></div>
-      </div>
-      <div class="panel">
-        <div class="panel-h"><h3 class="fd">Se déconnecter</h3></div>
-        <p class="txt">Ferme le carnet sur cet appareil (téléphone prêté, ordinateur partagé). Les données restent en ligne ; il faudra le mot de passe pour le rouvrir.</p>
-        <div class="acts"><button class="btn btn-g" type="button" id="logoutBtn">Se déconnecter</button></div>
       </div>
     </div>
   </section>
@@ -887,7 +873,6 @@ function idb(mode, fn) {
 }
 const idbGet = k => idb('readonly', st => st.get(k));
 const idbPut = o => idb('readwrite', st => { Object.entries(o).forEach(([k, v]) => st.put(v, k)); });
-const idbClear = () => idb('readwrite', st => st.clear());
 function snapshot() { const data = db.export(); db.run('PRAGMA foreign_keys = ON'); return data; } // export() rouvre la base et remet les pragmas à zéro
 const withDb = (d, fn) => { const o = db; db = d; try { return fn(); } finally { db = o; } };
 const hasRows = d => withDb(d, () => q1('SELECT (SELECT COUNT(*) FROM commandes) + (SELECT COUNT(*) FROM depenses) + (SELECT COUNT(*) FROM recettes) n').n > 0);
@@ -903,7 +888,6 @@ const FB_CFG = {
   projectId: 'creaty-carnet-jp', storageBucket: 'creaty-carnet-jp.firebasestorage.app',
   messagingSenderId: '1073048220264', appId: '1:1073048220264:web:a1b00c8d97287548e941dd'
 };
-const FB_EMAIL = 'carnet@creaty-carnet-jp.firebaseapp.com'; // compte unique partagé par les deux associés
 const MAX_BYTES = 1000000; // un document Firestore fait au plus ~1 Mo
 let FB, fbAuth, fbStore, fbDoc;
 let remoteVer = 0, baseData = null, dirty = false, pushing = false, again = false, lastRemote = null, syncState = 'go';
@@ -917,31 +901,10 @@ async function fbLoad() {
   fbStore = fs.getFirestore(a);
   fbDoc = fs.doc(fbStore, 'carnets', 'creaty');
 }
+// Pas de mot de passe : chaque navigateur reçoit un compte anonyme Firebase, gardé d'une visite à l'autre.
 async function ensureLogin() {
   await fbAuth.authStateReady();
-  if (fbAuth.currentUser) return;
-  const f = $('#login'), pw = $('#loginPw'), err = $('#loginErr'), btn = $('#loginBtn');
-  $('#bootMsg').textContent = 'Carnet privé de Joram et Plam\'s';
-  f.hidden = false; pw.focus();
-  await new Promise(resolve => {
-    f.onsubmit = async e => {
-      e.preventDefault(); err.textContent = ''; btn.disabled = true; btn.textContent = 'Ouverture…';
-      try {
-        await FB.signInWithEmailAndPassword(fbAuth, FB_EMAIL, pw.value);
-        f.hidden = true; $('#bootMsg').textContent = 'Ouverture du carnet…'; resolve();
-      } catch (e) {
-        err.textContent = /network/.test(e.code) ? 'Pas de connexion internet. Vérifie et réessaie.'
-          : /too-many/.test(e.code) ? 'Trop d’essais. Attends quelques minutes puis réessaie.' : 'Mot de passe incorrect.';
-        pw.select();
-      } finally { btn.disabled = false; btn.textContent = 'Ouvrir le carnet'; }
-    };
-  });
-}
-async function logout() {
-  if (dirty && !confirm('Des fiches ne sont pas encore parties en ligne (pas de connexion). Si tu te déconnectes maintenant, elles seront perdues. Continuer ?')) return;
-  await FB.signOut(fbAuth);
-  try { await idbClear(); } catch (e) { console.warn(e); }
-  location.reload();
+  if (!fbAuth.currentUser) await FB.signInAnonymously(fbAuth);
 }
 
 function setSync(s) {
@@ -2140,7 +2103,6 @@ function bind() {
   $('#bkImport').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; if (f) importDB(f); });
   $('#resetTxt').addEventListener('input', e => $('#resetBtn').disabled = e.target.value.trim() !== 'EFFACER');
   $('#resetBtn').addEventListener('click', resetDB);
-  $('#logoutBtn').addEventListener('click', logout);
 }
 </script>
 </body>

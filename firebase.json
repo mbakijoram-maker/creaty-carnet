@@ -1,4 +1,4 @@
 {
   "firestore": { "rules": "firestore.rules", "location": "europe-west1" },
-  "auth": { "providers": { "emailPassword": true } }
+  "auth": { "providers": { "anonymous": true, "emailPassword": true } }
 }

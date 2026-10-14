@@ -1,10 +1,10 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Seul le compte du carnet (partagé par Joram et Plam's) peut lire et écrire.
+    // Pas de mot de passe : tout navigateur qui ouvre le carnet (compte anonyme Firebase) peut lire et écrire.
     match /carnets/creaty {
-      allow read: if request.auth != null && request.auth.uid == 'AqSORGECuYNJ0MXYu6kWKlP2lyf1';
-      allow write: if request.auth != null && request.auth.uid == 'AqSORGECuYNJ0MXYu6kWKlP2lyf1'
+      allow read: if request.auth != null;
+      allow write: if request.auth != null
         && request.resource.data.keys().hasOnly(['data', 'version', 'maj_le', 'par'])
         && request.resource.data.data is bytes
         && request.resource.data.version is int;
