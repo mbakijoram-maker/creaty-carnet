@@ -427,6 +427,12 @@ textarea.in{resize:vertical;min-height:64px}
           <div class="f"><label for="c-tel">Téléphone <span class="opt">facultatif</span></label><input class="in" id="c-tel" type="tel" name="telephone" placeholder="+243 …" autocomplete="off"></div>
           <div class="f"><label for="c-lieu">Livraison <span class="opt">facultatif</span></label><input class="in" id="c-lieu" name="lieu_livraison" placeholder="ex. Gombe"></div>
         </div>
+        <div class="grid2">
+          <div class="f"><label for="c-transport">Frais de transport <span class="opt">facultatif</span></label><input class="in" id="c-transport" type="number" name="frais_transport" min="0" step="any" data-num inputmode="decimal" placeholder="0"></div>
+          <div class="f"><label for="c-transport-dev">Devise du transport</label>
+            <select class="in" id="c-transport-dev" name="devise_transport"><option>FC</option><option value="USD">$ (USD)</option></select></div>
+        </div>
+        <span class="hint">Ce que le client paie pour le transport : il s'ajoute au total de la commande et au reste à payer.</span>
         <div class="f">
           <span class="flabel">Poster commandé</span>
           <div class="lines" id="lines"></div>
@@ -648,7 +654,9 @@ const COMMANDES_COLS = `
   lieu_livraison  TEXT,
   associe_id      INTEGER REFERENCES associes(id),
   note            TEXT,
-  cree_le         TEXT    NOT NULL DEFAULT (datetime('now'))`;
+  cree_le         TEXT    NOT NULL DEFAULT (datetime('now')),
+  frais_transport REAL    DEFAULT 0 CHECK (frais_transport IS NULL OR frais_transport >= 0),
+  devise_transport TEXT   NOT NULL DEFAULT 'FC' CHECK (devise_transport IN ('FC','USD'))`;
 const SCHEMA_TABLES = `
 CREATE TABLE IF NOT EXISTS associes (
   id   INTEGER PRIMARY KEY,
@@ -726,9 +734,11 @@ FROM (
        FROM lignes_commande l WHERE l.commande_id = c.id) AS articles,
     COALESCE((SELECT SUM(l.quantite) FROM lignes_commande l WHERE l.commande_id = c.id), 0) AS nb_pieces,
     COALESCE((SELECT SUM(l.quantite * l.prix_unitaire) FROM lignes_commande l
-              WHERE l.commande_id = c.id AND l.devise = 'FC'), 0) AS total_fc,
+              WHERE l.commande_id = c.id AND l.devise = 'FC'), 0)
+      + CASE WHEN c.devise_transport = 'FC' THEN COALESCE(c.frais_transport, 0) ELSE 0 END AS total_fc,
     COALESCE((SELECT SUM(l.quantite * l.prix_unitaire) FROM lignes_commande l
-              WHERE l.commande_id = c.id AND l.devise = 'USD'), 0) AS total_usd,
+              WHERE l.commande_id = c.id AND l.devise = 'USD'), 0)
+      + CASE WHEN c.devise_transport = 'USD' THEN COALESCE(c.frais_transport, 0) ELSE 0 END AS total_usd,
     COALESCE((SELECT SUM(r.montant) FROM recettes r
               WHERE r.commande_id = c.id AND r.devise = 'FC'), 0) AS paye_fc,
     COALESCE((SELECT SUM(r.montant) FROM recettes r
@@ -1034,8 +1044,15 @@ function setup() {
   db.run('PRAGMA foreign_keys = ON');
   ASSOC = q('SELECT id, nom FROM associes ORDER BY id');
 }
-// Ancienne version : un seul poster par commande -> on le déplace dans lignes_commande
 function migrate() {
+  migrateLines();
+  // Frais de transport payés par le client (ajoutés après coup aux anciens carnets)
+  const cols = q("SELECT name FROM pragma_table_info('commandes')").map(r => r.name);
+  if (!cols.includes('frais_transport')) db.run('ALTER TABLE commandes ADD COLUMN frais_transport REAL DEFAULT 0 CHECK (frais_transport IS NULL OR frais_transport >= 0)');
+  if (!cols.includes('devise_transport')) db.run("ALTER TABLE commandes ADD COLUMN devise_transport TEXT NOT NULL DEFAULT 'FC' CHECK (devise_transport IN ('FC','USD'))");
+}
+// Ancienne version : un seul poster par commande -> on le déplace dans lignes_commande
+function migrateLines() {
   const cols = q("SELECT name FROM pragma_table_info('commandes')").map(r => r.name);
   if (!cols.includes('article')) return;
   const cadre = cols.includes('avec_cadre') ? 'avec_cadre' : '0';
@@ -1182,6 +1199,7 @@ function refreshLines() {
       $('.fin-s', box).textContent = qn ? `= ${money(sub, d)}` : 'aucun';
     });
   });
+  t[$('#c-transport-dev').value] += Math.max(0, Number($('#c-transport').value) || 0); // transport payé par le client
   $('#c-total').textContent = inline(t);
 }
 function dateHint() {
@@ -1464,6 +1482,7 @@ function renderCommandes() {
         <div class="i-meta"><span class="id">#${r.id}</span><span>${fdate(r.date_commande)}</span>${who(r.associe_id)}</div>
         <h4 class="i-title">${esc(r.client)}${r.telephone ? `<a class="tel" href="tel:${esc(r.telephone.replace(/\s/g, ''))}">${esc(r.telephone)}</a>` : ''}</h4>
         <div class="i-lines">${ls.map(l => `<div class="i-line"><span><b>${l.quantite} ×</b> ${esc(l.article)}${l.format ? ' · ' + esc(l.format) : ''} · ${l.avec_cadre ? '<span class="cd">avec cadre</span>' : 'sans cadre'}</span><span>${money(l.quantite * l.prix_unitaire, l.devise)}</span></div>`).join('')}</div>
+        ${r.frais_transport > 0 ? `<div class="i-lines"><div class="i-line"><span>Frais de transport</span><span>${money(r.frais_transport, r.devise_transport)}</span></div></div>` : ''}
         ${r.lieu_livraison ? `<p class="i-sub">Livraison : ${esc(r.lieu_livraison)}</p>` : ''}
         ${r.note ? `<p class="i-note">${esc(r.note)}</p>` : ''}
       </div>
@@ -1561,7 +1580,7 @@ function buildReport(o) {
     const st = c => upcoming(c) && daysTo(c.date_commande) > 0 ? 'À venir' : c.statut;
     m.sections.push({
       title: 'Commandes', columns: [{ h: 'N°', w: 1.3 }, { h: 'Date', w: 2.2 }, { h: 'Client', w: 3 }, { h: 'Posters', w: 6 }, { h: 'Statut', w: 2 }, { h: 'Total', w: 2.6, r: 1, money: 1 }, { h: 'Reste', w: 2.6, r: 1, money: 1 }],
-      rows: cs.map(c => ['#' + c.id, fdateS(c.date_commande), c.client, (lm[c.id] || []).map(lineTxt).join('\n'), st(c), Mt(cmdTot(c)), c.statut === 'Annulée' ? '—' : Mt(cmdReste(c))]),
+      rows: cs.map(c => ['#' + c.id, fdateS(c.date_commande), c.client, (lm[c.id] || []).map(lineTxt).concat(c.frais_transport > 0 ? ['Transport ' + money(c.frais_transport, c.devise_transport)] : []).join('\n'), st(c), Mt(cmdTot(c)), c.statut === 'Annulée' ? '—' : Mt(cmdReste(c))]),
       foot: ['', '', plural(cs.length, 'commande'), '', '', Mt(T), Mt(Rr)], txtTotal: inline(T) + ' · reste à encaisser ' + inline(Rr),
       txt: r => `${r[0]} · ${r[1]} · ${r[2]} — ${r[3].replace(/\n/g, ' + ')} — ${cellText(r[5])} (${r[4]})`
     });
@@ -1600,7 +1619,8 @@ function buildFacture(id) {
     meta: [['Client', c.client], ['Téléphone', c.telephone || '—'], ['Livraison', c.lieu_livraison || 'Kinshasa'], ['Date', fdate(c.date_commande)], ['Statut', statut], ['Suivi par', c.gere_par || '—']],
     sections: [{
       title: 'Détail de la commande', columns: [{ h: 'Poster', w: 5 }, { h: 'Format', w: 2.2 }, { h: 'Finition', w: 2.4 }, { h: 'Qté', w: 1.2, r: 1 }, { h: 'Prix unit.', w: 2.6, r: 1, money: 1 }, { h: 'Total', w: 2.8, r: 1, money: 1 }],
-      rows: ls.map(l => [l.article, l.format || '—', l.avec_cadre ? 'Avec cadre' : 'Sans cadre', l.quantite, Mc(l.prix_unitaire, l.devise), Mc(l.quantite * l.prix_unitaire, l.devise)]),
+      rows: ls.map(l => [l.article, l.format || '—', l.avec_cadre ? 'Avec cadre' : 'Sans cadre', l.quantite, Mc(l.prix_unitaire, l.devise), Mc(l.quantite * l.prix_unitaire, l.devise)])
+        .concat(c.frais_transport > 0 ? [['Frais de transport', '—', '—', '', '', Mc(c.frais_transport, c.devise_transport)]] : []),
       foot: ['', '', '', ls.reduce((s, l) => s + l.quantite, 0), 'Total', Mt(cmdTot(c))],
       txt: r => `${r[3]} × ${r[0]} (${r[1]}, ${r[2].toLowerCase()}) = ${cellText(r[5])}`
     }],
@@ -2028,6 +2048,7 @@ function bind() {
   // Commande : lignes de posters, prix automatique selon format + cadre
   const fc = $('#f-commandes'), lines = $('#lines');
   lines.addEventListener('input', e => { if (!e.target.closest('.line')) return; if (e.target.dataset.k === 'p') e.target.dataset.auto = '0'; refreshLines(); });
+  ['input', 'change'].forEach(ev => { $('#c-transport').addEventListener(ev, refreshLines); $('#c-transport-dev').addEventListener(ev, refreshLines); });
   lines.addEventListener('change', e => { const el = e.target.closest('.line'); if (!el) return; if (e.target.dataset.k === 'format') autoPrice(el); refreshLines(); });
   lines.addEventListener('click', e => {
     const b = e.target.closest('[data-line=rm]'); if (!b) return;

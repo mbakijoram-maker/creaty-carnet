@@ -32,7 +32,10 @@ CREATE TABLE IF NOT EXISTS commandes (
   lieu_livraison  TEXT,
   associe_id      INTEGER REFERENCES associes(id),
   note            TEXT,
-  cree_le         TEXT    NOT NULL DEFAULT (datetime('now'))
+  cree_le         TEXT    NOT NULL DEFAULT (datetime('now')),
+  -- Frais de transport payés par le client (s'ajoutent au total et au reste à payer)
+  frais_transport REAL    DEFAULT 0 CHECK (frais_transport IS NULL OR frais_transport >= 0),
+  devise_transport TEXT   NOT NULL DEFAULT 'FC' CHECK (devise_transport IN ('FC','USD'))
 );
 CREATE TABLE IF NOT EXISTS lignes_commande (
   id             INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -105,9 +108,11 @@ FROM (
        FROM lignes_commande l WHERE l.commande_id = c.id) AS articles,
     COALESCE((SELECT SUM(l.quantite) FROM lignes_commande l WHERE l.commande_id = c.id), 0) AS nb_pieces,
     COALESCE((SELECT SUM(l.quantite * l.prix_unitaire) FROM lignes_commande l
-              WHERE l.commande_id = c.id AND l.devise = 'FC'), 0) AS total_fc,
+              WHERE l.commande_id = c.id AND l.devise = 'FC'), 0)
+      + CASE WHEN c.devise_transport = 'FC' THEN COALESCE(c.frais_transport, 0) ELSE 0 END AS total_fc,
     COALESCE((SELECT SUM(l.quantite * l.prix_unitaire) FROM lignes_commande l
-              WHERE l.commande_id = c.id AND l.devise = 'USD'), 0) AS total_usd,
+              WHERE l.commande_id = c.id AND l.devise = 'USD'), 0)
+      + CASE WHEN c.devise_transport = 'USD' THEN COALESCE(c.frais_transport, 0) ELSE 0 END AS total_usd,
     COALESCE((SELECT SUM(r.montant) FROM recettes r
               WHERE r.commande_id = c.id AND r.devise = 'FC'), 0) AS paye_fc,
     COALESCE((SELECT SUM(r.montant) FROM recettes r
